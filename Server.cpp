@@ -2,12 +2,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-void Server::create( const char * _port, const char * _pass )
+void Server::create()
 {
     struct protoent	*pe;
 
-    this->setPort(atoi(_port));
-    pass = _pass;
     pe = getprotobyname("tcp");
     if ((srvFd = socket(AF_INET, SOCK_STREAM, pe->p_proto)) == 0)
     {
@@ -35,170 +33,92 @@ void Server::create( const char * _port, const char * _pass )
     */
 }
 
-
-
-///  Говнокод ... 
-User * Server::newUser(struct pollfd nw)
-{
-    // send message to new connected user //
-    send(nw.fd, "SERVER PASSWORD: ", 18, 0);
-    // try get data from user //
-    int ret = poll(&nw, 1, 20000);
-    if (ret == -1)
-    {
-        perror("poll");
-        exit(EXIT_FAILURE);
-    }
-    else if (ret == 0)
-    {
-        send(nw.fd, "timeout\n", 9, 0);
-        close(nw.fd);
-        return NULL;
-    }
-    else
-    {
-        // get message from user //
-        if (nw.revents & POLLIN)
-        {
-            //std::string *buf = new std::string[100];
-            std::string buf[100];
-            int r = recv(nw.fd, buf, 100, 0);
-            if (r <= 0)
-            {
-                printf("client #%d gone away\n", nw.fd);
-                close(nw.fd);
-                return NULL;
-            }
-            else
-            {
-                std::string tmp = (char *)buf;
-                tmp.pop_back();
-
-                if (tmp != pass)
-                {
-                    send(nw.fd, "incorrect password\n", 20, 0);
-                    close(nw.fd);
-                    return NULL;
-                }
-                return (new User);
-            }
-        }
-    }
-    return NULL;
-}
-
-void Server::setUser(User * user, struct pollfd nw)
-{
-    // send message to new connected user //
-    send(nw.fd, "USERNAME: ", 11, 0);
-    // try get data from user //
-    int ret = poll(&nw, 1, 20000);
-    if (ret == -1)
-    {
-        perror("poll");
-        exit(EXIT_FAILURE);
-    }
-    else if (ret == 0)
-    {
-        send(nw.fd, "timeout\n", 9, 0);
-        close(nw.fd);
-        return ;
-    }
-    else
-    {
-        // get message from user //
-        if (nw.revents & POLLIN)
-        {
-            //std::string *buf = new std::string[100];
-            std::string buf[100];
-            int r = recv(nw.fd, buf, 100, 0);
-            if (r <= 0)
-            {
-                printf("client #%d gone away\n", nw.fd);
-                close(nw.fd);
-                return ;
-            }
-            else
-            {
-                std::string tmp = (char *)buf;
-                tmp.pop_back();
-                user->setName(tmp);
-            }
-        }
-    }
-}
-// Конец говнокода
-
-
 void Server::connectUsers( void )
 {
     int new_client_fd;
 
-    if ((new_client_fd = accept(srvFd, (struct sockaddr*)&address, (socklen_t*)&addrlen)) > 0)
-    // {
-    //     perror("accept");
-    //     exit(EXIT_FAILURE);
-    // }
+    if ((new_client_fd = accept(srvFd, (struct sockaddr*)&address, (socklen_t*)&addrlen)) > 0) 
     {
         struct pollfd nw;
+
         nw.fd = new_client_fd;
         nw.events = POLLIN;
-
-        User * new_client = this->newUser(nw);
-        if (!new_client)
-            return ;
-        this->setUser(new_client, nw);
-        // add new client to server //
-        userData.push_back(new_client);
+        nw.revents = 0;
+        userData.push_back(new User);
         userFds.push_back(nw);
-        std::cout << "new client: " << userData[userData.size() - 1]->getName() << " fd=" << new_client_fd << "\n";
-        send(nw.fd, "me: ", 5, 0);
+        std::cout << "New client on " << new_client_fd << " socket." << "\n";
     }
+}
+
+void Server::disconnectClient( size_t const id )
+{
+    std::cout << userData[id]->getName() << " gone away.\n";
+    close(userFds[id].fd);
+    userFds.erase(userFds.begin() + id);
+    userData.erase(userData.begin() + id);
+}
+
+int  Server::readRequest( size_t const id )
+{
+    char buf[BUF_SIZE + 1];
+    int bytesRead = 0;
+    userData[id]->text.clear();
+    while ((bytesRead += recv(userFds[id].fd, buf, BUF_SIZE, 0)) > 0)
+    {
+        buf[BUF_SIZE] = 0;
+        userData[id]->text += buf;
+        if (userData[id]->text.find("\n") != std::string::npos)
+            break;
+    }
+    return (bytesRead);
 }
 
 void Server::clientRequest( void )
 {
-    
     int ret = poll(userFds.data(), userFds.size(), 0);
     if (ret != 0)
     {
-        for (size_t i = 0; i < userFds.size(); i++)
+        for (size_t id = 0; id < userFds.size(); id++)
         {
-            if (userFds[i].revents & POLLIN)
+            if (userFds[id].revents & POLLIN)
             {
-                std::string buf[100];
-                int bytesRead = recv(userFds[i].fd, buf, 100, 0);
-                if (bytesRead <= 0)
-                {
-                    std::cout << userData[i]->getName() << " gone away.\n";
-                    close(userFds[i].fd);
-                    userFds.erase(userFds.begin() + i);
-                    userData.erase(userData.begin() + i);
-                }
+                if (readRequest(id) <= 0)
+                    disconnectClient(id);
                 else
-                {
-                    for (size_t j = 0; j < userFds.size(); j++)
-                        if (userFds[i].fd != userFds[j].fd)
-                        {
-                            std::string tmp = userData[i]->getName();
-                            tmp += ": ";
-                            send(userFds[j].fd, &tmp, tmp.size() + 1, 0);
-                            send(userFds[j].fd, buf, bytesRead, 0);
-                        }
-                    send(userFds[i].fd, "me: ", 5, 0);
-                    std::cout << "< " << userData[i]->getName() << " say >: " << (char *)buf;
-                }
+                    executeCommand(id);
             }
-            userFds[i].revents = 0;
+            userFds[id].revents = 0;
         }
     }
 }
 
-int const & Server::getPort( void ) const { return (port); }
-void Server::setPort( int _port ) { port = _port; }
-
-Server::Server()
+void Server::executeCommand( size_t const id )
 {
+    for (size_t j = 0; j < userFds.size(); j++)
+        if (userFds[id].fd != userFds[j].fd)
+        {
+            // std::string tmp = userData[id]->getName();
+            // tmp += ": ";
+            // send(userFds[j].fd, &tmp, tmp.size() + 1, 0);
+            send(userFds[j].fd, userData[id]->text.c_str(), userData[id]->text.size(), 0);
+        }
+    std::cout << "< socket " << userFds[id].fd << " say >: " << userData[id]->text;
+}
+
+Server::Server( const char * _port, const char * _pass )
+{
+    try
+    {
+        port = atoi(_port);
+        if (port < 1000 || port > 65555) // надо взять правельный рендж портов...
+            throw std::invalid_argument("Port out of range");
+    }
+    catch ( std::exception & e)
+    {
+        std::cerr << e.what() << "\n";
+        exit(EXIT_FAILURE);
+    }
+    pass = _pass;
     addrlen = sizeof(address);
     std::cout << "Done!\n";
 }

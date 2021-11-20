@@ -1,16 +1,17 @@
 #include "User.hpp"
 
-std::string const & User::getNick( void ) const { return(_nickname); }
-std::string const & User::getName( void ) const { return(_username); }
+std::string const & User::getNick( void ) const { return(nickname); }
+std::string const & User::getName( void ) const { return(username); }
 
-void User::setNick( std::string const & nick ) { _nickname = nick; }
-void User::setName( std::string const & name ) { _username = name; }
+void User::setNick( std::string const & nick ) { nickname = nick; }
+void User::setName( std::string const & name ) { username = name; }
 
 User::User()
 {
-    _username = "<blank>";
-    _nickname = "<blank>";
-    _password = "<blank>";
+    username = "<blank>";
+    nickname = "<blank>";
+    password = "<blank>";
+    registred = false;
 }
 
 User::~User() {}

@@ -8,9 +8,9 @@ int     main(int argc, char **argv)
         return (1);
     }
 
-    Server server;
+    Server server(argv[1], argv[2]);
 
-    server.create(argv[1], "qwerty");
+    server.create();
 
     while(true)
     {

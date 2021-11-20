@@ -8,7 +8,10 @@
 #include <poll.h>
 #include <vector>
 #include <iterator>
+#include <stdexcept>
 #include "User.hpp"
+
+#define BUF_SIZE 20
 
 class Server {
     private:
@@ -25,17 +28,14 @@ class Server {
 
     public:
 
-        int const & getPort( void ) const;
-        void setPort( int _port );
-
-        void create( const char * port, const char * pass );
+        void create();
         void connectUsers( void );
         void clientRequest( void );
-
-        User * newUser(struct pollfd nw);
-        void setUser(User * user, struct pollfd nw);
+        void disconnectClient( size_t const id );
+        int  readRequest( size_t const id );
+        void executeCommand( size_t const id );
         
-        Server();
+        Server( const char * _port, const char * _pass );
         ~Server();
 
 };

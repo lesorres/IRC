@@ -5,13 +5,17 @@
 
 class User {
     private:
-        std::string _username;
-        std::string _nickname;
-        std::string _password;
+        std::string username;
+        std::string nickname;
+        std::string password;
+        bool        registred;
+
 
         User( User const & _ot );
         User operator=( User const & _ot );
+    
     public:
+        std::string text;
 
         std::string const & getNick( void ) const;
         std::string const & getName( void ) const;
