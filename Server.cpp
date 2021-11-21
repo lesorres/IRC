@@ -52,25 +52,13 @@ void Server::connectUsers( void )
 
 void Server::disconnectClient( size_t const id )
 {
-    std::cout << userData[id]->getName() << " gone away.\n";
+    if (userData[id]->getNick().empty())
+        std::cout << "Socket " << userFds[id].fd << " gone away.\n";
+    else
+        std::cout << userData[id]->getNick() << " gone away.\n";
     close(userFds[id].fd);
     userFds.erase(userFds.begin() + id);
     userData.erase(userData.begin() + id);
-}
-
-int  Server::readRequest( size_t const id )
-{
-    char buf[BUF_SIZE + 1];
-    int bytesRead = 0;
-    userData[id]->text.clear();
-    while ((bytesRead += recv(userFds[id].fd, buf, BUF_SIZE, 0)) > 0)
-    {
-        buf[BUF_SIZE] = 0;
-        userData[id]->text += buf;
-        if (userData[id]->text.find("\n") != std::string::npos)
-            break;
-    }
-    return (bytesRead);
 }
 
 void Server::clientRequest( void )
@@ -86,31 +74,84 @@ void Server::clientRequest( void )
                     disconnectClient(id);
                 else
                     executeCommand(id);
+                userFds[id].revents = 0;
             }
-            userFds[id].revents = 0;
         }
     }
 }
 
-void Server::executeCommand( size_t const id )
+int  Server::readRequest( size_t const id )
 {
-    for (size_t j = 0; j < userFds.size(); j++)
-        if (userFds[id].fd != userFds[j].fd)
-        {
-            // std::string tmp = userData[id]->getName();
-            // tmp += ": ";
-            // send(userFds[j].fd, &tmp, tmp.size() + 1, 0);
-            send(userFds[j].fd, userData[id]->text.c_str(), userData[id]->text.size(), 0);
-        }
-    std::cout << "< socket " << userFds[id].fd << " say >: " << userData[id]->text;
+    char buf[BUF_SIZE + 1];
+    int bytesRead = 0;
+    int rd;
+    while ((rd = recv(userFds[id].fd, buf, BUF_SIZE, 0)) > 0)
+    {
+        buf[rd] = 0;
+        bytesRead += rd;
+        userData[id]->text += buf;
+        if (userData[id]->text.find("\n") != std::string::npos)
+            break;
+    }
+    while (userData[id]->text.find("\r") != std::string::npos)      // Удаляем символ возврата карретки
+        userData[id]->text.erase(userData[id]->text.find("\r"), 1); // отправляемый старыми клиентами на MacOS
+    return (bytesRead);
 }
 
-Server::Server( const char * _port, const char * _pass )
+void Server::executeCommand( size_t const id )
+{
+    userData[id]->tail.clear();
+    if (userData[id]->text.find("\n") != userData[id]->text.size() - 1)
+    {
+        userData[id]->tail = userData[id]->text.substr(userData[id]->text.find("\n") + 1);
+        userData[id]->text.erase(userData[id]->text.find("\n") + 1);
+    }
+    for (size_t j = 0; j < userFds.size(); j++)
+    {
+        if (userData[id]->text.substr(0, 4) == "PASS")
+        {
+            std::string tmp = userData[id]->text.substr(5);
+            tmp.pop_back();
+            userData[id]->setPass(tmp);
+        }
+        else if (userData[id]->text.substr(0, 4) == "NICK")
+        {
+            std::string tmp = userData[id]->text.substr(5);
+            tmp.pop_back();
+            userData[id]->setNick(tmp);
+        }
+        else if (userData[id]->text.substr(0, 4) == "USER")
+        {
+            std::string tmp = userData[id]->text.substr(5);
+            tmp.pop_back();
+            userData[id]->setUser(tmp);
+        }
+        else if (userFds[id].fd != userFds[j].fd)
+        {
+            std::string tmp = userData[id]->getNick();
+            tmp += ": ";
+            send(userFds[j].fd, &tmp, tmp.size() + 1, 0);
+            send(userFds[j].fd, userData[id]->text.c_str(), userData[id]->text.size(), 0);
+        }
+    }
+    if (userData[id]->getNick().empty())
+        std::cout << "< socket " << userFds[id].fd << " >: " << userData[id]->text;
+    else
+        std::cout << "< " << userData[id]->getNick() << " >: " << userData[id]->text;
+    userData[id]->text.clear();
+    if (!userData[id]->tail.empty())
+    {
+        userData[id]->text = userData[id]->tail;
+        executeCommand(id);
+    }
+}
+
+Server::Server( std::string const & _port, std::string const & _pass )
 {
     try
     {
-        port = atoi(_port);
-        if (port < 1000 || port > 65555) // надо взять правельный рендж портов...
+        port = atoi(_port.c_str());
+        if (port < 1000 || port > 65555 || _port.find_first_not_of("0123456789") != std::string::npos) // надо взять правельный рендж портов...
             throw std::invalid_argument("Port out of range");
     }
     catch ( std::exception & e)

@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include "User.hpp"
 
-#define BUF_SIZE 20
+#define BUF_SIZE 1024
 
 class Server {
     private:
@@ -35,7 +35,7 @@ class Server {
         int  readRequest( size_t const id );
         void executeCommand( size_t const id );
         
-        Server( const char * _port, const char * _pass );
+        Server( std::string const & _port, std::string const & _pass );
         ~Server();
 
 };

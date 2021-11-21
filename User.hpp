@@ -2,6 +2,7 @@
 #define User_hpp
 
 #include <iostream>
+#include <queue>
 
 class User {
     private:
@@ -16,12 +17,15 @@ class User {
     
     public:
         std::string text;
+        std::string tail;
 
         std::string const & getNick( void ) const;
-        std::string const & getName( void ) const;
+        std::string const & getUser( void ) const;
+        std::string const & getPass( void ) const;
 
         void setNick( std::string const & nick );
-        void setName( std::string const & name );
+        void setUser( std::string const & name );
+        void setPass( std::string const & pass );
 
         User();
         ~User();
