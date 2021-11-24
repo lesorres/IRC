@@ -22,19 +22,30 @@
 
 
 class Command {
-	static std::vector<User*> &userData;
-	void setUserData( std::vector<User*> & );
-	std::string checkCmdNameFormat( std::string cmdStr );
-	std::string getRidOfCmdName( std::string cmdStr );
-public:
-	static void pass( std::string const , User & );
-	static void nick( std::string const , User & );
-	static void user( std::string const , User & );
-	static void who( std::string const , User & );
-	static void whois( std::string const , User & );
-	static void whowas( std::string const , User & );
-	// static void user(std::string const username, std::string hostname, std::string servname, std::string realname);
+	private:
+		typedef struct s_msg
+		{
+			std::string prefx;
+			std::string cmd;
+			std::vector <std::string> midParams;
+			std::string trailing;
+			int paramN;
+		}				t_msg;
 
+		static std::vector<User*> &userData;
+		void setUserData( std::vector<User*> & );
+		std::string parseMsg( std::string cmdStr );
+		std::string checkMsgFormat( std::string cmdStr );
+		std::string getRidOfCmdName( std::string cmdStr );
+
+	public:
+		static void pass( std::string const , User & );
+		static void nick( std::string const , User & );
+		static void user( std::string const , User & );
+		static void who( std::string const , User & );
+		static void whois( std::string const , User & );
+		static void whowas( std::string const , User & );
+		// static void user(std::string const username, std::string hostname, std::string servname, std::string realname);
 };
 
 #endif

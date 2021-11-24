@@ -4,7 +4,7 @@
 
 typedef void (Command:: * PType)(std::string &str, User &user);
 
-std::map<std::string cmd, Command const &>cmd_map;
+std::map<std::string, PType> cmd_map;
 
 // в коструктор сервера:
 
