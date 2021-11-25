@@ -6,19 +6,19 @@
 
 class User {
     private:
-        std::string username;
-        std::string nickname;
-        std::string password;
-        int         _fd;
-        bool        registred;
-
-
+        std::string                 username;
+        std::string                 nickname;
+        std::string                 password;
+        std::vector<std::string>    channels;
+        std::map<std::string, bool> oper;
+        int                         _fd;
+        bool                        registred;
         User( User const & _ot );
         User operator=( User const & _ot );
     
     public:
-        std::string text;
-        std::string tail;
+        std::string                 text;
+        std::string                 tail;
 
         std::string const & getNick( void ) const;
         std::string const & getUser( void ) const;
