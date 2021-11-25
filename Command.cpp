@@ -70,6 +70,39 @@ std::string Command::removeCmd(std::string str){
     return str;
 }
 
+std::string parseMsg( std::string cmdStr )
+{
+	std::string tmp;
+	std::string::iterator it_begin = cmdStr.begin();
+	std::string::iterator it_end = cmdStr.end();
+	
+	while (*it_begin == ' ')
+		it_begin++;
+	while (*it_end == ' ')
+		it_end--;
+	tmp = cmdStr.substr()
+}
+std::string Command::getRidOfCmdName( std::string cmdStr )
+{
+
+}
+std::string checkCmdNameFormat( std::string cmdStr )
+{
+
+}
+static void who( std::string const , User & )
+{
+	
+}
+static void whois( std::string const , User & )
+{
+	
+}
+static void whowas( std::string const , User & )
+{
+	
+}
+
 int main() {
     std::string cmdline;
     User user;

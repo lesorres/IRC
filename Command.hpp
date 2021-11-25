@@ -25,8 +25,23 @@
 // class Server;
 
 class Command {
+private:
+	typedef struct s_msg
+	{
+		std::string prefx;
+		std::string cmd;
+		std::vector <std::string> midParams;
+		std::string trailing;
+		int paramN;
+	}				t_msg;
+
     std::vector<User*> userData;
     // std::vector<User*> &userData;   // вектор для Server
+
+	std::string parseMsg( std::string cmdStr );
+	std::string checkMsgFormat( std::string cmdStr );
+	std::string getRidOfCmdName( std::string cmdStr );
+
 public:
     Command();
     // Command(Server &);      //коструктор для Server
@@ -34,6 +49,9 @@ public:
     void pass( std::string const , User & );
     void nick( std::string const , User & );
     void user( std::string const , User & );
+	void who( std::string const , User & );
+	void whois( std::string const , User & );
+	void whowas( std::string const , User & );
     std::string removeCmd( std::string );
     // static void user(std::string const username, std::string hostname, std::string servname, std::string realname);
     ~Command();
