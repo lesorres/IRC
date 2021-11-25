@@ -32,7 +32,7 @@ void Command::nick(std::string const str, User &user) {
     //         break ;
     // }
 
-    if (str.empty() && str.data()){
+    if (str.empty() && str.data()) {
         std::cout << "ERR_NONICKNAMEGIVEN" << std::endl;
         return ERR_NONICKNAMEGIVEN;
     }
