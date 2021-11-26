@@ -20,6 +20,7 @@
 #include <vector>
 #include <iostream>
 #include "User.hpp"
+#include "connectionRegistrationCmd.cpp"
 // #include "Server.hpp"
 
 // class Server;
