@@ -23,18 +23,19 @@
 // #include "Server.hpp"
 
 // class Server;
+typedef struct s_msg
+{
+	std::string prefx;
+	std::string cmd;
+	std::vector <std::string> midParams;
+	std::string trailing;
+	int paramN;
+}				t_msg;
 
 class Command {
 private:
-	typedef struct s_msg
-	{
-		std::string prefx;
-		std::string cmd;
-		std::vector <std::string> midParams;
-		std::string trailing;
-		int paramN;
-	}				t_msg;
 
+	t_msg msg;
     std::vector<User*> userData;
     // std::vector<User*> &userData;   // вектор для Server
 

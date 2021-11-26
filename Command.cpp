@@ -70,17 +70,31 @@ std::string Command::removeCmd(std::string str){
     return str;
 }
 
-std::string parseMsg( std::string cmdStr )
+std::string Command::parseMsg( std::string cmdStr )
 {
 	std::string tmp;
 	std::string::iterator it_begin = cmdStr.begin();
 	std::string::iterator it_end = cmdStr.end();
 	
 	while (*it_begin == ' ')
+	{
+		cmdStr.erase(it_begin);
 		it_begin++;
+	}
 	while (*it_end == ' ')
+	{
+		cmdStr.erase(it_begin);
 		it_end--;
-	tmp = cmdStr.substr()
+	}
+	if ( *it_begin == ':')
+	{
+		it_begin++;
+		this->msg.prefx = std::string()
+	}
+	while ( it_begin != it_end)
+	{
+		
+	}
 }
 std::string Command::getRidOfCmdName( std::string cmdStr )
 {
