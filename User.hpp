@@ -33,6 +33,7 @@ class User {
         std::string const & getHostn( void ) const;
         std::string const & getServern( void ) const;
         int const & getFd( void ) const;
+        bool const & getRegistred( void ) const;
 
         void setNick( std::string const & nick );
         void setUser( std::string const & name );
@@ -42,6 +43,7 @@ class User {
         void setHostn( std::string const & pass );
         void setServern( std::string const & pass );
         void setFd( int const & fd );
+        void setRegistred( bool const & registred );
 
         User();
         ~User();
