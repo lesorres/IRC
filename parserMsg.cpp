@@ -23,7 +23,7 @@ std::string Command::parseMsg( std::string cmdStr )
 	}
 	while ( it_begin != it_end)
 	{
-		
+			
 	}
 }
 
