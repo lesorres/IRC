@@ -59,19 +59,18 @@ void Command::user(std::string const nickname, User &user){
     std::cout << "this is user method" << std::endl;
 }
 
-
 void Command::setUserData(std::vector<User*>&userData){
     this->userData = userData;
 }
 
 std::string Command::removeCmd(std::string str){
+    std::string tmp;
     std::string::size_type pos = str.find(" ");
-    str.substr(pos + 1);
-    return str;
+    tmp = str.substr(pos + 1);
+    return tmp;
 }
 
-std::string parseMsg( std::string cmdStr )
-{
+std::string parseMsg( std::string cmdStr ) {
 	std::string tmp;
 	std::string::iterator it_begin = cmdStr.begin();
 	std::string::iterator it_end = cmdStr.end();
@@ -80,26 +79,27 @@ std::string parseMsg( std::string cmdStr )
 		it_begin++;
 	while (*it_end == ' ')
 		it_end--;
-	tmp = cmdStr.substr()
+	tmp = cmdStr.substr();
+        return cmdStr;
 }
-std::string Command::getRidOfCmdName( std::string cmdStr )
-{
 
+std::string Command::getRidOfCmdName( std::string cmdStr ) {
+    return cmdStr;
 }
-std::string checkCmdNameFormat( std::string cmdStr )
-{
 
+std::string checkCmdNameFormat( std::string cmdStr ) {
+    return cmdStr;
 }
-static void who( std::string const , User & )
-{
+
+static void who( std::string const , User & ) {
 	
 }
-static void whois( std::string const , User & )
-{
+
+static void whois( std::string const , User & ) {
 	
 }
-static void whowas( std::string const , User & )
-{
+
+static void whowas( std::string const , User & ) {
 	
 }
 
@@ -121,6 +121,7 @@ int main() {
             if (!command.compare("pass")){
                 // std::cout << "this is pass" << std::endl;
                 tmp = cmd.removeCmd(cmdline);  // удаление названия команды из пришедшей строки
+                std::cout << "after removeCmd - " << tmp << std::endl;
                 cmd.pass(tmp, user);
             }
             else if (!command.compare("nick")){
