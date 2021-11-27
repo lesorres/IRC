@@ -35,15 +35,15 @@ typedef struct s_msg
 class Command {
 private:
 
-	t_msg msg;
     std::vector<User*> userData;
     // std::vector<User*> &userData;   // вектор для Server
 
-	std::string parseMsg( std::string cmdStr );
 	std::string checkMsgFormat( std::string cmdStr );
 	std::string getRidOfCmdName( std::string cmdStr );
 
 public:
+	t_msg msg;
+	std::string parseMsg( std::string cmdStr );
     Command();
     // Command(Server &);      //коструктор для Server
     std::vector<User *>getUserData();
