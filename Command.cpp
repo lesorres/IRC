@@ -1,6 +1,8 @@
 #include "Command.hpp"
 
-Command::Command(){
+Command::Command()
+{
+	msg.paramN = 0;
 }
 
 // //коструктор для Server
