@@ -20,7 +20,6 @@
 #include <vector>
 #include <iostream>
 #include "User.hpp"
-#include "connectionRegistrationCmd.cpp"
 // #include "Server.hpp"
 
 // class Server;
@@ -47,10 +46,14 @@ private:
 public:
     Command();
     // Command(Server &);      //коструктор для Server
+    std::vector<User *>getUserData();
     void setUserData(std::vector<User*> &);
     void pass( std::string const , User & );
     void nick( std::string const , User & );
     void user( std::string const , User & );
+    void oper( std::string const , User & );
+    void quit( std::string const , User & );
+
 	void who( std::string const , User & );
 	void whois( std::string const , User & );
 	void whowas( std::string const , User & );
