@@ -8,6 +8,10 @@ Command::Command(){
 //     // setUserData(serv.getUserData());
 // }
 
+std::vector<User *>Command::getUserData(){
+    return userData;
+}
+
 Command::~Command(){}
 
 void Command::setUserData(std::vector<User*>&userData){

@@ -1,6 +1,5 @@
 #include "Command.hpp"
 
-
 //pass + user
 #define ERR_NEEDMOREPARAMS 
 #define ERR_ALREADYREGISTRED //462      //":You may not reregister"
@@ -20,6 +19,8 @@
 #define ERR_NICKCOLLISION //436         // "<nick> :Nickname collision KILL"
                                         //  - Возвращается сервером к клиенту, когда сервер видит
                                         //  конфликт никнейма (зарегистрированный никнейм уже есть).
+
+class Command;
 
 void Command::pass(std::string const password, User &user) {
 	if (password.empty()){
@@ -52,11 +53,11 @@ void Command::user(std::string const username, User &user){
 }
 
 void Command::nick(std::string const str, User &user) {
-	// std::vector<User *>::iterator it = userData.begin();
-	// for ( ; it < userData.end(); ++it) {
-	//     if ((*it)->getNick() == str)
-	//         break ;
-	// }
+	std::vector<User *>::iterator it = userData.begin();
+	for ( ; it != userData.end(); ++it) {
+	    if ((*it)->getNick() == str)
+	        break ;
+	}
 
 	if (str.empty() && str.data()) {
 		std::cout << "ERR_NONICKNAMEGIVEN" << std::endl;
@@ -70,13 +71,21 @@ void Command::nick(std::string const str, User &user) {
 		std::cout << "ERR_NICKNAMEINUSE" << std::endl;
 		return ERR_NICKNAMEINUSE;
 	}
-	// else if ((*it)->getNick() == str){
-	//     std::cout << "ERR_NICKCOLLISION" << std::endl;
-	//     return ERR_NICKCOLLISION;
-	// }
+	else if ((*it)->getNick() == str){
+	    std::cout << "ERR_NICKCOLLISION" << std::endl;
+	    return ERR_NICKCOLLISION;
+	}
 	else
 		user.setNick(str);
 	std::cout << user.getNick() << std::endl;
+}
+
+void Command::oper(std::string const arg, User &user){
+	
+}
+
+void Command::quit(std::string const arg, User &user){
+
 }
 
 std::string Command::removeCmd(std::string str){
@@ -88,9 +97,10 @@ std::string Command::removeCmd(std::string str){
 
 int main() {
 	std::string cmdline;
-	User user;
+	User *user = new User;
 	Command cmd;
 	int i = 0;
+	cmd.getUserData().push_back(user);
 	std::getline(std::cin, cmdline);
 	std::string::size_type pos = cmdline.find(" ");
 	std::string command = cmdline.substr(0, pos);  //строка для сравнения команды
@@ -105,17 +115,25 @@ int main() {
 				// std::cout << "this is pass" << std::endl;
 				tmp = cmd.removeCmd(cmdline);  // удаление названия команды из пришедшей строки
 				std::cout << "after removeCmd - " << tmp << std::endl;
-				cmd.pass(tmp, user);
+				cmd.pass(tmp, *user);
 			}
 			else if (!command.compare("nick")){
 				// std::cout << "this is nick" << std::endl;
 				tmp = cmd.removeCmd(cmdline);   // удаление названия команды из пришедшей строки
-				cmd.nick(tmp, user);
+				cmd.nick(tmp, *user);
 			}
 			else if (!command.compare("user")){
 				// std::cout << "this is user" << std::endl;
 				tmp = cmd.removeCmd(cmdline);   // удаление названия команды из пришедшей строки
-				cmd.user(tmp, user);
+				cmd.user(tmp, *user);
+			}
+			else if (!command.compare("oper")){
+				tmp = cmd.removeCmd(cmdline);
+				cmd.oper(tmp, *user);
+			}
+			else if (!command.compare("quit")){
+				tmp = cmd.removeCmd(cmdline);
+				cmd.quit(tmp, *user);
 			}
 			i++;
 		}
