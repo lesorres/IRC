@@ -147,11 +147,11 @@ void Server::executeCommand( size_t const id )
 
 Server::Server( std::string const & _port, std::string const & _pass)
 {
-    cmd_map.insert(make_pair("PASS", &Command::pass);
-    cmd_map.insert(make_pair("NICK", &Command::nick);
-    cmd_map.insert(make_pair("USER", &Command::user);
-    // cmd_map.insert(make_pair("OPER", &Command::oper);
-    // cmd_map.insert(make_pair("QUIT", &Command::quit);
+    cmd_map.insert(make_pair("PASS", &Command::pass));
+    cmd_map.insert(make_pair("NICK", &Command::nick));
+    cmd_map.insert(make_pair("USER", &Command::user));
+    cmd_map.insert(make_pair("OPER", &Command::oper));
+    cmd_map.insert(make_pair("QUIT", &Command::quit));
     // cmd_map.insert(make_pair("PRIVMSG", &Command::privmsg);
     // cmd_map.insert(make_pair("AWAY", &Command::away);
     // cmd_map.insert(make_pair("NOTICE", &Command::notice);
