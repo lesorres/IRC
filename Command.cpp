@@ -52,6 +52,6 @@ void Command::setUserData(std::vector<User*>&userData){
     this->userData = userData;
 }
 
-void Command::execute(std::string const &com, User &user){
+void Command::execute(std::string const &com, User &user, std::vector<User*> & userData){
     (this->*(cmd_map.at(com)))(user.text, user);
 }

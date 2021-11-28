@@ -23,7 +23,6 @@
 class Command;
 
 void Command::pass(std::string const & password, User &user) {
-	std::cout << "int pas2\n";
 	if (password.empty()){
 		std::cout << "ERR_NEEDMOREPARAMS" << std::endl;
 		return ERR_NEEDMOREPARAMS;
@@ -36,7 +35,6 @@ void Command::pass(std::string const & password, User &user) {
 		user.setPass(password);
 		std::cout << user.getPass() << std::endl;
 	}
-	std::cout << "in pass\n";
 }
 
 void Command::user(std::string const & username, User &user){

@@ -105,11 +105,16 @@ void Server::executeCommand( size_t const id )
         userData[id]->tail = userData[id]->text.substr(userData[id]->text.find("\n") + 1);
         userData[id]->text.erase(userData[id]->text.find("\n") + 1);
     }
-    ///////
-    if (userData[id])
+    /*
+    if (!userData[id]->getRegistred() && userData[id]->text != "PASS" && userData[id]->text != "NICK"\
+        userData[id]->text != "USER" && userData[id]->text != "QUIT")
+        return (same.error());
+    */
+
+    //////
 
     for (size_t j = 0; j < userFds.size(); j++)
-        cmd.execute(userData[id]->text.substr(0, 4), *userData[id]); // <---- Command HERE
+        cmd.execute(cmd.msg.cmd, *userData[id], userData); // <---- Command HERE
 
     //////
     if (userData[id]->getNick().empty())
@@ -148,7 +153,3 @@ Server::~Server()
 {
     std::cout << "Destroyed.\n";
 }
-
-// std::vector<User*> &Server::getUserData(){
-//     return userData;
-// }

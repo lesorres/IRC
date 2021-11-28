@@ -53,7 +53,7 @@ private:
 
 public:
 	t_msg msg;
-    void execute(std::string const &, User &);
+    void execute(std::string const &, User &, std::vector<User*>& userData);
 	std::string parseMsg( std::string cmdStr );
     // Command(Server &);      //коструктор для Server
     std::vector<User *>getUserData();
