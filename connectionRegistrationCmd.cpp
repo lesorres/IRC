@@ -22,7 +22,7 @@
 
 class Command;
 
-void Command::pass(std::string const & password, User &user) {
+void Command::pass(std::string const & password, User &user, std::vector<User*>& userData) {
 	if (password.empty()){
 		std::cout << "ERR_NEEDMOREPARAMS" << std::endl;
 		return ERR_NEEDMOREPARAMS;
@@ -37,7 +37,7 @@ void Command::pass(std::string const & password, User &user) {
 	}
 }
 
-void Command::user(std::string const & username, User &user){
+void Command::user(std::string const & username, User &user, std::vector<User*>& userData){
 //	Параметры: <username> <hostname> <servername> <realname>
 	std::string names[4];
 	std::string tmp;
@@ -73,10 +73,10 @@ void Command::user(std::string const & username, User &user){
 	}
 }
 
-void Command::nick(std::string const & str, User &user) {
+void Command::nick(std::string const & str, User &user, std::vector<User*>& userData) {
 	std::cout << str << std::endl;
 	for (int i = 0; i < userData.size(); ++i){
-		if (this->userData[i]->getNick() == str){
+		if (userData[i]->getNick() == str){
 	    	std::cout << "ERR_NICKCOLLISION" << std::endl;
 	    	return ERR_NICKCOLLISION;
 		}
@@ -104,7 +104,7 @@ void Command::nick(std::string const & str, User &user) {
 	std::cout << user.getNick() << std::endl;
 }
 
-void Command::oper(std::string const & arg, User &user){
+void Command::oper(std::string const & arg, User &user, std::vector<User*>& userData){
 //   Параметры: <user> <password>
 	std::string::size_type pos = arg.find(" ");
 	std::string usr = arg.substr(0, pos);
@@ -125,22 +125,22 @@ void Command::oper(std::string const & arg, User &user){
 
 }
 
-void Command::quit(std::string const & arg, User &user){
+void Command::quit(std::string const & arg, User &user, std::vector<User*>& userData){
 	if (arg.empty())
 		std::cout << arg << std::endl;
 	exit(1);
 }
 
-std::string Command::removeCmd(std::string str){
-	std::string tmp;
-	std::string::size_type pos = str.find(" ");
-	if (pos == std::string::npos)
-		tmp = "";
-	else
-		tmp = str.substr(pos + 1);
-	std::cout << "comandline after removeCmd - " << tmp << std::endl;
-	return tmp;
-}
+// std::string Command::removeCmd(std::string str){
+// 	std::string tmp;
+// 	std::string::size_type pos = str.find(" ");
+// 	if (pos == std::string::npos)
+// 		tmp = "";
+// 	else
+// 		tmp = str.substr(pos + 1);
+// 	std::cout << "comandline after removeCmd - " << tmp << std::endl;
+// 	return tmp;
+// }
 
 // int main() {
 // 	std::string cmdline;
