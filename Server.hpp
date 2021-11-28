@@ -17,12 +17,10 @@
 
 #define BUF_SIZE 1024
 
-// class Command;
 
 class Server {
     private:
-        typedef void (Command:: * PType)(std::string &str, User &user);
-        std::map<std::string, PType>cmd_map;
+        Command cmd;
         std::vector<struct pollfd> userFds;
         std::vector<User*> userData;
         int srvFd;
