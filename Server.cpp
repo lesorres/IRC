@@ -99,50 +99,50 @@ int  Server::readRequest( size_t const id )
 
 void Server::executeCommand( size_t const id )
 {
-    userData[id]->tail.clear();
-    if (userData[id]->text.find("\n") != userData[id]->text.size() - 1)
-    {
-        userData[id]->tail = userData[id]->text.substr(userData[id]->text.find("\n") + 1);
-        userData[id]->text.erase(userData[id]->text.find("\n") + 1);
-    }
-    for (size_t j = 0; j < userFds.size(); j++)
-    {
-        if (userData[id]->text.substr(0, 4) == "PASS")
-        {
-            std::string tmp = userData[id]->text.substr(5);
-            tmp.pop_back();
-            userData[id]->setPass(tmp);
-        }
-        else if (userData[id]->text.substr(0, 4) == "NICK")
-        {
-            std::string tmp = userData[id]->text.substr(5);
-            tmp.pop_back();
-            userData[id]->setNick(tmp);
-        }
-        else if (userData[id]->text.substr(0, 4) == "USER")
-        {
-            std::string tmp = userData[id]->text.substr(5);
-            tmp.pop_back();
-            userData[id]->setUser(tmp);
-        }
-        else if (userFds[id].fd != userFds[j].fd)
-        {
-            std::string tmp = userData[id]->getNick();
-            tmp += ": ";
-            send(userFds[j].fd, &tmp, tmp.size() + 1, 0);
-            send(userFds[j].fd, userData[id]->text.c_str(), userData[id]->text.size(), 0);
-        }
-    }
-    if (userData[id]->getNick().empty())
-        std::cout << "< socket " << userFds[id].fd << " >: " << userData[id]->text;
-    else
-        std::cout << "< " << userData[id]->getNick() << " >: " << userData[id]->text;
-    userData[id]->text.clear();
-    if (!userData[id]->tail.empty())
-    {
-        userData[id]->text = userData[id]->tail;
-        executeCommand(id);
-    }
+    // userData[id]->tail.clear();
+    // if (userData[id]->text.find("\n") != userData[id]->text.size() - 1)
+    // {
+    //     userData[id]->tail = userData[id]->text.substr(userData[id]->text.find("\n") + 1);
+    //     userData[id]->text.erase(userData[id]->text.find("\n") + 1);
+    // }
+    // for (size_t j = 0; j < userFds.size(); j++)
+    // {
+    //     if (userData[id]->text.substr(0, 4) == "PASS")
+    //     {
+    //         std::string tmp = userData[id]->text.substr(5);
+    //         tmp.pop_back();
+    //         userData[id]->setPass(tmp);
+    //     }
+    //     else if (userData[id]->text.substr(0, 4) == "NICK")
+    //     {
+    //         std::string tmp = userData[id]->text.substr(5);
+    //         tmp.pop_back();
+    //         userData[id]->setNick(tmp);
+    //     }
+    //     else if (userData[id]->text.substr(0, 4) == "USER")
+    //     {
+    //         std::string tmp = userData[id]->text.substr(5);
+    //         tmp.pop_back();
+    //         userData[id]->setUser(tmp);
+    //     }
+    //     else if (userFds[id].fd != userFds[j].fd)
+    //     {
+    //         std::string tmp = userData[id]->getNick();
+    //         tmp += ": ";
+    //         send(userFds[j].fd, &tmp, tmp.size() + 1, 0);
+    //         send(userFds[j].fd, userData[id]->text.c_str(), userData[id]->text.size(), 0);
+    //     }
+    // }
+    // if (userData[id]->getNick().empty())
+    //     std::cout << "< socket " << userFds[id].fd << " >: " << userData[id]->text;
+    // else
+    //     std::cout << "< " << userData[id]->getNick() << " >: " << userData[id]->text;
+    // userData[id]->text.clear();
+    // if (!userData[id]->tail.empty())
+    // {
+    //     userData[id]->text = userData[id]->tail;
+    //     executeCommand(id);
+    // }
 }
 
 Server::Server( std::string const & _port, std::string const & _pass)
