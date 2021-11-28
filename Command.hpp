@@ -43,7 +43,8 @@ typedef struct s_msg
 
 class Command {
 private:
-
+    typedef void (Command:: * PType)(std::string const &, User &user);
+    std::map<std::string, PType>cmd_map;
     std::vector<User*> userData;
     // std::vector<User*> &userData;   // вектор для Server
 
@@ -52,8 +53,8 @@ private:
 
 public:
 	t_msg msg;
+    void execute(std::string const &, User &);
 	std::string parseMsg( std::string cmdStr );
-    Command();
     // Command(Server &);      //коструктор для Server
     std::vector<User *>getUserData();
     void setUserData(std::vector<User*> &);
@@ -68,6 +69,7 @@ public:
 	void whowas( std::string const &, User & );
     std::string removeCmd( std::string );
     // static void user(std::string const username, std::string hostname, std::string servname, std::string realname);
+    Command();
     ~Command();
 };
 

@@ -16,7 +16,7 @@ class User {
         std::string                 servername;
         std::vector<std::string>    channels;
         std::map<std::string, bool> oper;
-        int                         _fd;
+        int                         fd;
         bool                        registred;
         User( User const & _ot );
         User operator=( User const & _ot );

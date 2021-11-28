@@ -12,7 +12,7 @@ all: $(NAME)
 $(NAME): $(OBJ) $(HEADER) 
 	@clang++ $(OBJ) $(FLAGS) -o $(NAME)
 %.o:%.cpp $(HEADER)
-	@clang++ $(FLAGS) -c $< -o $(<:.cpp=.o)
+	@clang++ $(FLAGS) -c $< -o $(<:.cpp=.o) -g
 clean: 
 	@rm -f $(OBJ)
 fclean: clean

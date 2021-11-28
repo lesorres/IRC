@@ -1,8 +1,6 @@
 {
 	"files.associations": {
-		"vector": "cpp",
-		"string": "cpp",
-		"algorithm": "cpp",
+		"utility": "cpp",
 		"__bit_reference": "cpp",
 		"__config": "cpp",
 		"__debug": "cpp",
@@ -18,6 +16,7 @@
 		"__threading_support": "cpp",
 		"__tree": "cpp",
 		"__tuple": "cpp",
+		"algorithm": "cpp",
 		"array": "cpp",
 		"atomic": "cpp",
 		"bit": "cpp",
@@ -57,14 +56,13 @@
 		"sstream": "cpp",
 		"stdexcept": "cpp",
 		"streambuf": "cpp",
+		"string": "cpp",
 		"string_view": "cpp",
 		"system_error": "cpp",
 		"tuple": "cpp",
 		"type_traits": "cpp",
 		"typeinfo": "cpp",
 		"unordered_map": "cpp",
-		"utility": "cpp",
-		"__functional_03": "cpp",
-		"memory_resource": "cpp"
+		"vector": "cpp"
 	}
 }
