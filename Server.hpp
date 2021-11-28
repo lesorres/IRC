@@ -17,12 +17,18 @@
 
 #define BUF_SIZE 1024
 
-// class Command;
+class Command;
+
+typedef void (Command:: * PType)(std::string const &, User &);
+
+
 
 class Server {
     private:
-        typedef void (Command:: * PType)(std::string &str, User &user);
+        typedef void (Server:: *SType)(std::string const &str, User &user);
+        Command commands;
         std::map<std::string, PType>cmd_map;
+        std::map<std::string, SType>command;
         std::vector<struct pollfd> userFds;
         std::vector<User*> userData;
         int srvFd;
@@ -30,6 +36,7 @@ class Server {
         std::string pass;
         int addrlen;
         struct sockaddr_in address;
+
         Server( Server const & _ot );
         Server operator=( Server const & _ot ); 
 
@@ -44,6 +51,8 @@ class Server {
         
         Server( std::string const & _port, std::string const & _pass);
         ~Server();
+
+        void passw( std::string const &str, User &user) { std::cout << str << " User: " << user.getNick();}
 
 };
 
