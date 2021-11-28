@@ -12,11 +12,11 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "User.hpp"
+#include "Utils.hpp"
 #include "Command.hpp"
 #include <map>
 
 #define BUF_SIZE 1024
-std::vector<std::string> split(std::string str, std::string delimiter);
 
 class Server {
 	private:

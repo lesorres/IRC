@@ -134,8 +134,10 @@ Server::Server( std::string const & _port, std::string const & _pass)
     // (this->*(command.at("PASS")))("DATA", *bob);
     try
     {
+        if (_port.find_first_not_of("0123456789") != std::string::npos)
+            throw std::invalid_argument("Port must contain only numbers");
         port = atoi(_port.c_str());
-        if (port < 1000 || port > 65555 || _port.find_first_not_of("0123456789") != std::string::npos) // надо взять правельный рендж портов...
+        if (port < 1000 || port > 65555) // надо взять правельный рендж портов...
             throw std::invalid_argument("Port out of range");
     }
     catch ( std::exception & e)
