@@ -44,6 +44,7 @@ void Server::connectUsers( void )
         nw.revents = 0;
         userData.push_back(new User);
         userFds.push_back(nw);
+        userData[userData.size() - 1]->setFd(new_client_fd);
         std::cout << "New client on " << new_client_fd << " socket." << "\n";
     }
 }
@@ -70,7 +71,7 @@ void Server::clientRequest( void )
             {
                 if (readRequest(id) <= 0)
                     disconnectClient(id);
-                else
+                else if (!userData[id]->getBreakconnect())
                     executeCommand(id);
                 userFds[id].revents = 0;
             }
@@ -83,31 +84,32 @@ int  Server::readRequest( size_t const id )
     char buf[BUF_SIZE + 1];
     int bytesRead = 0;
     int rd;
+    std::string text;
+    if (userData[id]->messages.size() > 0)
+		text = userData[id]->messages.front();
     while ((rd = recv(userFds[id].fd, buf, BUF_SIZE, 0)) > 0)
     {
         buf[rd] = 0;
         bytesRead += rd;
-        userData[id]->text += buf;
-        userData[id]->setFd(userFds[id].fd);
-        if (userData[id]->text.find("\n") != std::string::npos)
+        text += buf;
+        if (cmd.msg.cmd.find("\n") != std::string::npos)
             break;
     }
-    while (userData[id]->text.find("\r") != std::string::npos)      // Удаляем символ возврата карретки
-        userData[id]->text.erase(userData[id]->text.find("\r"), 1); // отправляемый старыми клиентами на MacOS
+    while (text.find("\r") != std::string::npos)      // Удаляем символ возврата карретки
+        text.erase(text.find("\r"), 1);               // из комбинации CRLF
+    userData[id]->checkConnection(text);
+    userData[id]->messages = split(text, "\n");
     return (bytesRead);
 }
 
 void Server::executeCommand( size_t const id )
 {
-    userData[id]->tail.clear();
-    if (userData[id]->text.find("\n") != userData[id]->text.size() - 1)
-    {
-        userData[id]->tail = userData[id]->text.substr(userData[id]->text.find("\n") + 1);
-        userData[id]->text.erase(userData[id]->text.find("\n") + 1);
-    }
-    /*
-    if (!userData[id]->getRegistred() && userData[id]->text != "PASS" && userData[id]->text != "NICK"\
-        userData[id]->text != "USER" && userData[id]->text != "QUIT")
+    // PARSER PART //
+    cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
+    userData[id]->messages[0].erase(0, 5);
+    /* // CHECK REGISTER //
+    if (!userData[id]->getRegistred() && cmd.msg.cmd != "PASS" && cmd.msg.cmd != "NICK"\
+        cmd.msg.cmd != "USER" && cmd.msg.cmd != "QUIT")
         return (same.error());
     */
 
@@ -118,15 +120,12 @@ void Server::executeCommand( size_t const id )
 
     //////
     if (userData[id]->getNick().empty())
-        std::cout << "< socket " << userFds[id].fd << " >: " << userData[id]->text;
+        std::cout << "< socket " << userFds[id].fd << " >: " << userData[id]->messages[0] << "\n";
     else
-        std::cout << "< " << userData[id]->getNick() << " >: " << userData[id]->text;
-    userData[id]->text.clear();
-    if (!userData[id]->tail.empty())
-    {
-        userData[id]->text = userData[id]->tail;
+        std::cout << "< " << userData[id]->getNick() << " >: " << userData[id]->messages[0] << "\n";
+    userData[id]->messages.erase(userData[id]->messages.begin());
+    if (!userData[id]->messages.empty())
         executeCommand(id);
-    }
 }
 
 Server::Server( std::string const & _port, std::string const & _pass)

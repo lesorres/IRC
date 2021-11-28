@@ -53,5 +53,13 @@ void Command::setUserData(std::vector<User*>&userData){
 }
 
 void Command::execute(std::string const &com, User &user, std::vector<User*> & userData){
-    (this->*(cmd_map.at(com)))(user.text, user);
+    try
+    {
+        (this->*(cmd_map.at(com)))(user.messages[0], user);
+        // user.messages.erase(user.messages.begin());
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }

@@ -18,12 +18,12 @@ class User {
         std::map<std::string, bool> oper;
         int                         fd;
         bool                        registred;
+        bool                        breakconnect;
         User( User const & _ot );
         User operator=( User const & _ot );
     
     public:
-        std::string                 text;
-        std::string                 tail;
+        std::vector<std::string>    messages;
 
         std::string const & getNick( void ) const;
         std::string const & getUser( void ) const;
@@ -34,6 +34,7 @@ class User {
         std::string const & getServern( void ) const;
         int const & getFd( void ) const;
         bool const & getRegistred( void ) const;
+        bool const & getBreakconnect( void ) const;
 
         void setNick( std::string const & nick );
         void setUser( std::string const & name );
@@ -44,6 +45,8 @@ class User {
         void setServern( std::string const & pass );
         void setFd( int const & fd );
         void setRegistred( bool const & registred );
+
+        void checkConnection( std::string const & mess );
 
         User();
         ~User();
