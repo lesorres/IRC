@@ -15,6 +15,15 @@
 #define ERR_NICKCOLLISION //436        // "<nick> :Nickname collision KILL"
                                         //  - Возвращается сервером к клиенту, когда сервер видит
                                         //  конфликт никнейма (зарегистрированный никнейм уже есть).
+//oper
+#define RPL_YOUREOPER       // 381 - RPL_YOUREOPER отправляется клиенту, который благополучно
+                            //       выполнил OPER-сообщение и получил статус IRC-оператора.
+#define ERR_NOOPERHOST      // 491    ":No O-lines for your host"
+                            //     - Если сервер не настроен на поддержку клиентского хоста
+                            //       для сообщения OPER, клиенту будет возвращена эта ошибка.
+#define ERR_PASSWDMISMATCH  // 464   ":Password incorrect"
+                            //     - Возвращается при неправильно введеном или неуказанным
+                            //       паролем.
 
 #include <map>
 #include <vector>
@@ -48,15 +57,15 @@ public:
     // Command(Server &);      //коструктор для Server
     std::vector<User *>getUserData();
     void setUserData(std::vector<User*> &);
-    void pass( std::string const , User & );
-    void nick( std::string const , User & );
-    void user( std::string const , User & );
-    void oper( std::string const , User & );
-    void quit( std::string const , User & );
+    void pass( std::string const &, User & );
+    void nick( std::string const &, User & );
+    void user( std::string const &, User & );
+    void oper( std::string const &, User & );
+    void quit( std::string const &, User & );
 
-	void who( std::string const , User & );
-	void whois( std::string const , User & );
-	void whowas( std::string const , User & );
+	void who( std::string const &, User & );
+	void whois( std::string const &, User & );
+	void whowas( std::string const &, User & );
     std::string removeCmd( std::string );
     // static void user(std::string const username, std::string hostname, std::string servname, std::string realname);
     ~Command();
