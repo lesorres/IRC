@@ -42,20 +42,20 @@ Command::Command()
 //     // setUserData(serv.getUserData());
 // }
 
-std::vector<User *>Command::getUserData(){
-    return userData;
-}
+// std::vector<User *>Command::getUserData(){
+//     return userData;
+// }
 
 Command::~Command(){}
 
-void Command::setUserData(std::vector<User*>&userData){
-    this->userData = userData;
-}
+// void Command::setUserData(std::vector<User*>&userData){
+//     this->userData = userData;
+// }
 
 void Command::execute(std::string const &com, User &user, std::vector<User*> & userData){
     try
     {
-        (this->*(cmd_map.at(com)))(user.messages[0], user);
+        (this->*(cmd_map.at(com)))(user.messages[0], user, userData);
         // user.messages.erase(user.messages.begin());
     }
     catch(const std::exception& e)
