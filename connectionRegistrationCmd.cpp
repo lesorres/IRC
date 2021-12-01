@@ -1,22 +1,22 @@
 #include "Command.hpp"
 
 //pass + user
-#define ERR_NEEDMOREPARAMS 
-#define ERR_ALREADYREGISTRED //462      //":You may not reregister"
+#define ERR_NEEDMOREPARAMS 461
+#define ERR_ALREADYREGISTRED 462      //":You may not reregister"
                                         // - Возвращается сервером любому линку, который пытается
                                         //  изменить часть подробностей регистрации (подобные паролю
                                         //  или пользовательской информацией из второго
                                         //  USER-сообщения).
 
 //nick
-#define ERR_NONICKNAMEGIVEN //431       // ":No nickname given"
-#define ERR_ERRONEUSNICKNAME //432      // "<nick> :Erroneus nickname"
+#define ERR_NONICKNAMEGIVEN 431       // ":No nickname given"
+#define ERR_ERRONEUSNICKNAME 432      // "<nick> :Erroneus nickname"
                                         // - Возвращается после получения NICK-сообщения, которое
                                         // содержит символы, которые запрещены. Смотрите раздел
                                         // х.х.х для более подробной информации.
-#define ERR_NICKNAMEINUSE //433         // "<nick> :Nickname is already in use"
+#define ERR_NICKNAMEINUSE 433         // "<nick> :Nickname is already in use"
                                         // Возвращается при смене никнейма на другой, уже используемый.
-#define ERR_NICKCOLLISION //436         // "<nick> :Nickname collision KILL"
+#define ERR_NICKCOLLISION 436         // "<nick> :Nickname collision KILL"
                                         //  - Возвращается сервером к клиенту, когда сервер видит
                                         //  конфликт никнейма (зарегистрированный никнейм уже есть).
 
@@ -25,49 +25,60 @@
 
 class Command;
 
-void Command::pass(User &user, std::vector<User*>& userData) {
-	std::cout << msg.midParams.size() << std::endl;
+int Command::pass(User &user, std::vector<User*>& userData) {
+	// std::cout << msg.midParams.size() << std::endl;
 	if (msg.midParams.size() == 1) {
-		if (user.getRegistred() == true) {
+		if (user.getRegistred() == 3) {
 			std::cout << ":You may not reregister" << std::endl;
 			return ERR_ALREADYREGISTRED;
 		}
 		else if (user.getPass().empty() == true) {
 			user.setPass(msg.midParams[0]);
-			std::cout << user.getPass() << std::endl;
+			user.setRegistred(user.getRegistred() + 1);
+			// std::cout << user.getRegistred() << std::endl;
+			// if (user.getNick().empty() && user.getRealn().empty() && user.getUser().empty())
+				// user.setRegistred(true);
 		}
 	}
-	else {
+	else if (msg.midParams.size() < 1) {
 		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
 		return ERR_NEEDMOREPARAMS;
 	}
+	// std::cout << "pass - " << user.getRegistred() << std::endl;
+	// std::cout << "user.getPass() = | " << user.getPass() << " |" << std::endl;
+	return connection(user);
 }
 
-void Command::user(User &user, std::vector<User*>& userData){
-	std::cout << msg.midParams.size() << std::endl;
+int Command::user(User &user, std::vector<User*>& userData){
+	// std::cout << msg.midParams.size() << std::endl;
 	if (msg.midParams.size() < 3 && !msg.trailing.empty() ) { //) && msg.paramN != 4) { //msg.midParams.size() < 4
 		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
 		return ERR_NEEDMOREPARAMS;
 	}
-	else if (user.getRegistred() == true ){
+	else if (user.getRegistred() == 3){
 		std::cout << ":You may not reregister" << std::endl;
 		return ERR_ALREADYREGISTRED;
 	}
-	else if (!user.getUser().empty() && !user.getHostn().empty() && \
-			!user.getServern().empty() && !user.getRealn().empty()) {
+	else if (user.getUser().empty() && user.getHostn().empty() && \
+			user.getServern().empty() && user.getRealn().empty()) {
 		user.setUser(msg.midParams[0]);
 		user.setHostn(msg.midParams[1]);
 		user.setServern(msg.midParams[2]);
 		user.setRealn(msg.trailing);
-		if (user.getNick().empty() && user.getPass().empty())
-			user.setRegistred(true);
-		// std::cout << user.getUser() << "\n" << user.getRealn() << "\n" << user.getHostn() << "\n" << user.getServern() << std::endl;
+		
+		user.setRegistred(user.getRegistred() + 1);
+		// std::cout << user.getRegistred() << std::endl;
+		// std::cout << "\n" << "\n" << user.getUser() << "\n" << user.getRealn() << "\n" << user.getHostn() << "\n" << user.getServern() << "\n" << std::endl;
 	}
+	// std::cout << "user - " << user.getRegistred() << std::endl;
+	// std::cout << "user.getUser() = | " << user.getUser() << " |" << std::endl;
+	// std::cout << "user.getRealn() = | " << user.getRealn() << " |" << std::endl;
+	return connection(user);
 }
 
-void Command::nick(User &user, std::vector<User*>& userData) {
-	std::cout << msg.midParams.size() << std::endl;
-	if (msg.midParams.size() < 1) {
+int Command::nick(User &user, std::vector<User*>& userData) {
+	// std::cout << msg.midParams.size() << std::endl;
+	if (msg.midParams.size() == 1) {
 		for (int i = 0; i < userData.size(); ++i){
 			if (userData[i]->getNick() == msg.midParams[0]){
 		    	std::cout << msg.midParams[0] << " :Nickname collision KILL" << std::endl;
@@ -78,11 +89,11 @@ void Command::nick(User &user, std::vector<User*>& userData) {
 			std::cout << ":No nickname given" << std::endl;
 			return ERR_NONICKNAMEGIVEN;
 		}
-		// else if (nickname.){
+		// else if (msg.midParams[0].){
 			// std::cout << "ERR_ERRONEUSNICKNAME" << std::endl;
 		//     return ERR_ERRONEUSNICKNAME;
 		// }
-		else if (user.getNick() == msg.midParams[0]){
+		if (user.getNick() == msg.midParams[0]){
 			std::cout << msg.midParams[0] << " :Nickname is already in use" << std::endl;
 			return ERR_NICKNAMEINUSE;
 		}
@@ -92,11 +103,18 @@ void Command::nick(User &user, std::vector<User*>& userData) {
 				//   каждого известного ему клиента, если они все решатся их изменить. 
 			}
 			user.setNick(msg.midParams[0]);
+			user.setRegistred(user.getRegistred() + 1);
+			// std::cout << user.getRegistred() << std::endl;
+			// if (user.getPass().empty() && user.getRealn().empty() && user.getUser().empty())
+				// user.setRegistred(true);
 		}
 	}
+	// std::cout << "nick - " << user.getRegistred() << std::endl;
+	// std::cout << "user.getNick() = | " << user.getNick() << " |" << std::endl;
+	return connection(user);
 }
 
-void Command::oper(User &user, std::vector<User*>& userData){
+int Command::oper(User &user, std::vector<User*>& userData){
 //   Параметры: <user> <password>
 	// std::string::size_type pos = msg.midParams[0].find(" ");
 	// std::string usr = arg.substr(0, pos);
@@ -104,66 +122,31 @@ void Command::oper(User &user, std::vector<User*>& userData){
 	if (user.getNick() == msg.midParams[0] && user.getPass() == msg.midParams[1]){
 		//  "MODE +o"
 		std::cout << ":You are now an IRC operator" << std::endl;
-		return RPL_YOUREOPER;
+		// return RPL_YOUREOPER;
 	}
 	else if (msg.midParams.size() < 2) { //msg.midParams.size() < 2
 		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
-		return ERR_NEEDMOREPARAMS;
+		// return ERR_NEEDMOREPARAMS;
 	}
 	else if (user.getPass() != msg.midParams[1]) {
 		std::cout << ":Password incorrect" << std::endl;
-		return ERR_PASSWDMISMATCH;
+		// return ERR_PASSWDMISMATCH;
 	}
-
+	return 0;
 }
 
-void Command::quit(User &user, std::vector<User*>& userData){
+int Command::quit(User &user, std::vector<User*>& userData){
 	if (msg.trailing.empty())
 		// std::cout <<  << std::endl;
 	exit(1);
+	return 0;
 }
 
 bool Command::connection(User &user){
-	if (user.getRegistred() == true) {
+	// std::cout << "getRegistrated внутри connection - " << user.getRegistred() << std::endl;
+	if (user.getRegistred() == 3) {
 		std::cout << "success! *send MOTD*" << std::endl;
 		return 0;
 	}
 	return DISCONNECT;
 }
-// int main() {
-// 	std::string cmdline;
-// 	User *user = new User;
-// 	Command cmd;
-// 	int i = 0;
-// 	cmd.getUserData().push_back(user);
-// 	std::getline(std::cin, cmdline);
-// 	std::string::size_type pos = cmdline.find(" ");
-// 	std::string command = cmdline.substr(0, pos);  //строка для сравнения команды
-// 	std::cout << "this is cmd     - " << cmdline << std::endl;
-// 	std::cout << "this is command - " << command << std::endl;
-// 		if (cmdline.empty())
-// 			std::cerr << "Invalid arguments" << std::endl;
-// 		else {
-// 			std::string tmp;
-// 			if (!command.compare("pass")){
-// 				tmp = cmd.removeCmd(cmdline);  // удаление названия команды из пришедшей строки
-// 				cmd.pass(tmp, *user);
-// 			}
-// 			else if (!command.compare("nick")){
-// 				tmp = cmd.removeCmd(cmdline);   // удаление названия команды из пришедшей строки
-// 				cmd.nick(tmp, *user);
-// 			}
-// 			else if (!command.compare("user")){
-// 				tmp = cmd.removeCmd(cmdline);   // удаление названия команды из пришедшей строки
-// 				cmd.user(tmp, *user);
-// 			}
-// 			else if (!command.compare("oper")){
-// 				tmp = cmd.removeCmd(cmdline);
-// 				cmd.oper(tmp, *user);
-// 			}
-// 			else if (!command.compare("quit")){
-// 				tmp = cmd.removeCmd(cmdline);
-// 				cmd.quit(tmp, *user);
-// 			}
-// 	}
-// }
