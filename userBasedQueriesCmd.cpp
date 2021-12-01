@@ -2,6 +2,11 @@
 
 void Command::who( User &, std::vector<User*>& userData ) {
 	
+	if (this->msg.midParams.size() > 2)
+	{
+		std::cout << 
+		return()
+	}
 	// if 
 	// пример команды и возвращаемого значения:
 
