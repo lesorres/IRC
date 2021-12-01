@@ -43,11 +43,8 @@ typedef struct s_msg
 
 class Command {
 private:
-    typedef void (Command:: * PType)(std::string const &, User &user);
+    typedef void (Command:: * PType)( User &user, std::vector<User*>& userData);
     std::map<std::string, PType>cmd_map;
-    std::vector<User*> userData;
-    // std::vector<User*> &userData;   // вектор для Server
-
 	std::string checkMsgFormat( std::string cmdStr );
 	std::string getRidOfCmdName( std::string cmdStr );
 
@@ -55,20 +52,19 @@ public:
 	t_msg msg;
     void execute(std::string const &, User &, std::vector<User*>& userData);
 	std::string parseMsg( std::string cmdStr );
-    // Command(Server &);      //коструктор для Server
-    std::vector<User *>getUserData();
-    void setUserData(std::vector<User*> &);
-    void pass( std::string const &, User & );
-    void nick( std::string const &, User & );
-    void user( std::string const &, User & );
-    void oper( std::string const &, User & );
-    void quit( std::string const &, User & );
+    void pass(User &, std::vector<User*>& userData );
+    void nick(User &, std::vector<User*>& userData );
+    void user(User &, std::vector<User*>& userData );
+    void oper(User &, std::vector<User*>& userData );
+    void quit(User &, std::vector<User*>& userData );
 
-	void who( std::string const &, User & );
-	void whois( std::string const &, User & );
-	void whowas( std::string const &, User & );
-    std::string removeCmd( std::string );
-    // static void user(std::string const username, std::string hostname, std::string servname, std::string realname);
+	void who( User &, std::vector<User*>& userData );
+	void whois( User &, std::vector<User*>& userData );
+	void whowas( User &, std::vector<User*>& userData );
+	void cleanMsgStruct();
+
+    bool connection(User &);
+    void motd();
     Command();
     ~Command();
 };

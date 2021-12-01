@@ -20,128 +20,116 @@
                                         //  - Возвращается сервером к клиенту, когда сервер видит
                                         //  конфликт никнейма (зарегистрированный никнейм уже есть).
 
+#define DISCONNECT		1				// если количество параметров, необходимых для регистрации пользователя
+										// не соответствует требуемому (!= 3), пользователь не должен подключаться
+
 class Command;
 
-void Command::pass(std::string const & password, User &user) {
-	if (password.empty()){
-		std::cout << "ERR_NEEDMOREPARAMS" << std::endl;
-		return ERR_NEEDMOREPARAMS;
-	}
-	else if (user.getRegistred() == true){
-		std::cout << "ERR_ALREADYREGISTRED" << std::endl;
-		return ERR_ALREADYREGISTRED;
+void Command::pass(User &user, std::vector<User*>& userData) {
+	std::cout << msg.midParams.size() << std::endl;
+	if (msg.midParams.size() == 1) {
+		if (user.getRegistred() == true) {
+			std::cout << ":You may not reregister" << std::endl;
+			return ERR_ALREADYREGISTRED;
+		}
+		else if (user.getPass().empty() == true) {
+			user.setPass(msg.midParams[0]);
+			std::cout << user.getPass() << std::endl;
+		}
 	}
 	else {
-		user.setPass(password);
-		std::cout << user.getPass() << std::endl;
+		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
+		return ERR_NEEDMOREPARAMS;
 	}
 }
 
-void Command::user(std::string const & username, User &user){
-//	Параметры: <username> <hostname> <servername> <realname>
-	std::string names[4];
-	std::string tmp;
-	int k = 0;
-	std::size_t pos = username.find(" ");
-	names[0] = username.substr(k, pos);
-	std::cout << names[0] << std::endl;
-	tmp = username.substr(pos + 1);
-	for (int i = 1; i < 4; ++i){
-		pos = tmp.find(" ");
-		names[i] = tmp.substr(0, pos);
-		tmp = tmp.substr(pos + 1);
-		std::cout << names[i] << std::endl;
-	}
-	if (username.empty()) { //msg.midParams.size() < 4
-		std::cout << "ERR_NEEDMOREPARAMS" << std::endl;
+void Command::user(User &user, std::vector<User*>& userData){
+	std::cout << msg.midParams.size() << std::endl;
+	if (msg.midParams.size() < 3 && !msg.trailing.empty() ) { //) && msg.paramN != 4) { //msg.midParams.size() < 4
+		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
 		return ERR_NEEDMOREPARAMS;
 	}
 	else if (user.getRegistred() == true ){
-		std::cout << "ERR_ALREADYREGISTRED" << std::endl;
+		std::cout << ":You may not reregister" << std::endl;
 		return ERR_ALREADYREGISTRED;
 	}
-	else {
-		// user.setUser(msg.midParams.at(0));
-		// user.setRealn(msg.midParams.at(1));
-		// user.setHostn(msg.midParams.at(2));
-		// user.setRealn(msg.midParams.at(3));
-		user.setUser(names[0]);
-		user.setHostn(names[1]);
-		user.setServern(names[2]);
-		user.setRealn(names[3]);
+	else if (!user.getUser().empty() && !user.getHostn().empty() && \
+			!user.getServern().empty() && !user.getRealn().empty()) {
+		user.setUser(msg.midParams[0]);
+		user.setHostn(msg.midParams[1]);
+		user.setServern(msg.midParams[2]);
+		user.setRealn(msg.trailing);
+		if (user.getNick().empty() && user.getPass().empty())
+			user.setRegistred(true);
 		// std::cout << user.getUser() << "\n" << user.getRealn() << "\n" << user.getHostn() << "\n" << user.getServern() << std::endl;
 	}
 }
 
-void Command::nick(std::string const & str, User &user) {
-	std::cout << str << std::endl;
-	for (int i = 0; i < userData.size(); ++i){
-		if (this->userData[i]->getNick() == str){
-	    	std::cout << "ERR_NICKCOLLISION" << std::endl;
-	    	return ERR_NICKCOLLISION;
+void Command::nick(User &user, std::vector<User*>& userData) {
+	std::cout << msg.midParams.size() << std::endl;
+	if (msg.midParams.size() < 1) {
+		for (int i = 0; i < userData.size(); ++i){
+			if (userData[i]->getNick() == msg.midParams[0]){
+		    	std::cout << msg.midParams[0] << " :Nickname collision KILL" << std::endl;
+		    	return ERR_NICKCOLLISION;
+			}
+		}
+		if (msg.midParams[0].empty()) { //msg.paramN < 1
+			std::cout << ":No nickname given" << std::endl;
+			return ERR_NONICKNAMEGIVEN;
+		}
+		// else if (nickname.){
+			// std::cout << "ERR_ERRONEUSNICKNAME" << std::endl;
+		//     return ERR_ERRONEUSNICKNAME;
+		// }
+		else if (user.getNick() == msg.midParams[0]){
+			std::cout << msg.midParams[0] << " :Nickname is already in use" << std::endl;
+			return ERR_NICKNAMEINUSE;
+		}
+		else {
+			if (msg.midParams.size() < 1 && user.getNick() != msg.midParams[0]){ 		//msg.midParams.size() < 1 или msg.midParams.empty()
+				// записать предыдущий ник если пришел новый для замены: Для умеренной истории, серверу следует хранить предыдущие никнеймы для
+				//   каждого известного ему клиента, если они все решатся их изменить. 
+			}
+			user.setNick(msg.midParams[0]);
 		}
 	}
-
-	if (str.empty() && str.data()) { //msg.paramN < 1
-		std::cout << "ERR_NONICKNAMEGIVEN" << std::endl;
-		return ERR_NONICKNAMEGIVEN;
-	}
-	// else if (nickname.){
-		// std::cout << "ERR_ERRONEUSNICKNAME" << std::endl;
-	//     return ERR_ERRONEUSNICKNAME;
-	// }
-	else if (user.getNick() == str){
-		std::cout << "ERR_NICKNAMEINUSE" << std::endl;
-		return ERR_NICKNAMEINUSE;
-	}
-	else {
-		if (user.getNick().empty() == false && user.getNick() != str){ 		//msg.midParams.size() < 1 или msg.midParams.empty()
-			// записать предыдущий ник если пришел новый для замены: Для умеренной истории, серверу следует хранить предыдущие никнеймы для
-			//   каждого известного ему клиента, если они все решатся их изменить. 
-		}
-		user.setNick(str);
-	}
-	std::cout << user.getNick() << std::endl;
 }
 
-void Command::oper(std::string const & arg, User &user){
+void Command::oper(User &user, std::vector<User*>& userData){
 //   Параметры: <user> <password>
-	std::string::size_type pos = arg.find(" ");
-	std::string usr = arg.substr(0, pos);
-	std::string pass = arg.substr(pos + 1);
-	if (user.getNick() == usr && user.getPass() == pass){
+	// std::string::size_type pos = msg.midParams[0].find(" ");
+	// std::string usr = arg.substr(0, pos);
+	// std::string pass = arg.substr(pos + 1);
+	if (user.getNick() == msg.midParams[0] && user.getPass() == msg.midParams[1]){
 		//  "MODE +o"
 		std::cout << ":You are now an IRC operator" << std::endl;
 		return RPL_YOUREOPER;
 	}
-	else if (arg.empty()) { //msg.midParams.size() < 4
-		std::cout << "ERR_NEEDMOREPARAMS" << std::endl;
+	else if (msg.midParams.size() < 2) { //msg.midParams.size() < 2
+		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
 		return ERR_NEEDMOREPARAMS;
 	}
-	else if (user.getPass() != pass) {
+	else if (user.getPass() != msg.midParams[1]) {
 		std::cout << ":Password incorrect" << std::endl;
 		return ERR_PASSWDMISMATCH;
 	}
 
 }
 
-void Command::quit(std::string const & arg, User &user){
-	if (arg.empty())
-		std::cout << arg << std::endl;
+void Command::quit(User &user, std::vector<User*>& userData){
+	if (msg.trailing.empty())
+		// std::cout <<  << std::endl;
 	exit(1);
 }
 
-std::string Command::removeCmd(std::string str){
-	std::string tmp;
-	std::string::size_type pos = str.find(" ");
-	if (pos == std::string::npos)
-		tmp = "";
-	else
-		tmp = str.substr(pos + 1);
-	std::cout << "comandline after removeCmd - " << tmp << std::endl;
-	return tmp;
+bool Command::connection(User &user){
+	if (user.getRegistred() == true) {
+		std::cout << "success! *send MOTD*" << std::endl;
+		return 0;
+	}
+	return DISCONNECT;
 }
-
 // int main() {
 // 	std::string cmdline;
 // 	User *user = new User;

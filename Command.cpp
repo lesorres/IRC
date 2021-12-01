@@ -3,7 +3,6 @@
 Command::Command()
 {
 	msg.paramN = 0;
-
     cmd_map.insert(make_pair("PASS", &Command::pass));
     cmd_map.insert(make_pair("NICK", &Command::nick));
     cmd_map.insert(make_pair("USER", &Command::user));
@@ -42,24 +41,34 @@ Command::Command()
 //     // setUserData(serv.getUserData());
 // }
 
-std::vector<User *>Command::getUserData(){
-    return userData;
-}
+// std::vector<User *>Command::getUserData(){
+//     return userData;
+// }
+
 
 Command::~Command(){}
 
-void Command::setUserData(std::vector<User*>&userData){
-    this->userData = userData;
-}
+// void Command::setUserData(std::vector<User*>&userData){
+//     this->userData = userData;
+// }
 
 void Command::execute(std::string const &com, User &user, std::vector<User*> & userData){
     try
     {
-        (this->*(cmd_map.at(com)))(user.messages[0], user);
+        (this->*(cmd_map.at(com)))( user, userData);
         // user.messages.erase(user.messages.begin());
     }
     catch(const std::exception& e)
     {
         std::cerr << e.what() << '\n';
     }
+}
+
+void Command::cleanMsgStruct()
+{
+	msg.prefx.clear();
+	msg.cmd.clear();
+	msg.midParams.clear();
+	msg.trailing.clear();
+	msg.paramN = 0;
 }
