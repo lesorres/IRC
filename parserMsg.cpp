@@ -49,7 +49,7 @@ std::string Command::parseMsg(std::string cmdStr)
 	if (!msg.midParams.empty())
 		msg.midParams.erase(cutIt, msg.midParams.end());
 
-	msg.paramN = msg.midParams.size() + 
+	msg.paramN = msg.midParams.size() + !msg.trailing.empty();
 
 	// // check if command and at least one param are presented in message, return error
 	// // if (1)
