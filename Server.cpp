@@ -1,5 +1,7 @@
 #include "Server.hpp"
 
+#include <arpa/inet.h>
+
 void Server::create()
 {
     struct protoent	*pe;
@@ -11,8 +13,9 @@ void Server::create()
         exit(EXIT_FAILURE);
     }
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_addr.s_addr = INADDR_ANY;//inet_addr("188.225.111.224"); 
     address.sin_port = htons(port);
+    //std::cout << htonl(inet_addr("188.225.111.224")) << "\n";
     if (bind(srvFd, (struct sockaddr*)&address, sizeof(address)) < 0)
     {
         perror("bind failed");
@@ -92,7 +95,7 @@ int  Server::readRequest( size_t const id )
         buf[rd] = 0;
         bytesRead += rd;
         text += buf;
-        if (cmd.msg.cmd.find("\n") != std::string::npos)
+        if (text.find("\n") != std::string::npos)
             break;
     }
     while (text.find("\r") != std::string::npos)      // Удаляем символ возврата карретки
@@ -114,6 +117,14 @@ void Server::executeCommand( size_t const id )
     */
 
     //////
+    for (size_t j = 0; j < userFds.size(); j++)
+    {
+        if (userFds[j].fd != userFds[id].fd)
+        {
+            send(userFds[j].fd, userData[id]->messages[0].c_str(), userData[id]->messages[0].size(), 0);
+        }
+    }
+
 
     for (size_t j = 0; j < userFds.size(); j++)
         cmd.execute(cmd.msg.cmd, *userData[id], userData); // <---- Command HERE

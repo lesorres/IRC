@@ -21,7 +21,6 @@ std::string Command::parseMsg(std::string cmdStr)
 				this->msg.midParams.push_back(parsed);
 		}
 	}
-
 	//identifying if trailing is presented amond mid parameters
 	trailingIt = this->msg.midParams.begin();
 	while (trailingIt != this->msg.midParams.end())
@@ -40,7 +39,8 @@ std::string Command::parseMsg(std::string cmdStr)
 		this->msg.trailing += " " + *trailingIt;
 		trailingIt++;
 	}
-	this->msg.trailing.erase(this->msg.trailing.begin());
+	std::cout << "here\n";
+	// this->msg.trailing.erase(this->msg.trailing.begin());
 
 	// cuting trailing part from mid params array
 	this->msg.midParams.erase(cutIt, this->msg.midParams.end());

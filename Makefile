@@ -25,7 +25,10 @@ run:
 rerun: re 
 	@./$(NAME)
 
-ip:
+ip: #macOS
 	@ipconfig getifaddr en0
+
+iplx: #linux
+	@hostname -I
 
 .PHONY: clean fclean re run rerun
