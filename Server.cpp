@@ -117,6 +117,8 @@ void Server::executeCommand( size_t const id )
 
     for (size_t j = 0; j < userFds.size(); j++)
         cmd.execute(cmd.msg.cmd, *userData[id], userData); // <---- Command HERE
+	
+	cmd.cleanMsgStruct();
 
     //////
     if (userData[id]->getNick().empty())

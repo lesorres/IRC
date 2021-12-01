@@ -63,3 +63,12 @@ void Command::execute(std::string const &com, User &user, std::vector<User*> & u
         std::cerr << e.what() << '\n';
     }
 }
+
+void Command::cleanMsgStruct()
+{
+	msg.prefx.clear();
+	msg.cmd.clear();
+	msg.midParams.clear();
+	msg.trailing.clear();
+	msg.paramN = 0;
+}

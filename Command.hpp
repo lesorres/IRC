@@ -61,6 +61,7 @@ public:
 	void who( User &, std::vector<User*>& userData );
 	void whois( User &, std::vector<User*>& userData );
 	void whowas( User &, std::vector<User*>& userData );
+	void cleanMsgStruct();
 
     bool connection(User &);
     void motd();
