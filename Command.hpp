@@ -58,9 +58,9 @@ public:
     void oper(User &, std::vector<User*>& userData );
     void quit(User &, std::vector<User*>& userData );
 
-	void who( std::string const &, User & );
-	void whois( std::string const &, User & );
-	void whowas( std::string const &, User & );
+	void who( User &, std::vector<User*>& userData );
+	void whois( User &, std::vector<User*>& userData );
+	void whowas( User &, std::vector<User*>& userData );
 
     bool connection(User &);
     void motd();

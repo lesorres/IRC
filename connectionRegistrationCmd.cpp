@@ -20,28 +20,32 @@
                                         //  - Возвращается сервером к клиенту, когда сервер видит
                                         //  конфликт никнейма (зарегистрированный никнейм уже есть).
 
-#define DISCONNECT						// если количество параметров, необходимых для регистрации пользователя
+#define DISCONNECT		1				// если количество параметров, необходимых для регистрации пользователя
 										// не соответствует требуемому (!= 3), пользователь не должен подключаться
 
 class Command;
 
 void Command::pass(User &user, std::vector<User*>& userData) {
-	if (msg.paramN < 1) {
+	std::cout << msg.midParams.size() << std::endl;
+	if (msg.midParams.size() == 1) {
+		if (user.getRegistred() == true) {
+			std::cout << ":You may not reregister" << std::endl;
+			return ERR_ALREADYREGISTRED;
+		}
+		else if (user.getPass().empty() == true) {
+			user.setPass(msg.midParams[0]);
+			std::cout << user.getPass() << std::endl;
+		}
+	}
+	else {
 		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
 		return ERR_NEEDMOREPARAMS;
-	}
-	else if (user.getRegistred() == true) {
-		std::cout << ":You may not reregister" << std::endl;
-		return ERR_ALREADYREGISTRED;
-	}
-	else if (user.getPass().empty() == true) {
-		user.setPass(msg.midParams[0]);
-		std::cout << user.getPass() << std::endl;
 	}
 }
 
 void Command::user(User &user, std::vector<User*>& userData){
-	if (msg.midParams.size() < 3 && msg.trailing.size() < 1 && msg.paramN != 4) { //msg.midParams.size() < 4
+	std::cout << msg.midParams.size() << std::endl;
+	if (msg.midParams.size() < 3 && !msg.trailing.empty() ) { //) && msg.paramN != 4) { //msg.midParams.size() < 4
 		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
 		return ERR_NEEDMOREPARAMS;
 	}
@@ -62,7 +66,8 @@ void Command::user(User &user, std::vector<User*>& userData){
 }
 
 void Command::nick(User &user, std::vector<User*>& userData) {
-	if (msg.paramN == 1) {
+	std::cout << msg.midParams.size() << std::endl;
+	if (msg.midParams.size() < 1) {
 		for (int i = 0; i < userData.size(); ++i){
 			if (userData[i]->getNick() == msg.midParams[0]){
 		    	std::cout << msg.midParams[0] << " :Nickname collision KILL" << std::endl;
@@ -101,8 +106,8 @@ void Command::oper(User &user, std::vector<User*>& userData){
 		std::cout << ":You are now an IRC operator" << std::endl;
 		return RPL_YOUREOPER;
 	}
-	else if (msg.midParams.size() < 4) { //msg.midParams.size() < 4
-		std::cout << "ERR_NEEDMOREPARAMS" << std::endl;
+	else if (msg.midParams.size() < 2) { //msg.midParams.size() < 2
+		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
 		return ERR_NEEDMOREPARAMS;
 	}
 	else if (user.getPass() != msg.midParams[1]) {
@@ -121,10 +126,9 @@ void Command::quit(User &user, std::vector<User*>& userData){
 bool Command::connection(User &user){
 	if (user.getRegistred() == true) {
 		std::cout << "success! *send MOTD*" << std::endl;
+		return 0;
 	}
-	else
-		return DISCONNECT;
-
+	return DISCONNECT;
 }
 // int main() {
 // 	std::string cmdline;

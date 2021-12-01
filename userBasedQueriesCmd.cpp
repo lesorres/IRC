@@ -1,8 +1,8 @@
 #include "Command.hpp"
 
-void Command::who( std::string const &, User & ) {
+void Command::who( User &, std::vector<User*>& userData ) {
 	
-	if 
+	// if 
 	// пример команды и возвращаемого значения:
 
 	// WHO *
@@ -21,10 +21,10 @@ void Command::who( std::string const &, User & ) {
 	// :IRCat 315 nik nik :End of /WHO list
 }
 
-void Command::whois( std::string const &, User & ) {
+void Command::whois( User &, std::vector<User*>& userData ) {
 	
 }
 
-void Command::whowas( std::string const &, User & ) {
+void Command::whowas( User &, std::vector<User*>& userData ) {
 	
 }
