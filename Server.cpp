@@ -119,7 +119,7 @@ void Server::executeCommand( size_t const id )
     //////
 
     for (size_t j = 0; j < userFds.size(); j++)
-        execute(msg.cmd, *userData[id], userData); // <---- Command HERE
+        execute(msg.cmd, *userData[id]); // <---- Command HERE
 	
 	cleanMsgStruct();
 
@@ -133,11 +133,10 @@ void Server::executeCommand( size_t const id )
         executeCommand(id);
 }
 
-void Server::execute(std::string const &com, User &user, std::vector<User*> & userData){
+void Server::execute(std::string const &com, User &user){
     try
     {
         (this->*(commands.at(com)))( user );
-        // user.messages.erase(user.messages.begin());
     }
     catch(const std::exception& e)
     {
@@ -145,18 +144,8 @@ void Server::execute(std::string const &com, User &user, std::vector<User*> & us
     }
 }
 
-void Server::cleanMsgStruct()
+void Server::initCommandMap( void )
 {
-	msg.prefx.clear();
-	msg.cmd.clear();
-	msg.midParams.clear();
-	msg.trailing.clear();
-	msg.paramN = 0;
-}
-
-Server::Server( std::string const & _port, std::string const & _pass)
-{
-	msg.paramN = 0;
     commands.insert(std::make_pair("PASS", &Server::pass));
     commands.insert(std::make_pair("NICK", &Server::nick));
     commands.insert(std::make_pair("USER", &Server::user));
@@ -188,6 +177,12 @@ Server::Server( std::string const & _port, std::string const & _pass)
     // commands.insert(make_pair("REHASH", &Server::rehash);
     // commands.insert(make_pair("RESTART", &Server::restart);
     // commands.insert(make_pair("KILL", &Server::kill);
+}
+
+Server::Server( std::string const & _port, std::string const & _pass)
+{
+	msg.paramN = 0;
+    initCommandMap();
 
     // (this->*(command.at("PASS")))("DATA", *bob);
     try

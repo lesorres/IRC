@@ -41,6 +41,7 @@ class Server {
 		struct sockaddr_in	address;
 		int					addrlen;
 
+		void		initCommandMap();
 		std::string checkMsgFormat( std::string cmdStr );
 		std::string getRidOfCmdName( std::string cmdStr );
 
@@ -61,8 +62,8 @@ class Server {
 		void executeCommand( size_t const id );
 		// std::vector<User*> &getUserData();
 
-		//commands
-    	void execute(std::string const &, User &, std::vector<User*>& userData);
+		// commands
+    	void execute(std::string const &, User &);
 		std::string parseMsg( std::string cmdStr );
     	int pass(User & );
     	int nick(User & );

@@ -65,3 +65,12 @@ std::string Server::getRidOfCmdName( std::string cmdStr ) {
 std::string checkCmdNameFormat( std::string cmdStr ) {
     return cmdStr;
 }
+
+void Server::cleanMsgStruct()
+{
+	msg.prefx.clear();
+	msg.cmd.clear();
+	msg.midParams.clear();
+	msg.trailing.clear();
+	msg.paramN = 0;
+}

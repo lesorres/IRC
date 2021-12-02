@@ -1,5 +1,4 @@
 #include "Server.hpp"
-#include "Command.hpp"
 
 #define ERR_NOOPERHOST ":No O-lines for your host"
 #define ERR_NICKCOLLISION "<nick> :Nickname collision KILL"
