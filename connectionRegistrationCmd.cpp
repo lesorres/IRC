@@ -32,7 +32,7 @@
 
 // class Server;
 
-int Server::pass(User &user, std::vector<User*>& userData) {
+int Server::pass(User &user) {
 	if (msg.midParams.size() == 1) {
 		if (user.getRegistred() == 3) {
 			errorMEss(462, user);
@@ -55,7 +55,7 @@ int Server::pass(User &user, std::vector<User*>& userData) {
 	return connection(user);
 }
 
-int Server::user(User &user, std::vector<User*>& userData){
+int Server::user(User &user){
 	if (msg.midParams.size() < 3 && !msg.trailing.empty() ) { //) && msg.paramN != 4) { //msg.midParams.size() < 4
 		// send(user.getFd(), errorMEss(461, user).c_str(), errorMEss(461, user).size(), 0);
 		errorMEss(461, user);
@@ -78,7 +78,7 @@ int Server::user(User &user, std::vector<User*>& userData){
 	return connection(user);
 }
 
-int Server::nick(User &user, std::vector<User*>& userData) {
+int Server::nick(User &user) {
 	if (msg.midParams.size() == 1) {
 		for (int i = 0; i < userData.size(); ++i) {
 			if (userData[i]->getNick() == msg.midParams[0]){
@@ -123,7 +123,7 @@ int Server::nick(User &user, std::vector<User*>& userData) {
 	return connection(user);
 }
 
-int Server::oper(User &user, std::vector<User*>& userData){
+int Server::oper(User &user){
 	if (user.getNick() == msg.midParams[0] && user.getPass() == msg.midParams[1]){
 		//  "MODE +o"
 		std::cout << ":You are now an IRC operator" << std::endl;
@@ -142,7 +142,7 @@ int Server::oper(User &user, std::vector<User*>& userData){
 	return 0;
 }
 
-int Server::quit(User &user, std::vector<User*>& userData){
+int Server::quit(User &user){
 	if (msg.trailing.empty())
 		// std::cout <<  << std::endl;
 	exit(1);

@@ -12,7 +12,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "User.hpp"
-#include "Command.hpp"
+// #include "Command.hpp"
 #include <map>
 
 #define BUF_SIZE 1024
@@ -33,8 +33,8 @@ class Server {
 		// Command						cmd;
 		std::vector<struct pollfd>	userFds;
 		std::vector<User*>			userData;
-		typedef int (Command:: * PType)( User &user, std::vector<User*>& userData);
-    	std::map<std::string, PType>cmd_map;
+		typedef int (Server:: * PType)( User &user);
+    	std::map<std::string, PType>commands;
 		std::string checkMsgFormat( std::string cmdStr );
 		std::string getRidOfCmdName( std::string cmdStr );
 
@@ -61,16 +61,16 @@ class Server {
 
 		//commands
 		t_msg msg;
-    	void execute(std::string const &, User &, std::vector<User*>& userData);
+    	void execute(std::string const &, User &);
 		std::string parseMsg( std::string cmdStr );
-    	int pass(User &, std::vector<User*>& userData );
-    	int nick(User &, std::vector<User*>& userData );
-    	int user(User &, std::vector<User*>& userData );
-    	int oper(User &, std::vector<User*>& userData );
-    	int quit(User &, std::vector<User*>& userData );
-		int who( User &, std::vector<User*>& userData );
-		int whois( User &, std::vector<User*>& userData );
-		int whowas( User &, std::vector<User*>& userData );
+    	int pass(User & );
+    	int nick(User & );
+    	int user(User & );
+    	int oper(User & );
+    	int quit(User & );
+		int who( User & );
+		int whois( User & );
+		int whowas( User & );
 		void cleanMsgStruct();
 
     	bool connection(User &);
