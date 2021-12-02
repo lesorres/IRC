@@ -34,6 +34,7 @@ class Server {
 		std::vector<User*>			userData;
 		typedef int (Server:: * PType)( User &user );
     	std::map<std::string, PType>commands;
+		t_msg 						msg;
 
 		int					srvFd;
 		int					srvPort;
@@ -41,7 +42,12 @@ class Server {
 		struct sockaddr_in	address;
 		int					addrlen;
 
-		void		initCommandMap();
+		void 		connectUsers( void );
+		void 		clientRequest( void );
+		void 		disconnectClient( size_t const id );
+		int  		readRequest( size_t const id );
+		void 		executeCommand( size_t const id );
+		void		initCommandMap( void );
 		std::string checkMsgFormat( std::string cmdStr );
 		std::string getRidOfCmdName( std::string cmdStr );
 
@@ -49,18 +55,12 @@ class Server {
 		Server operator=( Server const & _ot ); 
 
 	public:
-		t_msg msg;
 
 		Server( std::string const & _port, std::string const & _pass);
 		~Server();
 
-		void create();
-		void connectUsers( void );
-		void clientRequest( void );
-		void disconnectClient( size_t const id );
-		int  readRequest( size_t const id );
-		void executeCommand( size_t const id );
-		// std::vector<User*> &getUserData();
+		void create( void );
+		void run( void );
 
 		// commands
     	void execute(std::string const &, User &);
