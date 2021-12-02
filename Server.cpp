@@ -42,7 +42,7 @@ void Server::connectUsers( void )
         nw.fd = new_client_fd;
         nw.events = POLLIN;
         nw.revents = 0;
-        userData.push_back(new User);
+        userData.push_back(new User(srvFd));
         userFds.push_back(nw);
         userData[userData.size() - 1]->setFd(new_client_fd);
         std::cout << "New client on " << new_client_fd << " socket." << "\n";
@@ -104,20 +104,24 @@ int  Server::readRequest( size_t const id )
 
 void Server::executeCommand( size_t const id )
 {
-    // PARSER PART //
     cmd.parseMsg(userData[id]->messages[0]);
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
-    /* // CHECK REGISTER //
-    if (!userData[id]->getRegistred() && cmd.msg.cmd != "PASS" && cmd.msg.cmd != "NICK"\
+     // CHECK REGISTER //
+    if (userData[id]->getRegistred() != 3 && cmd.msg.cmd != "PASS" && cmd.msg.cmd != "NICK" &&\
         cmd.msg.cmd != "USER" && cmd.msg.cmd != "QUIT")
-        return (same.error());
-    */
-
+        send(userFds[id].fd, "You not registred\n", 19, 0);
+    else
+    {
+        send(userFds[id].fd, "MOTD\n", 5, 0);
+    }
+    
     //////
 
     for (size_t j = 0; j < userFds.size(); j++)
         cmd.execute(cmd.msg.cmd, *userData[id], userData); // <---- Command HERE
+	
+	cmd.cleanMsgStruct();
 
     //////
     if (userData[id]->getNick().empty())

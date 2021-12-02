@@ -4,6 +4,7 @@
 #include <iostream>
 #include <queue>
 #include <map>
+#include "Channel.hpp"
 
 class User {
     private:
@@ -16,9 +17,14 @@ class User {
         std::string                 servername;
         std::vector<std::string>    channels;
         std::map<std::string, bool> oper;
+        Channel *                   currentChannel;
+
         int                         fd;
-        bool                        registred;
+        int                         srvFd;
+        int                         registred;
         bool                        breakconnect;
+
+        User();
         User( User const & _ot );
         User operator=( User const & _ot );
     
@@ -33,7 +39,7 @@ class User {
         std::string const & getHostn( void ) const;
         std::string const & getServern( void ) const;
         int const & getFd( void ) const;
-        bool const & getRegistred( void ) const;
+        int const & getRegistred( void ) const;
         bool const & getBreakconnect( void ) const;
 
         void setNick( std::string const & nick );
@@ -44,11 +50,11 @@ class User {
         void setHostn( std::string const & pass );
         void setServern( std::string const & pass );
         void setFd( int const & fd );
-        void setRegistred( bool const & registred );
+        void setRegistred( int const & registred );
 
         void checkConnection( std::string const & mess );
 
-        User();
+        User(int serverSocket);
         ~User();
 };
 

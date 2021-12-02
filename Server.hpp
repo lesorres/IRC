@@ -14,6 +14,7 @@
 #include "User.hpp"
 #include "Utils.hpp"
 #include "Command.hpp"
+#include "Channel.hpp"
 #include <map>
 
 #define BUF_SIZE 1024
@@ -23,6 +24,7 @@ class Server {
 		Command						cmd;
 		std::vector<struct pollfd>	userFds;
 		std::vector<User*>			userData;
+		std::map<std::string, Channel*> channels;
 
 		int					srvFd;
 		int					port;

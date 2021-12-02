@@ -3,7 +3,6 @@
 Command::Command()
 {
 	msg.paramN = 0;
-
     cmd_map.insert(make_pair("PASS", &Command::pass));
     cmd_map.insert(make_pair("NICK", &Command::nick));
     cmd_map.insert(make_pair("USER", &Command::user));
@@ -17,7 +16,7 @@ Command::Command()
     // cmd_map.insert(make_pair("WHOWAS", &Command::whowas);
     // cmd_map.insert(make_pair("MODE", &Command::mode);
     // cmd_map.insert(make_pair("TOPIC", &Command::topic);
-    // cmd_map.insert(make_pair("JOIN", &Command::join);
+    cmd_map.insert(make_pair("JOIN", &Command::join));
     // cmd_map.insert(make_pair("INVITE", &Command::invite);
     // cmd_map.insert(make_pair("KICK", &Command::kick);
     // cmd_map.insert(make_pair("PART", &Command::part);
@@ -46,20 +45,29 @@ Command::Command()
 //     return userData;
 // }
 
+
 Command::~Command(){}
 
 // void Command::setUserData(std::vector<User*>&userData){
 //     this->userData = userData;
 // }
 
-void Command::execute(std::string const &com, User &user, std::vector<User*> & userData){
+void Command::execute(std::string const &com, User &from, std::vector<User*> & userData){
     try
     {
-        (this->*(cmd_map.at(com)))(user.messages[0], user, userData);
-        // user.messages.erase(user.messages.begin());
+        (this->*(cmd_map.at(com)))( from, userData);
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        send(from.getFd(), "send it all on channel\n", 24, 0);
     }
+}
+
+void Command::cleanMsgStruct()
+{
+	msg.prefx.clear();
+	msg.cmd.clear();
+	msg.midParams.clear();
+	msg.trailing.clear();
+	msg.paramN = 0;
 }
