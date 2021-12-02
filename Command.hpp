@@ -5,6 +5,7 @@
 #include <vector>
 #include <sys/socket.h>
 #include <iostream>
+#include <sys/socket.h>
 #include "User.hpp"
 
 // #include "Server.hpp"
@@ -46,6 +47,7 @@ public:
 
     bool connection(User &);
     void motd();
+	void errorMEss(int err, User &user);
     Command();
     ~Command();
 };
