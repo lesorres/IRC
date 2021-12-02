@@ -1,6 +1,6 @@
-#include "Command.hpp"
+#include "Server.hpp"
 
-int Command::who( User &, std::vector<User*>& userData ) {
+int Server::who( User & ) {
 	
 	if (this->msg.midParams.size() > 2)
 	{
@@ -27,10 +27,10 @@ int Command::who( User &, std::vector<User*>& userData ) {
 	return 1;
 }
 
-int Command::whois( User &, std::vector<User*>& userData ) {
+int Server::whois( User & ) {
 	return 0;	
 }
 
-int Command::whowas( User &, std::vector<User*>& userData ) {
+int Server::whowas( User & ) {
 	return 0;
 }

@@ -1,7 +1,7 @@
-#include "Command.hpp"
+#include "Server.hpp"
 #include <sstream>
 
-std::string Command::parseMsg(std::string cmdStr)
+std::string Server::parseMsg(std::string cmdStr)
 {
 	std::string parsed;
 	std::stringstream input(cmdStr);
@@ -51,17 +51,26 @@ std::string Command::parseMsg(std::string cmdStr)
 
 	msg.paramN = msg.midParams.size() + !msg.trailing.empty();
 
-	// // check if command and at least one param are presented in message, return error
+	// // check if Server and at least one param are presented in message, return error
 	// // if (1)
 	// // {
 	// // }
 	return (cmdStr);
 }
 
-std::string Command::getRidOfCmdName( std::string cmdStr ) {
+std::string Server::getRidOfCmdName( std::string cmdStr ) {
     return cmdStr;
 }
 
 std::string checkCmdNameFormat( std::string cmdStr ) {
     return cmdStr;
+}
+
+void Server::cleanMsgStruct()
+{
+	msg.prefx.clear();
+	msg.cmd.clear();
+	msg.midParams.clear();
+	msg.trailing.clear();
+	msg.paramN = 0;
 }

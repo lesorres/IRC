@@ -29,7 +29,7 @@ void User::checkConnection( std::string const & mess )
         breakconnect = false;
 }
 
-User::User()
+User::User(int serverSocket)
 {
     username = "";
     nickname = "";
@@ -39,6 +39,7 @@ User::User()
     servername = "";
     registred = 0;
     breakconnect = false;
+    srvFd = serverSocket;
 }
 
 User::~User() {}

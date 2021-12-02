@@ -16,9 +16,13 @@ class User {
         std::string                 servername;
         std::vector<std::string>    channels;
         std::map<std::string, bool> oper;
+
         int                         fd;
-        int                        registred;
+        int                         srvFd;
+        int                         registred;
         bool                        breakconnect;
+
+        User();
         User( User const & _ot );
         User operator=( User const & _ot );
     
@@ -48,7 +52,7 @@ class User {
 
         void checkConnection( std::string const & mess );
 
-        User();
+        User(int serverSocket);
         ~User();
 };
 
