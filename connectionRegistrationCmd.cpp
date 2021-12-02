@@ -1,63 +1,71 @@
 #include "Command.hpp"
 
+#define ERR_NOTREGISTERED 451 //":You have not registered"
+
 //pass + user
 #define ERR_NEEDMOREPARAMS 461
-#define ERR_ALREADYREGISTRED 462      //":You may not reregister"
+#define ERR_ALREADYREGISTRED 462        //":You may not reregister"
                                         // - Возвращается сервером любому линку, который пытается
                                         //  изменить часть подробностей регистрации (подобные паролю
                                         //  или пользовательской информацией из второго
                                         //  USER-сообщения).
 
+//oper
+ #define ERR_PASSWDMISMATCH 464 //":Password incorrect"
+
 //nick
-#define ERR_NONICKNAMEGIVEN 431       // ":No nickname given"
-#define ERR_ERRONEUSNICKNAME 432      // "<nick> :Erroneus nickname"
+#define ERR_NONICKNAMEGIVEN 431         // ":No nickname given"
+#define ERR_ERRONEUSNICKNAME 432        // "<nick> :Erroneus nickname"
                                         // - Возвращается после получения NICK-сообщения, которое
                                         // содержит символы, которые запрещены. Смотрите раздел
                                         // х.х.х для более подробной информации.
-#define ERR_NICKNAMEINUSE 433         // "<nick> :Nickname is already in use"
+#define ERR_NICKNAMEINUSE 433           // "<nick> :Nickname is already in use"
                                         // Возвращается при смене никнейма на другой, уже используемый.
-#define ERR_NICKCOLLISION 436         // "<nick> :Nickname collision KILL"
+#define ERR_NICKCOLLISION 436           // "<nick> :Nickname collision KILL"
                                         //  - Возвращается сервером к клиенту, когда сервер видит
                                         //  конфликт никнейма (зарегистрированный никнейм уже есть).
-
+#define ERR_NOOPERHOST 491				// ":No O-lines for your host"
+										// - Если сервер не настроен на поддержку клиентского хоста
+                						//  для сообщения OPER, клиенту будет возвращена эта ошибка.
 #define DISCONNECT		1				// если количество параметров, необходимых для регистрации пользователя
 										// не соответствует требуемому (!= 3), пользователь не должен подключаться
 
 class Command;
 
 int Command::pass(User &user, std::vector<User*>& userData) {
-	// std::cout << msg.midParams.size() << std::endl;
 	if (msg.midParams.size() == 1) {
 		if (user.getRegistred() == 3) {
-			std::cout << ":You may not reregister" << std::endl;
-			return ERR_ALREADYREGISTRED;
+			errorMEss(462, user);
+			// std::cout << ":You may not reregister" << std::endl;
+			// return ERR_ALREADYREGISTRED;
 		}
 		else if (user.getPass().empty() == true) {
 			user.setPass(msg.midParams[0]);
 			user.setRegistred(user.getRegistred() + 1);
-			// std::cout << user.getRegistred() << std::endl;
 			// if (user.getNick().empty() && user.getRealn().empty() && user.getUser().empty())
 				// user.setRegistred(true);
 		}
 	}
 	else if (msg.midParams.size() < 1) {
-		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
-		return ERR_NEEDMOREPARAMS;
+		// send(user.getFd(), errorMEss(461, user).c_str(), errorMEss(461, user).size(), 0);
+		errorMEss(461, user);
+		// std::cout << msg.cmd << " :Not enough parameters" << std::endl;
+		// return ERR_NEEDMOREPARAMS;
 	}
-	// std::cout << "pass - " << user.getRegistred() << std::endl;
-	// std::cout << "user.getPass() = | " << user.getPass() << " |" << std::endl;
 	return connection(user);
 }
 
 int Command::user(User &user, std::vector<User*>& userData){
-	// std::cout << msg.midParams.size() << std::endl;
 	if (msg.midParams.size() < 3 && !msg.trailing.empty() ) { //) && msg.paramN != 4) { //msg.midParams.size() < 4
-		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
-		return ERR_NEEDMOREPARAMS;
+		// send(user.getFd(), errorMEss(461, user).c_str(), errorMEss(461, user).size(), 0);
+		errorMEss(461, user);
+		// std::cout << msg.cmd << " :Not enough parameters" << std::endl;
+		// return ERR_NEEDMOREPARAMS;
 	}
 	else if (user.getRegistred() == 3){
-		std::cout << ":You may not reregister" << std::endl;
-		return ERR_ALREADYREGISTRED;
+		errorMEss(462, user);
+		// std::cout << ":You may not reregister" << std::endl;
+		// return ERR_ALREADYREGISTRED;
 	}
 	else if (user.getUser().empty() && user.getHostn().empty() && \
 			user.getServern().empty() && user.getRealn().empty()) {
@@ -65,71 +73,70 @@ int Command::user(User &user, std::vector<User*>& userData){
 		user.setHostn(msg.midParams[1]);
 		user.setServern(msg.midParams[2]);
 		user.setRealn(msg.trailing);
-		
 		user.setRegistred(user.getRegistred() + 1);
-		// std::cout << user.getRegistred() << std::endl;
-		// std::cout << "\n" << "\n" << user.getUser() << "\n" << user.getRealn() << "\n" << user.getHostn() << "\n" << user.getServern() << "\n" << std::endl;
 	}
-	// std::cout << "user - " << user.getRegistred() << std::endl;
-	// std::cout << "user.getUser() = | " << user.getUser() << " |" << std::endl;
-	// std::cout << "user.getRealn() = | " << user.getRealn() << " |" << std::endl;
 	return connection(user);
 }
 
 int Command::nick(User &user, std::vector<User*>& userData) {
-	// std::cout << msg.midParams.size() << std::endl;
 	if (msg.midParams.size() == 1) {
-		for (int i = 0; i < userData.size(); ++i){
+		for (int i = 0; i < userData.size(); ++i) {
 			if (userData[i]->getNick() == msg.midParams[0]){
-		    	std::cout << msg.midParams[0] << " :Nickname collision KILL" << std::endl;
-		    	return ERR_NICKCOLLISION;
+				// send(user.getFd(), errorMEss(436, user).c_str(), errorMEss(461, user).size(), 0);
+				errorMEss(436, user);
+		    	// std::cout << msg.midParams[0] << " :Nickname collision KILL" << std::endl;
+		    	// return ERR_NICKCOLLISION;
 			}
 		}
-		if (msg.midParams[0].empty()) { //msg.paramN < 1
-			std::cout << ":No nickname given" << std::endl;
-			return ERR_NONICKNAMEGIVEN;
+		if (user.getNick() == msg.midParams[0]) {
+			// send(user.getFd(), errorMEss(433, user).c_str(), errorMEss(461, user).size(), 0);
+			errorMEss(433, user);
+			// std::cout << msg.midParams[0] << " :Nickname is already in use" << std::endl;
+			// return ERR_NICKNAMEINUSE;
 		}
+		if (user.getNick().empty() == true ) { // != msg.midParams[0]) { 		//msg.midParams.size() < 1 или msg.midParams.empty()
+			user.setNick(msg.midParams[0]);
+			user.setRegistred(user.getRegistred() + 1);
+		}
+		else {
+			// записать предыдущий ник если пришел новый для замены: Для умеренной истории, серверу следует хранить предыдущие никнеймы для
+			//   каждого известного ему клиента, если они все решатся их изменить. 
+			user.setNick(msg.midParams[0]);
+
+		}
+		// std::cout << user.getRegistred() << std::endl;
+		// if (user.getPass().empty() && user.getRealn().empty() && user.getUser().empty())
+			// user.setRegistred(true);
+
 		// else if (msg.midParams[0].){
 			// std::cout << "ERR_ERRONEUSNICKNAME" << std::endl;
 		//     return ERR_ERRONEUSNICKNAME;
 		// }
-		if (user.getNick() == msg.midParams[0]){
-			std::cout << msg.midParams[0] << " :Nickname is already in use" << std::endl;
-			return ERR_NICKNAMEINUSE;
-		}
-		else {
-			if (msg.midParams.size() < 1 && user.getNick() != msg.midParams[0]){ 		//msg.midParams.size() < 1 или msg.midParams.empty()
-				// записать предыдущий ник если пришел новый для замены: Для умеренной истории, серверу следует хранить предыдущие никнеймы для
-				//   каждого известного ему клиента, если они все решатся их изменить. 
-			}
-			user.setNick(msg.midParams[0]);
-			user.setRegistred(user.getRegistred() + 1);
-			// std::cout << user.getRegistred() << std::endl;
-			// if (user.getPass().empty() && user.getRealn().empty() && user.getUser().empty())
-				// user.setRegistred(true);
+	}
+	else {
+		if (msg.midParams.size() < 1 ) {
+			errorMEss(431, user);
+			// std::cout << ":No nickname given" << std::endl;
+			// return ERR_NONICKNAMEGIVEN;
 		}
 	}
-	// std::cout << "nick - " << user.getRegistred() << std::endl;
-	// std::cout << "user.getNick() = | " << user.getNick() << " |" << std::endl;
 	return connection(user);
 }
 
 int Command::oper(User &user, std::vector<User*>& userData){
-//   Параметры: <user> <password>
-	// std::string::size_type pos = msg.midParams[0].find(" ");
-	// std::string usr = arg.substr(0, pos);
-	// std::string pass = arg.substr(pos + 1);
 	if (user.getNick() == msg.midParams[0] && user.getPass() == msg.midParams[1]){
 		//  "MODE +o"
 		std::cout << ":You are now an IRC operator" << std::endl;
 		// return RPL_YOUREOPER;
 	}
 	else if (msg.midParams.size() < 2) { //msg.midParams.size() < 2
-		std::cout << msg.cmd << " :Not enough parameters" << std::endl;
+		errorMEss(461, user);
+		// std::cout << msg.cmd << " :Not enough parameters" << std::endl;
 		// return ERR_NEEDMOREPARAMS;
 	}
 	else if (user.getPass() != msg.midParams[1]) {
-		std::cout << ":Password incorrect" << std::endl;
+		errorMEss(464, user);
+		// std::cout << ":Password incorrect" << std::endl;
 		// return ERR_PASSWDMISMATCH;
 	}
 	return 0;
@@ -143,7 +150,6 @@ int Command::quit(User &user, std::vector<User*>& userData){
 }
 
 bool Command::connection(User &user){
-	// std::cout << "getRegistrated внутри connection - " << user.getRegistred() << std::endl;
 	if (user.getRegistred() == 3) {
 		std::cout << "success! *send MOTD*" << std::endl;
 		return 0;
