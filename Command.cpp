@@ -1,74 +1,74 @@
 #include "Command.hpp"
 
-Command::Command()
-{
-	msg.paramN = 0;
-    cmd_map.insert(make_pair("PASS", &Command::pass));
-    cmd_map.insert(make_pair("NICK", &Command::nick));
-    cmd_map.insert(make_pair("USER", &Command::user));
-    cmd_map.insert(make_pair("OPER", &Command::oper));
-    cmd_map.insert(make_pair("QUIT", &Command::quit));
-    // cmd_map.insert(make_pair("PRIVMSG", &Command::privmsg);
-    // cmd_map.insert(make_pair("AWAY", &Command::away);
-    // cmd_map.insert(make_pair("NOTICE", &Command::notice);
-    // cmd_map.insert(make_pair("WHO", &Command::who);
-    // cmd_map.insert(make_pair("WHOIS", &Command::whois);
-    // cmd_map.insert(make_pair("WHOWAS", &Command::whowas);
-    // cmd_map.insert(make_pair("MODE", &Command::mode);
-    // cmd_map.insert(make_pair("TOPIC", &Command::topic);
-    // cmd_map.insert(make_pair("JOIN", &Command::join);
-    // cmd_map.insert(make_pair("INVITE", &Command::invite);
-    // cmd_map.insert(make_pair("KICK", &Command::kick);
-    // cmd_map.insert(make_pair("PART", &Command::part);
-    // cmd_map.insert(make_pair("NAMES", &Command::names);
-    // cmd_map.insert(make_pair("LIST", &Command::list);
-    // cmd_map.insert(make_pair("WALLOPS", &Command::wallops);
-    // cmd_map.insert(make_pair("PING", &Command::ping);
-    // cmd_map.insert(make_pair("PONG", &Command::pong);
-    // cmd_map.insert(make_pair("ISON", &Command::ison);
-    // cmd_map.insert(make_pair("USERHOST", &Command::userhost);
-    // cmd_map.insert(make_pair("VERSION", &Command::version);
-    // cmd_map.insert(make_pair("INFO", &Command::info);
-    // cmd_map.insert(make_pair("ADMIN", &Command::admin);
-    // cmd_map.insert(make_pair("TIME", &Command::time);
-    // cmd_map.insert(make_pair("REHASH", &Command::rehash);
-    // cmd_map.insert(make_pair("RESTART", &Command::restart);
-    // cmd_map.insert(make_pair("KILL", &Command::kill);
-}
+// Server::Server()
+// {
+// 	msg.paramN = 0;
+//     cmd_map.insert(make_pair("PASS", &Server::pass));
+//     cmd_map.insert(make_pair("NICK", &Server::nick));
+//     cmd_map.insert(make_pair("USER", &Server::user));
+//     cmd_map.insert(make_pair("OPER", &Server::oper));
+//     cmd_map.insert(make_pair("QUIT", &Server::quit));
+//     // cmd_map.insert(make_pair("PRIVMSG", &Server::privmsg);
+//     // cmd_map.insert(make_pair("AWAY", &Server::away);
+//     // cmd_map.insert(make_pair("NOTICE", &Server::notice);
+//     // cmd_map.insert(make_pair("WHO", &Server::who);
+//     // cmd_map.insert(make_pair("WHOIS", &Server::whois);
+//     // cmd_map.insert(make_pair("WHOWAS", &Server::whowas);
+//     // cmd_map.insert(make_pair("MODE", &Server::mode);
+//     // cmd_map.insert(make_pair("TOPIC", &Server::topic);
+//     // cmd_map.insert(make_pair("JOIN", &Server::join);
+//     // cmd_map.insert(make_pair("INVITE", &Server::invite);
+//     // cmd_map.insert(make_pair("KICK", &Server::kick);
+//     // cmd_map.insert(make_pair("PART", &Server::part);
+//     // cmd_map.insert(make_pair("NAMES", &Server::names);
+//     // cmd_map.insert(make_pair("LIST", &Server::list);
+//     // cmd_map.insert(make_pair("WALLOPS", &Server::wallops);
+//     // cmd_map.insert(make_pair("PING", &Server::ping);
+//     // cmd_map.insert(make_pair("PONG", &Server::pong);
+//     // cmd_map.insert(make_pair("ISON", &Server::ison);
+//     // cmd_map.insert(make_pair("USERHOST", &Server::userhost);
+//     // cmd_map.insert(make_pair("VERSION", &Server::version);
+//     // cmd_map.insert(make_pair("INFO", &Server::info);
+//     // cmd_map.insert(make_pair("ADMIN", &Server::admin);
+//     // cmd_map.insert(make_pair("TIME", &Server::time);
+//     // cmd_map.insert(make_pair("REHASH", &Server::rehash);
+//     // cmd_map.insert(make_pair("RESTART", &Server::restart);
+//     // cmd_map.insert(make_pair("KILL", &Server::kill);
+// }
 
 // //коструктор для Server
-// Command::Command(Server &serv) : userData(serv.getUserData()) {
+// Server::Server(Server &serv) : userData(serv.getUserData()) {
 //     // setUserData(serv.getUserData());
 // }
 
-// std::vector<User *>Command::getUserData(){
+// std::vector<User *>Server::getUserData(){
 //     return userData;
 // }
 
 
-Command::~Command(){}
+// Server::~Server(){}
 
-// void Command::setUserData(std::vector<User*>&userData){
+// void Server::setUserData(std::vector<User*>&userData){
 //     this->userData = userData;
 // }
 
-void Command::execute(std::string const &com, User &user, std::vector<User*> & userData){
-    try
-    {
-        (this->*(cmd_map.at(com)))( user, userData);
-        // user.messages.erase(user.messages.begin());
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-}
+// void Server::execute(std::string const &com, User &user, std::vector<User*> & userData){
+//     try
+//     {
+//         (this->*(cmd_map.at(com)))( user, userData);
+//         // user.messages.erase(user.messages.begin());
+//     }
+//     catch(const std::exception& e)
+//     {
+//         std::cerr << e.what() << '\n';
+//     }
+// }
 
-void Command::cleanMsgStruct()
-{
-	msg.prefx.clear();
-	msg.cmd.clear();
-	msg.midParams.clear();
-	msg.trailing.clear();
-	msg.paramN = 0;
-}
+// void Server::cleanMsgStruct()
+// {
+// 	msg.prefx.clear();
+// 	msg.cmd.clear();
+// 	msg.midParams.clear();
+// 	msg.trailing.clear();
+// 	msg.paramN = 0;
+// }
