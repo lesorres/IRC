@@ -105,8 +105,9 @@ int  Server::readRequest( size_t const id )
 void Server::executeCommand( size_t const id )
 {
     // PARSER PART //
-    cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
-    userData[id]->messages[0].erase(0, 5);
+    cmd.parseMsg(userData[id]->messages[0]);
+    // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
+    // userData[id]->messages[0].erase(0, 5);
     /* // CHECK REGISTER //
     if (!userData[id]->getRegistred() && cmd.msg.cmd != "PASS" && cmd.msg.cmd != "NICK"\
         cmd.msg.cmd != "USER" && cmd.msg.cmd != "QUIT")
