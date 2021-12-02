@@ -11,7 +11,7 @@
 #define ERR_PASSWDMISMATCH ":Password incorrect"
 #define ERR_NOTREGISTERED ":You have not registered"
 
-void Command::errorMEss(int err, User &user) {
+void Server::errorMEss(int err, User &user) {
 	std::string messg;
 	switch (err) {
 	case 431:

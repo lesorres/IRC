@@ -12,7 +12,7 @@ void Server::create()
     }
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(port);
+    address.sin_port = htons(srvPort);
     if (bind(srvFd, (struct sockaddr*)&address, sizeof(address)) < 0)
     {
         perror("bind failed");
@@ -92,7 +92,7 @@ int  Server::readRequest( size_t const id )
         buf[rd] = 0;
         bytesRead += rd;
         text += buf;
-        if (cmd.msg.cmd.find("\n") != std::string::npos)
+        if (msg.cmd.find("\n") != std::string::npos)
             break;
     }
     while (text.find("\r") != std::string::npos)      // Удаляем символ возврата карретки
@@ -104,24 +104,24 @@ int  Server::readRequest( size_t const id )
 
 void Server::executeCommand( size_t const id )
 {
-    cmd.parseMsg(userData[id]->messages[0]);
+    parseMsg(userData[id]->messages[0]);
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
-     // CHECK REGISTER //
-    if (userData[id]->getRegistred() != 3 && cmd.msg.cmd != "PASS" && cmd.msg.cmd != "NICK" &&\
-        cmd.msg.cmd != "USER" && cmd.msg.cmd != "QUIT")
-        send(userFds[id].fd, "You not registred\n", 19, 0);
-    else
-    {
-        send(userFds[id].fd, "MOTD\n", 5, 0);
-    }
+    // CHECK REGISTER //
+    // if (userData[id]->getRegistred() != 3 && msg.cmd != "PASS" && msg.cmd != "NICK" &&\
+    //     msg.cmd != "USER" && msg.cmd != "QUIT")
+    //     send(userFds[id].fd, "You not registred\n", 19, 0);
+    // else
+    // {
+    //     send(userFds[id].fd, "MOTD\n", 5, 0);
+    // }
     
     //////
 
     for (size_t j = 0; j < userFds.size(); j++)
-        cmd.execute(cmd.msg.cmd, *userData[id], userData); // <---- Command HERE
+        execute(msg.cmd, *userData[id], userData); // <---- Command HERE
 	
-	cmd.cleanMsgStruct();
+	cleanMsgStruct();
 
     //////
     if (userData[id]->getNick().empty())
@@ -133,16 +133,69 @@ void Server::executeCommand( size_t const id )
         executeCommand(id);
 }
 
+void Server::execute(std::string const &com, User &user, std::vector<User*> & userData){
+    try
+    {
+        (this->*(commands.at(com)))( user );
+        // user.messages.erase(user.messages.begin());
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+}
+
+void Server::cleanMsgStruct()
+{
+	msg.prefx.clear();
+	msg.cmd.clear();
+	msg.midParams.clear();
+	msg.trailing.clear();
+	msg.paramN = 0;
+}
+
 Server::Server( std::string const & _port, std::string const & _pass)
 {
+	msg.paramN = 0;
+    commands.insert(std::make_pair("PASS", &Server::pass));
+    commands.insert(std::make_pair("NICK", &Server::nick));
+    commands.insert(std::make_pair("USER", &Server::user));
+    commands.insert(std::make_pair("OPER", &Server::oper));
+    commands.insert(std::make_pair("QUIT", &Server::quit));
+    // commands.insert(make_pair("PRIVMSG", &Server::privmsg);
+    // commands.insert(make_pair("AWAY", &Server::away);
+    // commands.insert(make_pair("NOTICE", &Server::notice);
+    // commands.insert(make_pair("WHO", &Server::who);
+    // commands.insert(make_pair("WHOIS", &Server::whois);
+    // commands.insert(make_pair("WHOWAS", &Server::whowas);
+    // commands.insert(make_pair("MODE", &Server::mode);
+    // commands.insert(make_pair("TOPIC", &Server::topic);
+    // commands.insert(make_pair("JOIN", &Server::join);
+    // commands.insert(make_pair("INVITE", &Server::invite);
+    // commands.insert(make_pair("KICK", &Server::kick);
+    // commands.insert(make_pair("PART", &Server::part);
+    // commands.insert(make_pair("NAMES", &Server::names);
+    // commands.insert(make_pair("LIST", &Server::list);
+    // commands.insert(make_pair("WALLOPS", &Server::wallops);
+    // commands.insert(make_pair("PING", &Server::ping);
+    // commands.insert(make_pair("PONG", &Server::pong);
+    // commands.insert(make_pair("ISON", &Server::ison);
+    // commands.insert(make_pair("USERHOST", &Server::userhost);
+    // commands.insert(make_pair("VERSION", &Server::version);
+    // commands.insert(make_pair("INFO", &Server::info);
+    // commands.insert(make_pair("ADMIN", &Server::admin);
+    // commands.insert(make_pair("TIME", &Server::time);
+    // commands.insert(make_pair("REHASH", &Server::rehash);
+    // commands.insert(make_pair("RESTART", &Server::restart);
+    // commands.insert(make_pair("KILL", &Server::kill);
 
     // (this->*(command.at("PASS")))("DATA", *bob);
     try
     {
         if (_port.find_first_not_of("0123456789") != std::string::npos)
             throw std::invalid_argument("Port must contain only numbers");
-        port = atoi(_port.c_str());
-        if (port < 1000 || port > 65555) // надо взять правельный рендж портов...
+        srvPort = atoi(_port.c_str());
+        if (srvPort < 1000 || srvPort > 65555) // надо взять правельный рендж портов...
             throw std::invalid_argument("Port out of range");
     }
     catch ( std::exception & e)
@@ -150,7 +203,7 @@ Server::Server( std::string const & _port, std::string const & _pass)
         std::cerr << e.what() << "\n";
         exit(EXIT_FAILURE);
     }
-    pass = _pass;
+    srvPass = _pass;
     addrlen = sizeof(address);
     std::cout << "Done!\n";
 }

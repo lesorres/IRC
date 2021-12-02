@@ -4,7 +4,6 @@
 #include <iostream>
 #include <queue>
 #include <map>
-#include "Channel.hpp"
 
 class User {
     private:
@@ -17,7 +16,6 @@ class User {
         std::string                 servername;
         std::vector<std::string>    channels;
         std::map<std::string, bool> oper;
-        Channel *                   currentChannel;
 
         int                         fd;
         int                         srvFd;

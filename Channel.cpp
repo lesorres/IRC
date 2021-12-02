@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
 Channel::~Channel() {}
-Channel::Channel(User * creater, std::string _name, std::string _pass = "")
+Channel::Channel(User * creater, std::string _name, std::string _pass)
 {
     name = _name;
     password = _pass;

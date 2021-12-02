@@ -1,7 +1,6 @@
-#include "Command.hpp"
 #include "Channel.hpp"
 
-void Command::join(const User * user, std::string _name, std::string _pass = "")
-{
-    
-}
+// void Command::join( User & user, std::vector<User*>& userData )
+// {
+//     if (channels.at(msg.cmd))
+// }
