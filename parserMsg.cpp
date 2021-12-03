@@ -58,10 +58,6 @@ std::string Server::parseMsg(std::string cmdStr)
 	return (cmdStr);
 }
 
-std::string Server::getRidOfCmdName( std::string cmdStr ) {
-    return cmdStr;
-}
-
 std::string checkCmdNameFormat( std::string cmdStr ) {
     return cmdStr;
 }

@@ -43,7 +43,6 @@ class Server {
 
 		void		initCommandMap();
 		std::string checkMsgFormat( std::string cmdStr );
-		std::string getRidOfCmdName( std::string cmdStr );
 
 		Server( Server const & _ot );
 		Server operator=( Server const & _ot ); 
