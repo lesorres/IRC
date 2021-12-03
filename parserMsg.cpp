@@ -13,37 +13,42 @@ std::string Command::parseMsg(std::string cmdStr)
 	{
 		if (!parsed.empty())
 		{
-			if (this->msg.prefx.empty() && parsed[0] == ':')
-				this->msg.prefx = parsed;
-			else if (this->msg.cmd.empty())
-				this->msg.cmd = parsed;
+			if (msg.prefx.empty() && parsed[0] == ':')
+				msg.prefx = parsed;
+			else if (msg.cmd.empty())
+				msg.cmd = parsed;
 			else
-				this->msg.midParams.push_back(parsed);
+				msg.midParams.push_back(parsed);
 		}
 	}
 	//identifying if trailing is presented amond mid parameters
-	trailingIt = this->msg.midParams.begin();
-	while (trailingIt != this->msg.midParams.end())
+	trailingIt = msg.midParams.begin();
+	while (trailingIt != msg.midParams.end())
 	{
 		if ((*trailingIt)[0] == ':')
 			break;
 		trailingIt++;
 	}
 
-	//saving iterator to the trailing part in vector
+	//saving iterator in vector to the trailing part
 	cutIt = trailingIt;
 
-	//rewriting all mid params from vector to prefix attribute beginning from one with ':'
-	while (trailingIt != this->msg.midParams.end())
+	//rewriting all midparams from vector to trailing attribute (starting from first token with ':')
+	while (trailingIt != msg.midParams.end())
 	{
-		this->msg.trailing += " " + *trailingIt;
+		msg.trailing += " " + *trailingIt;
 		trailingIt++;
 	}
-	std::cout << "here\n";
-	// this->msg.trailing.erase(this->msg.trailing.begin());
 
-	// cuting trailing part from mid params array
-	this->msg.midParams.erase(cutIt, this->msg.midParams.end());
+	//removing one spase at the begining of trailing
+	if (!msg.trailing.empty())
+		msg.trailing.erase(msg.trailing.begin());
+
+	// removing trailing part from mid params array
+	if (!msg.midParams.empty())
+		msg.midParams.erase(cutIt, msg.midParams.end());
+
+	msg.paramN = msg.midParams.size() + 
 
 	// // check if command and at least one param are presented in message, return error
 	// // if (1)
