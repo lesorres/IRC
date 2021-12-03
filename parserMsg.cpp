@@ -1,12 +1,19 @@
 #include "Server.hpp"
 #include <sstream>
 
-std::string Server::parseMsg(std::string cmdStr)
+int Server::parseMsg(std::string cmdStr)
 {
 	std::string parsed;
 	std::stringstream input(cmdStr);
 	std::vector<std::string>::iterator trailingIt;
 	std::vector<std::string>::iterator cutIt;
+
+	//check message length
+	if (cmdStr.size() > 510)
+	{
+		std::cout << "message length exceeded allowed value of 510 symbols\n";
+		return (1);
+	}
 
 	//the loop below split string to tokens separated by space
 	while (std::getline(input, parsed, ' '))
@@ -51,15 +58,27 @@ std::string Server::parseMsg(std::string cmdStr)
 
 	msg.paramN = msg.midParams.size() + !msg.trailing.empty();
 
-	// // check if Server and at least one param are presented in message, return error
-	// // if (1)
-	// // {
-	// // }
-	return (cmdStr);
+	//check tokents validity
+	if (checkMsgFormat(cmdStr))
+		return(1);
+
+	return (0);
 }
 
-std::string checkCmdNameFormat( std::string cmdStr ) {
-    return cmdStr;
+int Server::checkMsgFormat( std::string cmdStr )
+{
+	if ((msg.midParams.size() > 14 && !msg.trailing.empty()) || \
+	(msg.midParams.size() > 15 && msg.trailing.empty()))
+	{
+		std::cout << "number of parameters (including trailing) exceeded allowed value of 15\n";
+		return (1);
+	}
+	if (msg.cmd.empty() && (!msg.prefx.empty() || !msg.midParams.empty() || !msg.trailing.empty()))
+	{
+		std::cout << "invalid format of message\n";
+		return (1);
+	}
+	return (0);
 }
 
 void Server::cleanMsgStruct()
@@ -69,4 +88,9 @@ void Server::cleanMsgStruct()
 	msg.midParams.clear();
 	msg.trailing.clear();
 	msg.paramN = 0;
+}
+
+void Server::processWildcard()
+{
+	
 }
