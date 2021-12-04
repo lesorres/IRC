@@ -42,8 +42,7 @@ class Server {
 		int					addrlen;
 
 		void		initCommandMap();
-		std::string checkMsgFormat( std::string cmdStr );
-		std::string getRidOfCmdName( std::string cmdStr );
+		int			checkMsgFormat( std::string cmdStr );
 
 		Server( Server const & _ot );
 		Server operator=( Server const & _ot ); 
@@ -62,9 +61,13 @@ class Server {
 		void executeCommand( size_t const id );
 		// std::vector<User*> &getUserData();
 
-		// commands
+		// message procesing
     	void execute(std::string const &, User &);
-		std::string parseMsg( std::string cmdStr );
+		int parseMsg( std::string cmdStr );
+		void cleanMsgStruct();
+		void processWildcard();
+
+		// commands
     	int pass(User & );
     	int nick(User & );
     	int user(User & );
@@ -73,7 +76,7 @@ class Server {
 		int who( User & );
 		int whois( User & );
 		int whowas( User & );
-		void cleanMsgStruct();
+
 
     	bool connection(User &);
     	void motd();
