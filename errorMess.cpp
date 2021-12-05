@@ -9,6 +9,7 @@
 #define ERR_NEEDMOREPARAMS " :Not enough parameters\n"
 #define ERR_PASSWDMISMATCH ":Password incorrect\n"
 #define ERR_NOTREGISTERED ":You have not registered\n"
+#define ERR_NOMOTD ":MOTD File is missing"
 
 void Server::errorMEss(int err, User &user) {
 	std::string messg;
@@ -24,6 +25,9 @@ void Server::errorMEss(int err, User &user) {
 		break ;
 	case 436:
 		messg = user.getNick() + ERR_NICKCOLLISION;
+		break ;
+	case 422:
+		messg = ERR_NOMOTD;
 		break ;
 	case 451:
 		messg = ERR_NOTREGISTERED;
