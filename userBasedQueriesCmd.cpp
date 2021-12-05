@@ -4,41 +4,42 @@ int Server::who( User & user)
 {
 	std::vector<User *>::iterator userIt;
 	std::vector<User *>::iterator endIt;
+	std::string message;
 
 	userIt = userData.begin();
 	endIt = userData.end();
 
 	if (msg.midParams.size() > 2)
 	{
-		// std::cout << ;
-		return 0;
+		std::cout << "invalid number of parameters is given\n";
+		return (1);
 	}
+
 	if (msg.midParams.size() == 1)
 	{
 		while (userIt != endIt)
 		{
-			std::cout << "* " << (*userIt)->getRealn() << " " << (*userIt)->getHostn() << " " \
-			<< (*userIt)->getServern() << (*userIt)->getNick(); //нужно добавить канал вместо звездочки
+			replyMEss(352, **userIt, "");
 			userIt++;
 		}
 		std::cout << msg.midParams[0] << " :End of /WHO list\n";
 	} 
+
 	else if (msg.midParams.size() == 2) //имеет смысл объединить с верхним условием
 	{
 		while (userIt != endIt)
 		{
-			std::cout << "* " << (*userIt)->getRealn() << " " << (*userIt)->getHostn() << " " \
-			<< (*userIt)->getServern() << (*userIt)->getNick(); //нужно добавить канал вместо звездочки
+			replyMEss(352, **userIt, "");
 			userIt++;
 		}
 		if (msg.midParams[2] != "o")
 			return (1);
 		std::cout << msg.midParams[0] << " :End of /WHO list\n";
 	}
+
 	else
 	{
 	}
-
 	return (0);
 }
 	// пример команды и возвращаемого значения:

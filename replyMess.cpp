@@ -43,6 +43,10 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 	case 322:
 		mess = RPL_LIST;
 		break ;
+	case 352:	//нужно добавить канал вместо звездочки
+		mess = "* " + user.getRealn() + " " + user.getHostn() + " " \
+			+ user.getServern() + " " + user.getNick() + "\n";
+		break ;
 	case 375:
 		mess = str + "\n";
 		break ;
