@@ -15,5 +15,6 @@
 
 
 std::vector<std::string> split(std::string str, std::string delimiter);
+bool isAlphaStr(std::string str);
 
 #endif

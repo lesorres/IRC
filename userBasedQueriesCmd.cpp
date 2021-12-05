@@ -19,7 +19,10 @@ int Server::who( User & user)
 	{
 		while (userIt != endIt)
 		{
-			replyMEss(352, **userIt, "");
+			message = "* " + (*userIt)->getRealn() + " " + (*userIt)->getHostn() + " " \
+			+ (*userIt)->getServern() + " " + (*userIt)->getNick() + "\n";
+			replyMEss(352, user, message);
+			// send((*userIt)->getFd(), message.c_str(), message.size(), 0);
 			userIt++;
 		}
 		std::cout << msg.midParams[0] << " :End of /WHO list\n";
