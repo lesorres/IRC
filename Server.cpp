@@ -104,7 +104,7 @@ int  Server::readRequest( size_t const id )
 
 void Server::executeCommand( size_t const id )
 {
-    parseMsg(userData[id]->messages[0]);
+    if (parseMsg(userData[id]->messages[0]))
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
     // CHECK REGISTER //
