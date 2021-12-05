@@ -10,7 +10,7 @@ OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
 $(NAME): $(OBJ) $(HEADER) 
-	@clang++ $(OBJ) $(FLAGS) -o $(NAME)
+	@clang++ $(OBJ) $(FLAGS) -o $(NAME) -g
 %.o:%.cpp $(HEADER)
 	@clang++ $(FLAGS) -c $< -o $(<:.cpp=.o) -g
 clean: 

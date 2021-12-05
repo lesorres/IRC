@@ -14,6 +14,8 @@
 #include "User.hpp"
 #include "Utils.hpp"
 #include "Channel.hpp"
+#include <fstream>
+#include <string>
 #include <map>
 
 #define BUF_SIZE 1024
@@ -43,6 +45,7 @@ class Server {
 		struct sockaddr_in	address;
 		int					addrlen;
 
+<<<<<<< HEAD
 		void 		connectUsers( void );
 		void 		clientRequest( void );
 		void 		disconnectClient( size_t const id );
@@ -51,6 +54,10 @@ class Server {
 		void		initCommandMap( void );
 		std::string checkMsgFormat( std::string cmdStr );
 		std::string getRidOfCmdName( std::string cmdStr );
+=======
+		void		initCommandMap();
+		int			checkMsgFormat( std::string cmdStr );
+>>>>>>> 820cdb808c0065efefbd4005fed0d80c8da7a694
 
 		Server( Server const & _ot );
 		Server operator=( Server const & _ot ); 
@@ -63,9 +70,13 @@ class Server {
 		void create( void );
 		void run( void );
 
-		// commands
+		// message procesing
     	void execute(std::string const &, User &);
-		std::string parseMsg( std::string cmdStr );
+		int parseMsg( std::string cmdStr );
+		void cleanMsgStruct();
+		void processWildcard();
+
+		// commands
     	int pass(User & );
     	int nick(User & );
     	int user(User & );
@@ -74,11 +85,12 @@ class Server {
 		int who( User & );
 		int whois( User & );
 		int whowas( User & );
-		void cleanMsgStruct();
+
 
     	bool connection(User &);
-    	void motd();
+    	void motd(User &);
 		void errorMEss(int err, User &user);
+		void replyMEss(int reply, User &user, const std::string &str = "");
 
 		// void passw( std::string const &str, User &user) { std::cout << str << " User: " << user.getNick();}
 
