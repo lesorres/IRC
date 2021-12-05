@@ -101,7 +101,7 @@ int  Server::readRequest( size_t const id )
         buf[rd] = 0;
         bytesRead += rd;
         text += buf;
-        if (msg.cmd.find("\n") != std::string::npos)
+        if (text.find("\n") != std::string::npos)
             break;
     }
     while (text.find("\r") != std::string::npos)      // Удаляем символ возврата карретки
@@ -148,17 +148,16 @@ void Server::executeCommand( size_t const id )
 
 
 
-    for (size_t j = 0; j < userFds.size(); j++)
-    {
-        if (userFds[j].fd != userFds[id].fd)
-        {
-            send(userFds[j].fd, userData[id]->messages[0].c_str(), userData[id]->messages[0].size(), 0);
-        }
-    }
+    // for (size_t j = 0; j < userFds.size(); j++)
+    // {
+    //     if (userFds[j].fd != userFds[id].fd)
+    //     {
+    //         send(userFds[j].fd, userData[id]->messages[0].c_str(), userData[id]->messages[0].size(), 0);
+    //     }
+    // }
 
-
+    
     execute(msg.cmd, *userData[id]); // <---- Command HERE
-	
 	cleanMsgStruct();
 
     //////
@@ -182,11 +181,11 @@ void Server::initCommandMap( void )
     // commands.insert(make_pair("AWAY", &Server::away));
     // commands.insert(make_pair("NOTICE", &Server::notice));
     commands.insert(std::make_pair("WHO", &Server::who));
+    commands.insert(std::make_pair("JOIN", &Server::join));
     // commands.insert(make_pair("WHOIS", &Server::whois));
     // commands.insert(make_pair("WHOWAS", &Server::whowas));
     // commands.insert(make_pair("MODE", &Server::mode));
     // commands.insert(make_pair("TOPIC", &Server::topic));
-    // commands.insert(make_pair("JOIN", &Server::join));
     // commands.insert(make_pair("INVITE", &Server::invite));
     // commands.insert(make_pair("KICK", &Server::kick));
     // commands.insert(make_pair("PART", &Server::part));

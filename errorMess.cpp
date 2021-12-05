@@ -44,6 +44,8 @@ void Server::errorMEss(int err, User &user) {
 	case 491:
 		messg = ERR_NOOPERHOST;
 		break ;
+	default:
+		messg = "Something wrong\n";
 	}
 	send(user.getFd(), messg.c_str(), messg.size(), 0);
 }
