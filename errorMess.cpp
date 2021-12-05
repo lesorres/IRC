@@ -1,14 +1,15 @@
 #include "Server.hpp"
 
-#define ERR_NOOPERHOST ":No O-lines for your host"
-#define ERR_NICKCOLLISION "<nick> :Nickname collision KILL"
-#define ERR_NICKNAMEINUSE " :Nickname is already in use"
-#define ERR_ERRONEUSNICKNAME " :Erroneus nickname"
-#define ERR_NONICKNAMEGIVEN ":No nickname given"
-#define ERR_ALREADYREGISTRED ":You may not reregister"
-#define ERR_NEEDMOREPARAMS " :Not enough parameters"
-#define ERR_PASSWDMISMATCH ":Password incorrect"
-#define ERR_NOTREGISTERED ":You have not registered"
+#define ERR_NOOPERHOST ":No O-lines for your host\n"
+#define ERR_NICKCOLLISION "<nick> :Nickname collision KILL\n"
+#define ERR_NICKNAMEINUSE " :Nickname is already in use\n"
+#define ERR_ERRONEUSNICKNAME " :Erroneus nickname\n"
+#define ERR_NONICKNAMEGIVEN ":No nickname given\n"
+#define ERR_ALREADYREGISTRED ":You may not reregister\n"
+#define ERR_NEEDMOREPARAMS " :Not enough parameters\n"
+#define ERR_PASSWDMISMATCH ":Password incorrect\n"
+#define ERR_NOTREGISTERED ":You have not registered\n"
+#define ERR_NOMOTD ":MOTD File is missing"
 
 void Server::errorMEss(int err, User &user) {
 	std::string messg;
@@ -24,6 +25,9 @@ void Server::errorMEss(int err, User &user) {
 		break ;
 	case 436:
 		messg = user.getNick() + ERR_NICKCOLLISION;
+		break ;
+	case 422:
+		messg = ERR_NOMOTD;
 		break ;
 	case 451:
 		messg = ERR_NOTREGISTERED;
@@ -41,6 +45,5 @@ void Server::errorMEss(int err, User &user) {
 		messg = ERR_NOOPERHOST;
 		break ;
 	}
-	// std::cout << messg << std::endl;
 	send(user.getFd(), messg.c_str(), messg.size(), 0);
 }
