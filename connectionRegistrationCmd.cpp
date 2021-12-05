@@ -43,16 +43,24 @@ int Server::pass(User &user) {
 }
 
 int Server::user(User &user){
-	if (msg.midParams.size() < 3 && msg.trailing.size() < 1)
+	if (!((msg.midParams.size() == 3 && !msg.trailing.empty()) \
+	|| (msg.midParams.size() == 4 && msg.trailing.empty())))
 		errorMEss(461, user);
 	else if (user.getRegistred() == 3)
 		errorMEss(462, user);
 	else if (user.getUser().empty() && user.getHostn().empty() && \
 			user.getServern().empty() && user.getRealn().empty()) {
 		user.setUser(msg.midParams[0]);
+		std::cout << user.getUser() << std::endl << std::endl;
 		user.setHostn(msg.midParams[1]);
+		std::cout << user.getHostn() << std::endl << std::endl;
 		user.setServern(msg.midParams[2]);
-		user.setRealn(msg.trailing);
+		std::cout << user.getServern() << std::endl << std::endl;
+		if (msg.trailing.empty())
+			user.setRealn(msg.midParams[3]);
+		else
+			user.setRealn(msg.trailing);
+		std::cout << user.getRealn() << std::endl << std::endl;
 		user.setRegistred(user.getRegistred() + 1);
 		return connection(user);
 	}
@@ -91,26 +99,21 @@ int Server::nick(User &user) {
 	return DISCONNECT;
 }
 
-int Server::oper(User &user){
-	if (user.getRegistred() == 3) {
-		if (user.getNick() == msg.midParams[0] && user.getPass() == msg.midParams[1])
-			replyMEss(381, user);
-		else if (msg.midParams.size() < 2)
-			errorMEss(461, user);
-		else if (user.getPass() != msg.midParams[1]) {
-			errorMEss(464, user);
-		}
+int Server::oper(User &user) {
+	if (user.getNick() == msg.midParams[0] && user.getPass() == msg.midParams[1])
+		replyMEss(381, user);
+	else if (msg.midParams.size() < 2)
+		errorMEss(461, user);
+	else if (user.getPass() != msg.midParams[1]) {
+		errorMEss(464, user);
 	}
 	return DISCONNECT;
 }
 
 int Server::quit(User &user){
-	if (user.getRegistred() == 3) {
-
 	if (msg.trailing.empty())
 		// std::cout <<  << std::endl;
 	exit(1);
-	}
 	return DISCONNECT;
 }
 
@@ -128,11 +131,18 @@ void Server::motd(User &user) {
 }
 
 bool Server::connection(User &user) {
+	std::cout << "msg.cmd - " << msg.cmd << std::endl;
 	if (user.getRegistred() == 3) {
 		motd(user);
 		return true;
 	}
-	else if (user.getRegistred() != 3 && (msg.cmd != "USER" || msg.cmd != "PASS" || msg.cmd != "NICK"))
+	return false;
+}
+
+bool Server::notRegistr(User &user) {
+	if (user.getRegistred() != 3 && (msg.cmd != "USER" && msg.cmd != "PASS" && msg.cmd != "NICK")) {
 		errorMEss(451, user);
+		return true;
+	}
 	return false;
 }

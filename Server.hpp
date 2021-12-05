@@ -78,10 +78,9 @@ class Server {
 		int join( User & user );
 		
 
-
-		//
-    	bool connection(User & );
-    	void motd(User & );
+		bool notRegistr(User &);
+    	bool connection(User &);
+    	void motd(User &);
 		void errorMEss(int err, User &user);
 		void replyMEss(int reply, User &user, const std::string &str = "");
 
