@@ -15,7 +15,7 @@ class User {
         std::string                 hostname;
         std::string                 servername;
         std::vector<std::string>    channels;
-        std::string                 currentChannel;
+        std::string                 activeChannel;
         std::map<std::string, bool> oper;
 
         int                         fd;

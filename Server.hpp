@@ -21,11 +21,6 @@
 
 #define BUF_SIZE 1024
 
-// Utils
-bool    contains(std::vector<std::string> vect, std::string str);
-std::vector<std::string> split(std::string str, std::string delimiter);
-//
-
 typedef struct s_msg
 {
 	std::string prefx;
@@ -76,6 +71,8 @@ class Server {
 		int whois( User & );
 		int whowas( User & );
 		int join( User & user );
+		int part( User & user );
+		int list( User & user );
 		
 
 		bool notRegistr(User &);
@@ -83,6 +80,7 @@ class Server {
     	void motd(User &);
 		void errorMEss(int err, User &user);
 		void replyMEss(int reply, User &user, const std::string &str = "");
+		void showMEss( User const & user, Channel const * channel );
 
 		Server( Server const & _ot );
 		Server operator=( Server const & _ot ); 

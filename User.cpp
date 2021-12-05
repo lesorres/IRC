@@ -1,4 +1,5 @@
 #include "User.hpp"
+#include "Utils.hpp"
 
 std::string const & User::getNick( void ) const { return(nickname); }
 std::string const & User::getUser( void ) const { return(username); }
@@ -23,13 +24,13 @@ void User::setRegistred( int const & status ) { registred = status; }
 
 void User::addChannel(std::string & name) { channels.push_back(name); }
 std::vector<std::string> User::getChannelList( void ) const { return (channels); }
-void User::setActiveChannel( std::string &name ) { currentChannel = name; }
-std::string User::getActiveChannel( void ) const { return(currentChannel); }
-void User::leaveChannel(std::string & name) {
-    std::vector<std::string>::iterator it = channels.begin();
-    while (*it != name)
-        it++;
-    channels.erase(it); 
+void User::setActiveChannel( std::string &name ) { activeChannel = name; }
+std::string User::getActiveChannel( void ) const { return(activeChannel); }
+void User::leaveChannel(std::string & name)
+{
+    if (name == activeChannel)
+        activeChannel = "";
+    eraseString(channels, name);
 }
 
 void User::checkConnection( std::string const & mess )
@@ -48,7 +49,7 @@ User::User(int serverSocket)
     realname = "";
     hostname = "";
     servername = "";
-    currentChannel = "";
+    activeChannel = "";
     registred = 0;
     breakconnect = false;
     srvFd = serverSocket;
