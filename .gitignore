@@ -1,5 +1,7 @@
 .vscode/
+bircd/
 .DS_Store
 a.out
 irc
 *.o
+Server1.hpp

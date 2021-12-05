@@ -1,4 +1,12 @@
 #include "Server.hpp"
+#include <algorithm>
+
+bool    contains(std::vector<std::string> vect, std::string str)
+{
+    if (find(vect.begin(), vect.end(), str) != vect.end())
+        return (true);
+    return (false);
+}
 
 std::vector<std::string> split(std::string str, std::string delimiter)
 {
@@ -10,7 +18,7 @@ std::vector<std::string> split(std::string str, std::string delimiter)
         res.push_back(token);
         str.erase(0, pos + delimiter.length());
     }
-    if (res.empty())
+    if (!str.empty())
         res.push_back(str);
     return (res);
 }

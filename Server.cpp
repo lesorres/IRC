@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-void Server::create()
+void Server::create( void )
 {
     struct protoent	*pe;
 
@@ -29,6 +29,15 @@ void Server::create()
     / O_NONBLOCK устанавливает  режим  неблокирования, 
     / что позволяет при ошибке вернуть чтение другим запросам 
     */
+}
+
+void Server::run( void )
+{
+    while(true)
+    {
+        connectUsers();
+        clientRequest();
+    }
 }
 
 void Server::connectUsers( void )
@@ -92,7 +101,7 @@ int  Server::readRequest( size_t const id )
         buf[rd] = 0;
         bytesRead += rd;
         text += buf;
-        if (msg.cmd.find("\n") != std::string::npos)
+        if (text.find("\n") != std::string::npos)
             break;
     }
     while (text.find("\r") != std::string::npos)      // Удаляем символ возврата карретки
@@ -100,6 +109,17 @@ int  Server::readRequest( size_t const id )
     userData[id]->checkConnection(text);
     userData[id]->messages = split(text, "\n");
     return (bytesRead);
+}
+
+void Server::execute(std::string const &com, User &user){
+    try
+    {
+        (this->*(commands.at(com)))( user );
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }
 
 void Server::executeCommand( size_t const id )
@@ -127,9 +147,7 @@ void Server::executeCommand( size_t const id )
     // }
 
 
-
-    // for (size_t j = 0; j < userFds.size(); j++)
-        execute(msg.cmd, *userData[id]); // <---- Command HERE
+    execute(msg.cmd, *userData[id]); // <---- Command HERE
 	
 	cleanMsgStruct();
 
@@ -143,17 +161,6 @@ void Server::executeCommand( size_t const id )
         executeCommand(id);
 }
 
-void Server::execute(std::string const &com, User &user){
-    try
-    {
-        (this->*(commands.at(com)))( user );
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-}
-
 void Server::initCommandMap( void )
 {
     commands.insert(std::make_pair("PASS", &Server::pass));
@@ -165,11 +172,11 @@ void Server::initCommandMap( void )
     // commands.insert(make_pair("AWAY", &Server::away));
     // commands.insert(make_pair("NOTICE", &Server::notice));
     commands.insert(std::make_pair("WHO", &Server::who));
+    commands.insert(std::make_pair("JOIN", &Server::join));
     // commands.insert(make_pair("WHOIS", &Server::whois));
     // commands.insert(make_pair("WHOWAS", &Server::whowas));
     // commands.insert(make_pair("MODE", &Server::mode));
     // commands.insert(make_pair("TOPIC", &Server::topic));
-    // commands.insert(make_pair("JOIN", &Server::join));
     // commands.insert(make_pair("INVITE", &Server::invite));
     // commands.insert(make_pair("KICK", &Server::kick));
     // commands.insert(make_pair("PART", &Server::part));

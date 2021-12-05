@@ -14,12 +14,12 @@ class Channel
         unsigned int        maxUsers;
         std::string         password;
         std::string         flags;
-        
+
         Channel();
         Channel( Channel const & _ot );
         Channel operator=( Channel const & _ot );
     public:
-        Channel(User * creater, std::string _name, std::string _pass);
+        Channel(User * creater, std::string name, std::string pass = "");
         ~Channel();
 };
 

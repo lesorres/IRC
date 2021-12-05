@@ -1,4 +1,4 @@
-#include "Server.hpp"
+  #include "Server.hpp"
 #include <sstream>
 
 int Server::parseMsg(std::string cmdStr)
@@ -28,7 +28,6 @@ int Server::parseMsg(std::string cmdStr)
 				msg.midParams.push_back(parsed);
 		}
 	}
-
 	//identifying if trailing is presented amond mid parameters
 	trailingIt = msg.midParams.begin();
 	while (trailingIt != msg.midParams.end())
