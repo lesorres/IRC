@@ -14,7 +14,7 @@ class Channel
         unsigned int        maxUsers;
         std::string         password;
         std::string         flags;
-        
+
         Channel();
         Channel( Channel const & _ot );
         Channel operator=( Channel const & _ot );

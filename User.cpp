@@ -21,6 +21,17 @@ void User::setServern( std::string const & server ) { servername = server; }
 void User::setFd( int const & _fd ) { fd = _fd; }
 void User::setRegistred( int const & status ) { registred = status; }
 
+void User::addChannel(std::string & name) { channels.push_back(name); }
+std::vector<std::string> User::getChannelList( void ) const { return (channels); }
+void User::setActiveChannel( std::string &name ) { currentChannel = name; }
+std::string User::getActiveChannel( void ) const { return(currentChannel); }
+void User::leaveChannel(std::string & name) {
+    std::vector<std::string>::iterator it = channels.begin();
+    while (*it != name)
+        it++;
+    channels.erase(it); 
+}
+
 void User::checkConnection( std::string const & mess )
 {
     if (mess.find_last_of("\n") != mess.size() - 1)
@@ -37,6 +48,7 @@ User::User(int serverSocket)
     realname = "";
     hostname = "";
     servername = "";
+    currentChannel = "";
     registred = 0;
     breakconnect = false;
     srvFd = serverSocket;

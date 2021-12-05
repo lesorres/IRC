@@ -20,7 +20,11 @@
 
 
 #define BUF_SIZE 1024
+
+// Utils
+bool    contains(std::vector<std::string> vect, std::string str);
 std::vector<std::string> split(std::string str, std::string delimiter);
+//
 
 typedef struct s_msg
 {
