@@ -1,12 +1,6 @@
 #include "Server.hpp"
 
-<<<<<<< HEAD
-#include <arpa/inet.h>
-
-void Server::create()
-=======
 void Server::create( void )
->>>>>>> 03a14f95f862825036023cdf3e77c79895e9cc47
 {
     struct protoent	*pe;
 
@@ -17,14 +11,8 @@ void Server::create( void )
         exit(EXIT_FAILURE);
     }
     address.sin_family = AF_INET;
-<<<<<<< HEAD
-    address.sin_addr.s_addr = INADDR_ANY;//inet_addr("188.225.111.224"); 
-    address.sin_port = htons(port);
-    //std::cout << htonl(inet_addr("188.225.111.224")) << "\n";
-=======
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(srvPort);
->>>>>>> 03a14f95f862825036023cdf3e77c79895e9cc47
     if (bind(srvFd, (struct sockaddr*)&address, sizeof(address)) < 0)
     {
         perror("bind failed");

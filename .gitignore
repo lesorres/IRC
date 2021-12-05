@@ -4,3 +4,4 @@ bircd/
 a.out
 irc
 *.o
+Server1.hpp
