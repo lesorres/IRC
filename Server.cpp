@@ -104,7 +104,7 @@ int  Server::readRequest( size_t const id )
 
 void Server::executeCommand( size_t const id )
 {
-    parseMsg(userData[id]->messages[0]);
+    if (!parseMsg(userData[id]->messages[0]) && notRegistr(*userData[id]) == false)
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
     // CHECK REGISTER //
@@ -129,8 +129,8 @@ void Server::executeCommand( size_t const id )
 
 
     // for (size_t j = 0; j < userFds.size(); j++)
+    // if (notRegistr(*userData[id]) == false)
         execute(msg.cmd, *userData[id]); // <---- Command HERE
-	
 	cleanMsgStruct();
 
     //////
