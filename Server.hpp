@@ -14,6 +14,8 @@
 #include "User.hpp"
 #include "Utils.hpp"
 #include "Channel.hpp"
+#include <fstream>
+#include <string>
 #include <map>
 
 #define BUF_SIZE 1024
@@ -79,8 +81,9 @@ class Server {
 
 
     	bool connection(User &);
-    	void motd();
+    	void motd(User &);
 		void errorMEss(int err, User &user);
+		void replyMEss(int reply, User &user, std::string str);
 
 		// void passw( std::string const &str, User &user) { std::cout << str << " User: " << user.getNick();}
 
