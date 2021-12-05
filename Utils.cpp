@@ -8,6 +8,30 @@ bool    contains(std::vector<std::string> vect, std::string str)
     return (false);
 }
 
+void eraseString( std::vector<std::string> & vect, std::string name )
+{
+    std::vector<std::string>::iterator it = vect.begin();
+    while (*it != name)
+    {
+        if (it == vect.end())
+            throw std::range_error("eraseName::not contains name");
+        it++;
+    }
+    vect.erase(it);
+}
+
+void eraseUser( std::vector<User*> & vect, std::string name )
+{
+    std::vector<User*>::iterator it = vect.begin();
+    while ((*it)->getNick() != name)
+    {
+        if (it == vect.end())
+            throw std::range_error("eraseName::not contains user");
+        it++;
+    }
+    vect.erase(it);
+}
+
 std::vector<std::string> split(std::string str, std::string delimiter)
 {
     size_t pos = 0;

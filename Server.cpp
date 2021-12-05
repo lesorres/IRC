@@ -111,14 +111,18 @@ int  Server::readRequest( size_t const id )
     return (bytesRead);
 }
 
-void Server::execute(std::string const &com, User &user){
+void Server::execute(std::string const &com, User &user) 
+{
     try
     {
         (this->*(commands.at(com)))( user );
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        if (user.getActiveChannel().empty())
+            send(user.getFd(), "Wrong command\n", 14, 0);
+        else
+            showMEss(user, channels.at(user.getActiveChannel()));
     }
 }
 
@@ -179,9 +183,9 @@ void Server::initCommandMap( void )
     // commands.insert(make_pair("TOPIC", &Server::topic));
     // commands.insert(make_pair("INVITE", &Server::invite));
     // commands.insert(make_pair("KICK", &Server::kick));
-    // commands.insert(make_pair("PART", &Server::part));
+    commands.insert(std::make_pair("PART", &Server::part));
     // commands.insert(make_pair("NAMES", &Server::names));
-    // commands.insert(make_pair("LIST", &Server::list));
+    commands.insert(std::make_pair("LIST", &Server::list));
     // commands.insert(make_pair("WALLOPS", &Server::wallops));
     // commands.insert(make_pair("PING", &Server::ping));
     // commands.insert(make_pair("PONG", &Server::pong));
