@@ -18,7 +18,7 @@
                 //  разместить между RPL_MOTDSTART (перед RPL_MOTD) и
                 //  RPL_ENDOFMOTD (после).
 
-void Server::replyMEss(int reply, User &user, std::string str) {
+void Server::replyMEss(int reply, User &user, const std::string &str) {
 	std::string mess;
 	switch (reply)
 	{

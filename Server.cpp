@@ -118,6 +118,16 @@ void Server::executeCommand( size_t const id )
     
     //////
 
+
+    //
+    // if ((msg.cmd != "USER" && msg.cmd != "PASS" && msg.cmd != "NICK") && userData[id]->getRegistred() != 3 ) {
+    //      cleanMsgStruct();
+	// 	    errorMEss(451, *userData[id]);
+    //      return ;
+    // }
+
+
+
     for (size_t j = 0; j < userFds.size(); j++)
         execute(msg.cmd, *userData[id]); // <---- Command HERE
 	
