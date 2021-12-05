@@ -83,7 +83,7 @@ class Server {
     	bool connection(User &);
     	void motd(User &);
 		void errorMEss(int err, User &user);
-		void replyMEss(int reply, User &user, std::string str);
+		void replyMEss(int reply, User &user, const std::string &str = "");
 
 		// void passw( std::string const &str, User &user) { std::cout << str << " User: " << user.getNick();}
 
