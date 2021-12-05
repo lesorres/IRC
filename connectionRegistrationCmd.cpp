@@ -56,7 +56,7 @@ int Server::pass(User &user) {
 }
 
 int Server::user(User &user){
-	if (msg.midParams.size() < 3 && !msg.trailing.empty() ) { //) && msg.paramN != 4) { //msg.midParams.size() < 4
+	if (msg.midParams.size() < 3 && msg.trailing.size() < 1) { //) && msg.paramN != 4) { //msg.midParams.size() < 4
 		// send(user.getFd(), errorMEss(461, user).c_str(), errorMEss(461, user).size(), 0);
 		errorMEss(461, user);
 		// std::cout << msg.cmd << " :Not enough parameters" << std::endl;
@@ -149,10 +149,27 @@ int Server::quit(User &user){
 	return 0;
 }
 
+void Server::motd(User &user) {
+	std::ifstream infile("conf/ircd.motd");
+	if (infile) {
+		std::string message;
+		replyMEss(375, user, message);
+		while (std::getline(infile, message))
+			replyMEss(372, user, message);
+		replyMEss(376, user, message);
+	}
+	else
+		errorMEss(422, user);
+}
+
 bool Server::connection(User &user){
 	if (user.getRegistred() == 3) {
-		std::cout << "success! *send MOTD*" << std::endl;
+		motd(user);
+		// std::cout << "success! *send MOTD*" << std::endl;
 		return 0;
+	}
+	else if (user.getRegistred() != 3 && (msg.cmd != "USER" || msg.cmd != "PASS" || msg.cmd != "NICK")) {
+		std::cout << "You are not registred!" << std::endl; 
 	}
 	return DISCONNECT;
 }
