@@ -33,6 +33,7 @@ typedef struct s_msg
 
 class Server {
 	private:
+		std::string serverName;
 		std::vector<struct pollfd>	userFds;
 		std::vector<User*>			userData;
 		typedef int (Server:: * PType)( User &user );

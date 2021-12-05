@@ -147,17 +147,8 @@ void Server::executeCommand( size_t const id )
     // }
 
 
-
-    // for (size_t j = 0; j < userFds.size(); j++)
-    // {
-    //     if (userFds[j].fd != userFds[id].fd)
-    //     {
-    //         send(userFds[j].fd, userData[id]->messages[0].c_str(), userData[id]->messages[0].size(), 0);
-    //     }
-    // }
-
-    
     execute(msg.cmd, *userData[id]); // <---- Command HERE
+	
 	cleanMsgStruct();
 
     //////
@@ -209,6 +200,7 @@ Server::Server( std::string const & _port, std::string const & _pass)
 {
 	msg.paramN = 0;
     initCommandMap();
+	serverName = "IRC16.11";
 
     // (this->*(command.at("PASS")))("DATA", *bob);
     try

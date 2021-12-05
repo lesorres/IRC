@@ -9,6 +9,9 @@ int Server::join( User & user )
     {
         channels.at(msg.midParams[0]);
         std::cout << "connect to channel\n";
+        std::string hello = "Welcome to";
+        hello += msg.midParams[0];
+        send(user.getFd(), hello.c_str(), hello.size(), 0);
     }
     catch (std::exception & e)
     {
