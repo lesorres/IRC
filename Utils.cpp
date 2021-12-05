@@ -14,3 +14,18 @@ std::vector<std::string> split(std::string str, std::string delimiter)
         res.push_back(str);
     return (res);
 }
+
+bool isAlphaStr(std::string str)
+{
+	std::string::iterator beginIt;
+	std::string::iterator endIt;
+
+	beginIt = str.begin();
+	endIt = str.end();
+
+	// for ( ; beginIt != endIt; ++beginIt)
+	// {
+	// 	if ()
+	// }
+	return(0);
+}

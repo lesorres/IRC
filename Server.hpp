@@ -80,7 +80,7 @@ class Server {
 		int whois( User & );
 		int whowas( User & );
 
-
+		bool notRegistr(User &);
     	bool connection(User &);
     	void motd(User &);
 		void errorMEss(int err, User &user);

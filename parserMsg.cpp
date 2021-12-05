@@ -78,6 +78,10 @@ int Server::checkMsgFormat( std::string cmdStr )
 		std::cout << "invalid format of message\n";
 		return (1);
 	}
+	// if ()
+	// {
+	// 	return (1);
+	// }
 	return (0);
 }
 
