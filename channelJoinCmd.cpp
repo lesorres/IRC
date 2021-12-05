@@ -18,14 +18,14 @@ int Server::join( User & user )
                 channels.at(channellist[i]);
                 if (contains(user.getChannelList(), channellist[i]))
                 {
-                    std::cout << user.getNick() << "alreday on " << channellist[i] << "\n";
+                    std::cout << user.getNick() << " alreday on " << channellist[i] << "\n";
                     if (i == 0 && user.getActiveChannel() != channellist[i])
                         user.setActiveChannel(channellist[i]);
                 }
                 else
                 {
                     user.addChannel(channellist[i]);
-                    std::cout << user.getNick() << "connect to channel " << channellist[i] << "\n";
+                    std::cout << user.getNick() << " connect to channel " << channellist[i] << "\n";
                     if (i == 0 && user.getActiveChannel() != channellist[i])
                         user.setActiveChannel(channellist[i]);
                 }
@@ -39,7 +39,7 @@ int Server::join( User & user )
                 user.addChannel(channellist[i]);
                 if (user.getActiveChannel() != channellist[i])
                     user.setActiveChannel(channellist[i]);
-                std::cout << user.getNick() << "created new channel " << channellist[i] << "\n";
+                std::cout << user.getNick() << " created new channel " << channellist[i] << "\n";
             }
         }
     }
