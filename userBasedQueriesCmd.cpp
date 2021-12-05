@@ -1,13 +1,13 @@
-#include "Command.hpp"
+#include "Server.hpp"
 
-void Command::who( User &, std::vector<User*>& userData ) {
+int Server::who( User & ) {
 	
-	// if (this->msg.midParams.size() > 2)
-	// {
-	// 	std::cout << 
-	// 	return()
-	// }
-	// // if 
+	if (this->msg.midParams.size() > 2)
+	{
+		// std::cout << ;
+		return 0;
+	}
+	// if 
 	// пример команды и возвращаемого значения:
 
 	// WHO *
@@ -24,12 +24,13 @@ void Command::who( User &, std::vector<User*>& userData ) {
 
 	// WHO 1 2 3 4
 	// :IRCat 315 nik nik :End of /WHO list
+	return 1;
 }
 
-void Command::whois( User &, std::vector<User*>& userData ) {
-	
+int Server::whois( User & ) {
+	return 0;	
 }
 
-void Command::whowas( User &, std::vector<User*>& userData ) {
-	
+int Server::whowas( User & ) {
+	return 0;
 }

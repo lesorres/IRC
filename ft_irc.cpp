@@ -11,12 +11,7 @@ int     main(int argc, char **argv)
     Server server(argv[1], argv[2]);
 
     server.create();
-
-    while(true)
-    {
-        server.connectUsers();
-        server.clientRequest();
-    }
+    server.run();
 
     return (0);
 }
