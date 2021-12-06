@@ -20,22 +20,25 @@
 
 void Server::replyMEss(int reply, User &user, const std::string &str) {
 	std::string mess;
+	std::stringstream ss;
+	ss << reply;
+	mess = ":" + serverName + " " + ss.str() + " " + user.getNick() + " ";
 	switch (reply)
 	{
 	case  311:
-		mess = user.getNick() + " " + user.getUser() + " " + user.getHostn() + " " + user.getRealn() + "\n";
+		mess += user.getNick() + " " + user.getUser() + " " + user.getHostn() + " " + user.getRealn() + "\n";
 		break ;
 	case 312:
-		mess = user.getNick() + " " + user.getServern() + ":";
+		mess += user.getNick() + " " + user.getServern() + ":";
 		break ;
 	case 313:
-		mess = user.getNick() + " " + RPL_WHOISOPERATOR;
+		mess += user.getNick() + " " + RPL_WHOISOPERATOR;
 		break ;
 	case 317:
-		mess = user.getNick() + RPL_WHOISIDLE;
+		mess += user.getNick() + RPL_WHOISIDLE;
 		break ;
 	case 318:
-		mess = user.getNick() + RPL_ENDOFWHOIS;
+		mess += user.getNick() + RPL_ENDOFWHOIS;
 		break ;
 	case 321:
 		mess = RPL_LISTSTART;
@@ -44,19 +47,19 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess = RPL_LIST;
 		break ;
 	case 352:	//нужно добавить канал вместо звездочки
-		mess = str;
+		mess += str;
 		break ;
 	case 375:
-		mess = str + "\n";
+		mess += str + "\n";
 		break ;
 	case 372:
-		mess = str + "\n";
+		mess += str + "\n";
 		break ;
 	case 376:
-		mess = RPL_ENDOFMOTD;
+		mess += RPL_ENDOFMOTD;
 		break ;
 	case 381:
-		mess = RPL_YOUREOPER;
+		mess += RPL_YOUREOPER;
 		break;
 	
 	}

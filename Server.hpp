@@ -15,6 +15,7 @@
 #include "Utils.hpp"
 #include "Channel.hpp"
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <map>
 

@@ -56,11 +56,15 @@ int Server::user(User &user){
 		std::cout << user.getHostn() << std::endl << std::endl;
 		user.setServern(msg.midParams[2]);
 		std::cout << user.getServern() << std::endl << std::endl;
-		if (msg.trailing.empty())
+		if (msg.trailing.empty()){
+
 			user.setRealn(msg.midParams[3]);
-		else
+			std::cout << "if trailing empty " << user.getRealn() << std::endl << std::endl;
+		}
+		else {
 			user.setRealn(msg.trailing);
-		std::cout << user.getRealn() << std::endl << std::endl;
+			std::cout << "if trailing isn't empty "  << user.getRealn() << std::endl << std::endl;
+		}
 		user.setRegistred(user.getRegistred() + 1);
 		return connection(user);
 	}
@@ -78,7 +82,6 @@ int Server::nick(User &user) {
 		if (user.getNick().empty() == true ) {
 			user.setNick(msg.midParams[0]);
 			user.setRegistred(user.getRegistred() + 1);
-			std::cout << "first reg - " << user.getNick() << std::endl;
 			return connection(user);
 		}
 		else {
