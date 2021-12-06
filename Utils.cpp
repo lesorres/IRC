@@ -55,9 +55,26 @@ bool isAlphaStr(std::string str)
 	beginIt = str.begin();
 	endIt = str.end();
 
-	// for ( ; beginIt != endIt; ++beginIt)
-	// {
-	// 	if ()
-	// }
+	for ( ; beginIt != endIt; ++beginIt)
+	{
+		if (!std::isalpha(*beginIt))
+			return (1);
+	}
+	return(0);
+}
+
+bool isDigitStr(std::string str)
+{
+	std::string::iterator beginIt;
+	std::string::iterator endIt;
+
+	beginIt = str.begin();
+	endIt = str.end();
+
+	for ( ; beginIt != endIt; ++beginIt)
+	{
+		if (!std::isdigit(*beginIt))
+			return (1);
+	}
 	return(0);
 }
