@@ -120,7 +120,7 @@ void Server::execute(std::string const &com, User &user)
     catch(const std::exception& e)
     {
         if (user.getActiveChannel().empty())
-            send(user.getFd(), "Wrong command\n", 14, 0);
+            send(user.getFd(), "Can't execute::Wrong command\n", 29, 0);
         else
             showMEss(user, channels.at(user.getActiveChannel()));
     }

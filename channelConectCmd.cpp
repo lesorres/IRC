@@ -62,6 +62,7 @@ int Server::part( User & user )
                 Channel * current = channels.at(channellist[i]);
                 user.leaveChannel(channellist[i]);
                 current->disconnectUser(user);
+                std::cout << user.getNick() << " leave channel " << channellist[i] << "\n";
                 if (current->getUserList().empty())
                 {
                     channels.erase(channellist[i]);

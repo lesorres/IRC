@@ -10,7 +10,6 @@ void Channel::addUser( User * user )
 void Channel::disconnectUser( User const & user )
 {
     eraseUser(users, user.getNick());
-    eraseUser(operators, user.getNick());
     countUsers--;
 }
 
