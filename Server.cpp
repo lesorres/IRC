@@ -128,7 +128,7 @@ void Server::execute(std::string const &com, User &user)
 
 void Server::executeCommand( size_t const id )
 {
-    if (!parseMsg(userData[id]->messages[0]) && notRegistr(*userData[id]) == false)
+    if (!parseMsg(id) && notRegistr(*userData[id]) == false)
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
     // CHECK REGISTER //
