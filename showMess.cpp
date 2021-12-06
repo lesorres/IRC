@@ -10,7 +10,8 @@ void Server::showMEss( User const & from, Channel const * channel )
     std::vector<User *> users = channel->getUserList();
     for(unsigned int i = 0; i < users.size(); i++)
     {
-        if (users[i]->getNick() != users[i]->getNick())
-            send(users[i]->getFd(), mess.c_str(), mess.size(), 0);
+        if (users[i]->getActiveChannel() == channel->getName())
+            if (from.getNick() != users[i]->getNick())
+                send(users[i]->getFd(), mess.c_str(), mess.size(), 0);
     }
 }
