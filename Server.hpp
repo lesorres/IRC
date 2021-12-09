@@ -14,10 +14,12 @@
 #include "User.hpp"
 #include "Utils.hpp"
 #include "Channel.hpp"
+#include <fstream>
+#include <string>
 #include <map>
 
+
 #define BUF_SIZE 1024
-std::vector<std::string> split(std::string str, std::string delimiter);
 
 typedef struct s_msg
 {
@@ -30,10 +32,12 @@ typedef struct s_msg
 
 class Server {
 	private:
+		std::string serverName;
 		std::vector<struct pollfd>	userFds;
 		std::vector<User*>			userData;
 		typedef int (Server:: * PType)( User &user );
-    	std::map<std::string, PType>commands;
+    	std::map<std::string, PType>	commands;
+		std::map<std::string, Channel *> channels;
 		t_msg 						msg;
 
 		int					srvFd;
@@ -47,14 +51,17 @@ class Server {
 		void 		disconnectClient( size_t const id );
 		int  		readRequest( size_t const id );
 		void 		executeCommand( size_t const id );
-		void		initCommandMap( void );
-		std::string checkMsgFormat( std::string cmdStr );
-		std::string getRidOfCmdName( std::string cmdStr );
 
+		// parser
+		void		initCommandMap( void );
+		int			checkMsgFormat( std::string cmdStr );
+		std::string getRidOfCmdName( std::string cmdStr );
+		void		processWildcard();
+		void		cleanMsgStruct();
 
 		// commands
     	void execute(std::string const &, User &);
-		std::string parseMsg( std::string cmdStr );
+		int parseMsg( std::string cmdStr );
     	int pass(User & );
     	int nick(User & );
     	int user(User & );
@@ -63,11 +70,18 @@ class Server {
 		int who( User & );
 		int whois( User & );
 		int whowas( User & );
-		void cleanMsgStruct();
+		int join( User & user );
+		int part( User & user );
+		int list( User & user );
+		int names( User & user );
+		
 
+		bool notRegistr(User &);
     	bool connection(User &);
-    	void motd();
+    	void motd(User &);
 		void errorMEss(int err, User &user);
+		void replyMEss(int reply, User &user, const std::string &str = "");
+		void showMEss( User const & user, Channel const * channel );
 
 		Server( Server const & );
 		Server operator=( Server const & ); 
@@ -79,8 +93,6 @@ class Server {
 
 		void create( void );
 		void run( void );
-
-		// void passw( std::string const &str, User &user) { std::cout << str << " User: " << user.getNick();}
 
 };
 

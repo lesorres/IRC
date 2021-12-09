@@ -1,4 +1,4 @@
-NAME =  irc
+NAME =  ircserv
 
 SRC = $(wildcard *.cpp)
 
@@ -10,7 +10,7 @@ OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
 $(NAME): $(OBJ) $(HEADER) 
-	@clang++ $(OBJ) $(FLAGS) -o $(NAME)
+	@clang++ $(OBJ) $(FLAGS) -o $(NAME) -g
 %.o:%.cpp $(HEADER)
 	@clang++ $(FLAGS) -c $< -o $(<:.cpp=.o) -g
 clean: 
@@ -25,7 +25,10 @@ run:
 rerun: re 
 	@./$(NAME)
 
-ip:
+ip: #macOS
 	@ipconfig getifaddr en0
+
+iplx: #linux
+	@hostname -I
 
 .PHONY: clean fclean re run rerun

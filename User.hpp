@@ -15,6 +15,7 @@ class User {
         std::string                 hostname;
         std::string                 servername;
         std::vector<std::string>    channels;
+        std::string                 activeChannel;
         std::map<std::string, bool> oper;
 
         int                         fd;
@@ -51,6 +52,13 @@ class User {
         void setRegistred( int const & registred );
 
         void checkConnection( std::string const & mess );
+
+        // channels
+        void addChannel( std::string & name );
+        void leaveChannel( std::string & name );
+        void setActiveChannel( std::string &name );
+        std::string getActiveChannel( void ) const;
+        std::vector<std::string> getChannelList( void ) const;
 
         User(int serverSocket);
         ~User();

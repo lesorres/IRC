@@ -101,7 +101,7 @@ int  Server::readRequest( size_t const id )
         buf[rd] = 0;
         bytesRead += rd;
         text += buf;
-        if (msg.cmd.find("\n") != std::string::npos)
+        if (text.find("\n") != std::string::npos)
             break;
     }
     while (text.find("\r") != std::string::npos)      // Удаляем символ возврата карретки
@@ -111,20 +111,27 @@ int  Server::readRequest( size_t const id )
     return (bytesRead);
 }
 
-void Server::execute(std::string const &com, User &user){
+void Server::execute(std::string const &com, User &user) 
+{
     try
     {
         (this->*(commands.at(com)))( user );
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        if (user.getActiveChannel().empty())
+            errorMEss(0, user);
+        else
+            showMEss(user, channels.at(user.getActiveChannel()));
     }
 }
 
 void Server::executeCommand( size_t const id )
 {
-    parseMsg(userData[id]->messages[0]);
+    //if (!parseMsg(userData[id]->messages[0]) && notRegistr(*userData[id]) == false) // autorization
+    parseMsg(userData[id]->messages[0]) && notRegistr(*userData[id]) == false; // not autorize
+
+
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
     // CHECK REGISTER //
@@ -137,6 +144,15 @@ void Server::executeCommand( size_t const id )
     // }
     
     //////
+
+
+    //
+    // if ((msg.cmd != "USER" && msg.cmd != "PASS" && msg.cmd != "NICK") && userData[id]->getRegistred() != 3 ) {
+    //      cleanMsgStruct();
+	// 	    errorMEss(451, *userData[id]);
+    //      return ;
+    // }
+
 
     execute(msg.cmd, *userData[id]); // <---- Command HERE
 	
@@ -159,38 +175,39 @@ void Server::initCommandMap( void )
     commands.insert(std::make_pair("USER", &Server::user));
     commands.insert(std::make_pair("OPER", &Server::oper));
     commands.insert(std::make_pair("QUIT", &Server::quit));
-    // commands.insert(make_pair("PRIVMSG", &Server::privmsg);
-    // commands.insert(make_pair("AWAY", &Server::away);
-    // commands.insert(make_pair("NOTICE", &Server::notice);
-    // commands.insert(make_pair("WHO", &Server::who);
-    // commands.insert(make_pair("WHOIS", &Server::whois);
-    // commands.insert(make_pair("WHOWAS", &Server::whowas);
-    // commands.insert(make_pair("MODE", &Server::mode);
-    // commands.insert(make_pair("TOPIC", &Server::topic);
-    // commands.insert(make_pair("JOIN", &Server::join);
-    // commands.insert(make_pair("INVITE", &Server::invite);
-    // commands.insert(make_pair("KICK", &Server::kick);
-    // commands.insert(make_pair("PART", &Server::part);
-    // commands.insert(make_pair("NAMES", &Server::names);
-    // commands.insert(make_pair("LIST", &Server::list);
-    // commands.insert(make_pair("WALLOPS", &Server::wallops);
-    // commands.insert(make_pair("PING", &Server::ping);
-    // commands.insert(make_pair("PONG", &Server::pong);
-    // commands.insert(make_pair("ISON", &Server::ison);
-    // commands.insert(make_pair("USERHOST", &Server::userhost);
-    // commands.insert(make_pair("VERSION", &Server::version);
-    // commands.insert(make_pair("INFO", &Server::info);
-    // commands.insert(make_pair("ADMIN", &Server::admin);
-    // commands.insert(make_pair("TIME", &Server::time);
-    // commands.insert(make_pair("REHASH", &Server::rehash);
-    // commands.insert(make_pair("RESTART", &Server::restart);
-    // commands.insert(make_pair("KILL", &Server::kill);
+    // commands.insert(make_pair("PRIVMSG", &Server::privmsg));
+    // commands.insert(make_pair("AWAY", &Server::away));
+    // commands.insert(make_pair("NOTICE", &Server::notice));
+    commands.insert(std::make_pair("WHO", &Server::who));
+    commands.insert(std::make_pair("JOIN", &Server::join));
+    // commands.insert(make_pair("WHOIS", &Server::whois));
+    // commands.insert(make_pair("WHOWAS", &Server::whowas));
+    // commands.insert(make_pair("MODE", &Server::mode));
+    // commands.insert(make_pair("TOPIC", &Server::topic));
+    // commands.insert(make_pair("INVITE", &Server::invite));
+    // commands.insert(make_pair("KICK", &Server::kick));
+    commands.insert(std::make_pair("PART", &Server::part));
+    commands.insert(std::make_pair("NAMES", &Server::names));
+    commands.insert(std::make_pair("LIST", &Server::list));
+    // commands.insert(make_pair("WALLOPS", &Server::wallops));
+    // commands.insert(make_pair("PING", &Server::ping));
+    // commands.insert(make_pair("PONG", &Server::pong));
+    // commands.insert(make_pair("ISON", &Server::ison));
+    // commands.insert(make_pair("USERHOST", &Server::userhost));
+    // commands.insert(make_pair("VERSION", &Server::version));
+    // commands.insert(make_pair("INFO", &Server::info));
+    // commands.insert(make_pair("ADMIN", &Server::admin));
+    // commands.insert(make_pair("TIME", &Server::time));
+    // commands.insert(make_pair("REHASH", &Server::rehash));
+    // commands.insert(make_pair("RESTART", &Server::restart));
+    // commands.insert(make_pair("KILL", &Server::kill));
 }
 
 Server::Server( std::string const & _port, std::string const & _pass)
 {
 	msg.paramN = 0;
     initCommandMap();
+	serverName = "IRC16.11";
 
     // (this->*(command.at("PASS")))("DATA", *bob);
     try

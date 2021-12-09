@@ -5,21 +5,30 @@
 #include "User.hpp"
 #include <vector>
 
+class User;
+
 class Channel
 {
     private:
         std::string         name;
         std::vector<User*>  users;
         std::vector<User*>  operators;
-        unsigned int        maxUsers;
+        unsigned int        countUsers;
         std::string         password;
         std::string         flags;
-        
+
         Channel();
         Channel( Channel const & _ot );
         Channel operator=( Channel const & _ot );
     public:
-        Channel(User * creater, std::string _name, std::string _pass);
+
+        std::string getName( void ) const;
+        void addUser( User * user );
+        void disconnectUser( User const & user);
+        std::vector<User*> const & getUserList( void ) const;
+        unsigned int getCountUsers( void );
+
+        Channel(User * creater, std::string name, std::string pass = "");
         ~Channel();
 };
 

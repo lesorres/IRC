@@ -1,10 +1,28 @@
 #include "Channel.hpp"
+#include "Utils.hpp"
 
-Channel::~Channel() {}
-Channel::Channel(User * creater, std::string _name, std::string _pass)
+void Channel::addUser( User * user )
 {
-    name = _name;
-    password = _pass;
+    users.push_back(user);
+    countUsers++;
+}
+
+void Channel::disconnectUser( User const & user )
+{
+    eraseUser(users, user.getNick());
+    countUsers--;
+}
+
+std::vector<User*> const & Channel::getUserList( void ) const { return (users); }
+std::string Channel::getName( void ) const { return (name); }
+unsigned int Channel::getCountUsers( void ) { return(countUsers); }
+Channel::Channel(User * creater, std::string channelname, std::string pass)
+{
+    name = channelname;
+    password = pass;
     users.push_back(creater);
     operators.push_back(creater);
-}
+    countUsers = 1;
+} 
+
+Channel::~Channel() {}
