@@ -24,10 +24,10 @@ class User {
         bool                        breakconnect;
 
         User();
-        User( User const & _ot );
-        User operator=( User const & _ot );
+        User operator=( User const & src );
     
     public:
+        User( User const & src );
         std::vector<std::string>    messages;
 
         std::string const & getNick( void ) const;

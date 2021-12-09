@@ -29,9 +29,6 @@ int Server::parseMsg(size_t id)
 				msg.midParams.push_back(parsed);
 		}
 	}
-	std::cout << "before trailing check:\n";
-	printStuct();
-	std::cout << "\n";
 
 	//identifying if trailing is presented amond mid parameters
 	trailingIt = msg.midParams.begin();
@@ -64,9 +61,9 @@ int Server::parseMsg(size_t id)
 
 	msg.paramN = msg.midParams.size() + !msg.trailing.empty();
 
-	std::cout << "parsed structure:\n";
-	printStuct();
-	std::cout << "\n";
+	// std::cout << "parsed structure:\n";
+	// printStuct();
+	// std::cout << "\n";
 
 	//check tokents validity
 	if (checkMsgFormat(cmdStr, id))

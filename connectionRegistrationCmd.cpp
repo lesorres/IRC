@@ -111,8 +111,15 @@ int Server::nick(User &user) {
 			else if (user.getNick().empty() == false ) {
 				// записать предыдущий ник если пришел новый для замены: Для умеренной истории, серверу следует хранить предыдущие никнеймы для
 				//   каждого известного ему клиента, если они все решатся их изменить. 
-				history.push_back(&user);
+				std::cout << "here1\n";
+				history.push_back(new User(user));
+				std::cout << "here2\n";
 				user.setNick(msg.midParams[0]);
+				std::cout << "userData:\n";
+				printUserVector(userData);
+				std::cout << "history :\n";
+				printUserVector(history);
+				std::cout << "\n";
 			}
 		}
 	}

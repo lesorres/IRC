@@ -86,6 +86,8 @@ class Server {
 		void		replyMEss(int reply, User &user, const std::string &str = "");
 		void		showMEss( User const & user, Channel const * channel );
 
+		void		printUserVector(std::vector<User*> users);
+
 		Server( Server const & _ot );
 		Server operator=( Server const & _ot ); 
 

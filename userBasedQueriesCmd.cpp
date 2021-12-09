@@ -19,20 +19,27 @@ int Server::who( User & user)
 	{
 		while (userIt != endIt)
 		{
-			message = "* " + (*userIt)->getRealn() + " " + (*userIt)->getHostn() + " " \
-			+ (*userIt)->getServern() + " " + (*userIt)->getNick() + "\n";
-			replyMEss(352, user, message);
-			// send((*userIt)->getFd(), message.c_str(), message.size(), 0);
+			if (!(*userIt)->empty())
+			{
+				message = "* " + (*userIt)->getUser() + " " + (*userIt)->getHostn() + " " \
+				+ (*userIt)->getServern() + " " + (*userIt)->getNick() + "\n";
+				replyMEss(352, user, message);
+			}
 			userIt++;
 		}
 		std::cout << msg.midParams[0] << " :End of /WHO list\n";
-	} 
+	}
 
 	else if (msg.midParams.size() == 2) //имеет смысл объединить с верхним условием
 	{
 		while (userIt != endIt)
 		{
-			replyMEss(352, **userIt, "");
+			if (!(*userIt)->empty()) //добавить условие на оператора
+			{
+				message = "* " + (*userIt)->getUser() + " " + (*userIt)->getHostn() + " " \
+				+ (*userIt)->getServern() + " " + (*userIt)->getNick() + "\n";
+				replyMEss(352, user, message);
+			}
 			userIt++;
 		}
 		if (msg.midParams[2] != "o")
@@ -104,6 +111,18 @@ int Server::whois( User & )
 {
 	return 0;	
 }
+
+// ERR_NOSUCHSERVER
+// ERR_NONICKNAMEGIVEN
+// RPL_WHOISUSER
+// RPL_WHOISCHANNELS
+// RPL_WHOISCHANNELS
+// RPL_WHOISSERVER
+// RPL_AWAY
+// RPL_WHOISOPERATOR
+// RPL_WHOISIDLE
+// ERR_NOSUCHNICK
+// RPL_ENDOFWHOIS
 
 int Server::whowas( User & )
 {

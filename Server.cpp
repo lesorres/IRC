@@ -215,6 +215,21 @@ void Server::killUser(User & user ){
     }
 }
 
+void	Server::printUserVector(std::vector<User*> users)
+{
+	std::vector<User *>::iterator itBegin = users.begin();
+	std::vector<User *>::iterator itEnd = users.end();
+
+	while (itBegin != itEnd)
+	{
+		std::cout << "nick :" << (*itBegin)->getNick() << "\n";
+		std::cout << "user :" << (*itBegin)->getUser() << "\n";
+		std::cout << "user :" << (*itBegin)->getHostn() << "\n";
+		std::cout << "user :" << (*itBegin)->getRealn() << "\n";
+		itBegin++;
+	}
+}
+
 Server::Server( std::string const & _port, std::string const & _pass)
 {
 	msg.paramN = 0;
