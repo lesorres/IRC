@@ -14,9 +14,9 @@ class User {
         std::string                 realname;
         std::string                 hostname;
         std::string                 servername;
+        std::string                 quitMess;
         std::vector<std::string>    channels;
         std::string                 activeChannel;
-        std::map<std::string, bool> oper;
 
         int                         fd;
         int                         srvFd;
@@ -37,6 +37,7 @@ class User {
         std::string const & getRealn( void ) const;
         std::string const & getHostn( void ) const;
         std::string const & getServern( void ) const;
+        std::string const & getQuitMess( void ) const;
         int const & getFd( void ) const;
         int const & getRegistred( void ) const;
         bool const & getBreakconnect( void ) const;
@@ -45,13 +46,15 @@ class User {
         void setUser( std::string const & name );
         void setPass( std::string const & pass );
 
-        void setRealn( std::string const & pass );
-        void setHostn( std::string const & pass );
-        void setServern( std::string const & pass );
+        void setRealn( std::string const & relaname );
+        void setHostn( std::string const & host );
+        void setServern( std::string const & server );
+        void setQuitMess( std::string const & mess );
         void setFd( int const & fd );
         void setRegistred( int const & registred );
 
         void checkConnection( std::string const & mess );
+        bool empty();
 
         // channels
         void addChannel( std::string & name );

@@ -41,6 +41,22 @@ void User::checkConnection( std::string const & mess )
         breakconnect = false;
 }
 
+bool User::empty()
+{
+    int i;
+    i = username.empty() \
+    + nickname.empty() \
+    + password.empty() \
+    + realname.empty() \
+    + hostname.empty() \
+    + servername.empty() \
+    + channels.empty() \
+    + activeChannel.empty();
+    if (i == 8)
+        return (1);
+    return (0);
+}
+
 User::User(int serverSocket)
 {
     username = "";
