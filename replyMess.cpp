@@ -8,8 +8,8 @@
 #define RPL_ENDOFWHOIS " :End of /WHOIS list\n"					//318
 #define RPL_LISTSTART "Channel :Users  Name\n"					//321
 #define RPL_LIST "<channel> <# visible> :<topic>"				//322
-#define RPL_MOTD ":- <text>\n"									//372
-#define RPL_MOTDSTART ":- <server> Message of the day - \n"		//375
+#define RPL_MOTD ":- "											//372
+#define RPL_MOTDSTART " Message of the day - \n"				//375
 #define RPL_ENDOFMOTD ":End of /MOTD command\n"					//376
 #define IRC_NOSIGNAL SO_NOSIGPIPE
 
@@ -51,10 +51,10 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += str;
 		break ;
 	case 375:
-		mess += str + "\n";
+		mess += ":- " + serverName + RPL_MOTDSTART;
 		break ;
 	case 372:
-		mess += str + "\n";
+		mess += RPL_MOTD + str + "\n";
 		break ;
 	case 376:
 		mess += RPL_ENDOFMOTD;

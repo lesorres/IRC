@@ -37,28 +37,29 @@
 bool Server::validNick(User &user) {
 	std::string str = msg.midParams[0];
 	std::string::iterator it = str.begin();
-	if (!std::isalpha(*it)){
-		std::cout << "if first symbol is not a alpha" << std::endl;
+	if (!std::isalpha(*it))
 		return false;
-	}
 	for ( ; it != str.end(); ++it)	{
 		if (!std::isalnum(*it) && *it != '-' && (*it != '[' \
 			&& *it != ']' && *it != '\\' && *it !=  '`' \
 			&& *it != '^' && *it != '{' && *it !=  '}')) {
-
-			std::cout << "if *it invalid and reteurn false " << std::endl;
-			return false;
+				return false;
 			}
 	}
 	return true;
 }
 
 int Server::pass(User &user) {
-	if (msg.midParams.size() == 1) {
+	if (msg.midParams.size() == 1 || !msg.trailing.empty()) {
 		if (user.getRegistred() == 3)
 			errorMEss(462, user);
 		else if (user.getPass().empty() == true) {
-			user.setPass(msg.midParams[0]);
+			if (msg.trailing.empty())
+				user.setPass(msg.midParams[0]);
+			else
+				user.setPass(msg.trailing);
+			if (user.getPass() != srvPass)
+				killUser(user);
 			user.setRegistred(user.getRegistred() + 1);
 			return connection(user);
 		}

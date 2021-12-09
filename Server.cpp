@@ -207,7 +207,7 @@ void Server::killUser(User & user ){
         channels[temp[i]]->disconnectUser(user);
     eraseUser(userData, user.getNick());
     std::vector<struct pollfd>::iterator it = userFds.begin();
-    for (it; it != userFds.end(); ++it) {
+    for ( ; it != userFds.end(); ++it) {
         if (user.getFd() == (*it).fd) {
             userFds.erase(it);
             break ;
