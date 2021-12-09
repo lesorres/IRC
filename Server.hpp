@@ -37,6 +37,7 @@ class Server {
 		std::string serverName;
 		std::vector<struct pollfd>	userFds;
 		std::vector<User*>			userData;
+		std::vector<User*>			history;
 		typedef int (Server:: * PType)( User &user );
     	std::map<std::string, PType>	commands;
 		std::map<std::string, Channel *> channels;
