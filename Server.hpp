@@ -51,16 +51,6 @@ class Server {
 		std::string checkMsgFormat( std::string cmdStr );
 		std::string getRidOfCmdName( std::string cmdStr );
 
-		Server( Server const & _ot );
-		Server operator=( Server const & _ot ); 
-
-	public:
-
-		Server( std::string const & _port, std::string const & _pass);
-		~Server();
-
-		void create( void );
-		void run( void );
 
 		// commands
     	void execute(std::string const &, User &);
@@ -78,6 +68,17 @@ class Server {
     	bool connection(User &);
     	void motd();
 		void errorMEss(int err, User &user);
+
+		Server( Server const & );
+		Server operator=( Server const & ); 
+
+	public:
+
+		Server( std::string const & port, std::string const & pass);
+		~Server();
+
+		void create( void );
+		void run( void );
 
 		// void passw( std::string const &str, User &user) { std::cout << str << " User: " << user.getNick();}
 
