@@ -8,6 +8,7 @@ std::string const & User::getPass( void ) const { return(password); }
 std::string const & User::getRealn( void ) const { return(realname); }
 std::string const & User::getHostn( void ) const { return(hostname); }
 std::string const & User::getServern( void ) const { return(servername); }
+std::string const & User::getQuitMess( void ) const { return(quitMess); }
 int const & User::getFd( void ) const { return(fd); }
 int const & User::getRegistred( void ) const { return(registred); }
 bool const & User::getBreakconnect( void ) const { return(breakconnect); }
@@ -19,6 +20,7 @@ void User::setPass( std::string const & pass ) { password = pass; }
 void User::setRealn( std::string const & real ) { realname = real; }
 void User::setHostn( std::string const & host ) { hostname = host; }
 void User::setServern( std::string const & server ) { servername = server; }
+void User::setQuitMess( std::string const & mess ) { quitMess = mess; }
 void User::setFd( int const & _fd ) { fd = _fd; }
 void User::setRegistred( int const & status ) { registred = status; }
 
@@ -56,6 +58,7 @@ bool User::empty()
         return (1);
     return (0);
 }
+
 
 User::User(int serverSocket)
 {

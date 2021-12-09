@@ -33,7 +33,6 @@
 #define DISCONNECT		1				// если количество параметров, необходимых для регистрации пользователя
 										// не соответствует требуемому (!= 3), пользователь не должен подключаться
 
-
 bool Server::validNick(User &user) {
 	std::string str = msg.midParams[0];
 	std::string::iterator it = str.begin();
@@ -78,19 +77,12 @@ int Server::user(User &user){
 	else if (user.getUser().empty() && user.getHostn().empty() && \
 			user.getServern().empty() && user.getRealn().empty()) {
 		user.setUser(msg.midParams[0]);
-		// std::cout << user.getUser() << std::endl << std::endl;
 		user.setHostn(msg.midParams[1]);
-		// std::cout << user.getHostn() << std::endl << std::endl;
 		user.setServern(msg.midParams[2]);
-		// std::cout << user.getServern() << std::endl << std::endl;
-		if (msg.trailing.empty()) {
+		if (msg.trailing.empty())
 			user.setRealn(msg.midParams[3]);
-			// std::cout << "if trailing empty " << user.getRealn() << std::endl << std::endl;
-		}
-		else {
+		else
 			user.setRealn(msg.trailing);
-			// std::cout << "if trailing isn't empty "  << user.getRealn() << std::endl << std::endl;
-		}
 		user.setRegistred(user.getRegistred() + 1);
 		return connection(user);
 	}
@@ -119,6 +111,7 @@ int Server::nick(User &user) {
 			else if (user.getNick().empty() == false ) {
 				// записать предыдущий ник если пришел новый для замены: Для умеренной истории, серверу следует хранить предыдущие никнеймы для
 				//   каждого известного ему клиента, если они все решатся их изменить. 
+				history.push_back(&user);
 				user.setNick(msg.midParams[0]);
 			}
 		}
@@ -142,8 +135,9 @@ int Server::oper(User &user) {
 }
 
 int Server::quit(User &user){
-	if (msg.trailing.empty())
-		// std::cout <<  << std::endl;
+	history.push_back(&user);
+	if (!msg.trailing.empty())
+		(*history.end())->setQuitMess(msg.trailing);
 	killUser(user);
 	return DISCONNECT;
 }
