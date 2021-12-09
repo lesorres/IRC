@@ -1,9 +1,10 @@
   #include "Server.hpp"
 #include <sstream>
 
-int Server::parseMsg(std::string cmdStr)
+int Server::parseMsg(size_t id)
 {
-	std::string parsed;
+	std::string cmdStr = userData[id]->messages[0];
+	std::string parsed;	//plase where we put each token after separating this exact token from string
 	std::stringstream input(cmdStr);
 	std::vector<std::string>::iterator trailingIt;
 	std::vector<std::string>::iterator cutIt;
@@ -20,7 +21,7 @@ int Server::parseMsg(std::string cmdStr)
 	{
 		if (!parsed.empty())
 		{
-			if (msg.prefx.empty() && parsed[0] == ':')
+			if (msg.prefx.empty() && parsed[0] == ':' && cmdStr[0] == ':')
 				msg.prefx = parsed;
 			else if (msg.cmd.empty())
 				msg.cmd = parsed;
@@ -28,6 +29,10 @@ int Server::parseMsg(std::string cmdStr)
 				msg.midParams.push_back(parsed);
 		}
 	}
+	//std::cout << "before trailing check:\n";
+	printStuct();
+	std::cout << "\n";
+
 	//identifying if trailing is presented amond mid parameters
 	trailingIt = msg.midParams.begin();
 	while (trailingIt != msg.midParams.end())
@@ -47,9 +52,11 @@ int Server::parseMsg(std::string cmdStr)
 		trailingIt++;
 	}
 
-	//removing one spase at the begining of trailing
+	//removing one spase and ":" symbol at the begining of trailing
 	if (!msg.trailing.empty())
-		msg.trailing.erase(msg.trailing.begin());
+	{
+		msg.trailing.erase(msg.trailing.begin(), msg.trailing.begin() + 2);
+	}
 
 	// removing trailing part from mid params array
 	if (!msg.midParams.empty())
@@ -57,30 +64,42 @@ int Server::parseMsg(std::string cmdStr)
 
 	msg.paramN = msg.midParams.size() + !msg.trailing.empty();
 
+	//std::cout << "parsed structure:\n";
+	printStuct();
+	//std::cout << "\n";
+
 	//check tokents validity
-	if (checkMsgFormat(cmdStr))
+	if (checkMsgFormat(cmdStr, id))
 		return(1);
 
 	return (0);
 }
 
-int Server::checkMsgFormat( std::string cmdStr )
+int Server::checkMsgFormat( std::string cmdStr , size_t id)
 {
+	std::string message;
+	//rfc1459 2.3 "the command, and the command parameters (of which there may be up to 15)"
 	if ((msg.midParams.size() > 14 && !msg.trailing.empty()) || \
 	(msg.midParams.size() > 15 && msg.trailing.empty()))
 	{
-		std::cout << "number of parameters (including trailing) exceeded allowed value of 15\n";
+		message = "number of parameters (including trailing) exceeded allowed value of 15\n";
+		send(userData[id]->getFd(), message.c_str(), message.size(), 0);
 		return (1);
 	}
+	//rfc1459 2.3.1 "<message>  ::= [':' <prefix> <SPACE> ] <command> <params> <crlf>"
 	if (msg.cmd.empty() && (!msg.prefx.empty() || !msg.midParams.empty() || !msg.trailing.empty()))
 	{
-		std::cout << "invalid format of message\n";
+		message = "invalid format of message\n";
+		send(userData[id]->getFd(), message.c_str(), message.size(), 0);
 		return (1);
 	}
-	// if ()
-	// {
-	// 	return (1);
-	// }
+	//rfc1459 2.3.1 "<command>  ::= <letter> { <letter> } | <number> <number> <number>"
+	if (!(!isAlphaStr(msg.cmd) || (!isDigitStr(msg.cmd) && msg.cmd.size() == 3)))
+	{
+		message = "invalid format of command\n";
+		send(userData[id]->getFd(), message.c_str(), message.size(), 0);
+		return (1);
+	}
 	return (0);
 }
 
@@ -96,4 +115,19 @@ void Server::cleanMsgStruct()
 void Server::processWildcard()
 {
 	
+}
+
+void Server::printStuct()
+{
+	std::vector <std::string>::iterator beginIt;
+	std::vector <std::string>::iterator endIt;
+	beginIt = msg.midParams.begin();
+	endIt = msg.midParams.end();
+
+	// std::cout << "prefx      : |" << msg.prefx << "|\n";
+	// std::cout << "cmd        : |" << msg.cmd << "|\n";
+	// for ( ; beginIt != endIt; ++beginIt)
+	// 	std::cout << "midParam   : |" << *beginIt << "|\n";
+	// std::cout << "trailing   : |" << msg.trailing << "|\n";
+	// std::cout << "paramN     : |" << msg.paramN << "|\n";
 }

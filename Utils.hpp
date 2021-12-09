@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cctype>
 
 #define RESET "\e[0m"
 #define RED "\e[31m"
@@ -16,6 +17,7 @@
 
 std::vector<std::string> split(std::string str, std::string delimiter);
 bool    isAlphaStr(std::string str);
+bool	isDigitStr(std::string str);
 bool    contains( std::vector<std::string> vect, std::string str );
 void	eraseString( std::vector<std::string> & vect, std::string name );
 void    eraseUser( std::vector<User*> & vect, std::string name );

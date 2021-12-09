@@ -15,8 +15,10 @@
 #include "Utils.hpp"
 #include "Channel.hpp"
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <map>
+#include <cctype>
 
 
 #define BUF_SIZE 1024
@@ -53,35 +55,36 @@ class Server {
 		void 		executeCommand( size_t const id );
 
 		// parser
-		void		initCommandMap( void );
-		int			checkMsgFormat( std::string cmdStr );
-		std::string getRidOfCmdName( std::string cmdStr );
-		void		processWildcard();
+		int			parseMsg(size_t id);
+		int			checkMsgFormat( std::string cmdStr , size_t id);
 		void		cleanMsgStruct();
+		void		processWildcard();
+		void		printStuct();
 
 		// commands
-    	void execute(std::string const &, User &);
-		int parseMsg( std::string cmdStr );
-    	int pass(User & );
-    	int nick(User & );
-    	int user(User & );
-    	int oper(User & );
-    	int quit(User & );
-		int who( User & );
-		int whois( User & );
-		int whowas( User & );
-		int join( User & user );
-		int part( User & user );
-		int list( User & user );
-		int names( User & user );
+		void		initCommandMap( void );
+    	void		execute(std::string const &, User &);
+    	int			pass(User & user );
+    	int			nick(User & user );
+    	int			user(User & user );
+    	int			oper(User & user );
+    	int			quit(User & user );
+		int			who( User & user );
+		int			whois( User & user );
+		int			whowas( User & user );
+		int			join( User & user );
+		int			part( User & user );
+		int			list( User & user );
+		int	 		names( User & user );
 		
-
-		bool notRegistr(User &);
-    	bool connection(User &);
-    	void motd(User &);
-		void errorMEss(int err, User &user);
-		void replyMEss(int reply, User &user, const std::string &str = "");
-		void showMEss( User const & user, Channel const * channel );
+		void		killUser(User & user );
+    	int			connection(User & user );
+		bool		notRegistr(User & user );
+		bool 		validNick(User & user );
+    	void		motd(User & user );
+		void		errorMEss(int err, User &user);
+		void		replyMEss(int reply, User &user, const std::string &str = "");
+		void		showMEss( User const & user, Channel const * channel );
 
 		Server( Server const & );
 		Server operator=( Server const & ); 

@@ -56,4 +56,5 @@ void Server::errorMEss(int err, User &user) {
 		messg = "Something wrong\n";
 	}
 	send(user.getFd(), messg.c_str(), messg.size(), 0);
+	std::cout << "\e[31mSend error to " << user.getNick() << "< socket " << user.getFd() << " >:\e[0m " << messg;
 }
