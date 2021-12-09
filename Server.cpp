@@ -200,6 +200,21 @@ void Server::initCommandMap( void )
     // commands.insert(make_pair("KILL", &Server::kill));
 }
 
+void Server::killUser(User & user ){
+    close(user.getFd());
+    std::vector<std::string> temp = user.getChannelList();
+    for (size_t i = 0; i < temp.size(); ++i)
+        channels[temp[i]]->disconnectUser(user);
+    eraseUser(userData, user.getNick());
+    std::vector<struct pollfd>::iterator it = userFds.begin();
+    for (it; it != userFds.end(); ++it) {
+        if (user.getFd() == (*it).fd) {
+            userFds.erase(it);
+            break ;
+        }
+    }
+}
+
 Server::Server( std::string const & _port, std::string const & _pass)
 {
 	msg.paramN = 0;

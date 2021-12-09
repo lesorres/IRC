@@ -11,6 +11,7 @@
 #define RPL_MOTD ":- <text>\n"									//372
 #define RPL_MOTDSTART ":- <server> Message of the day - \n"		//375
 #define RPL_ENDOFMOTD ":End of /MOTD command\n"					//376
+#define IRC_NOSIGNAL SO_NOSIGPIPE
 
             //    - При ответе на MOTD-сообщение и MOTD-файл найден, файл
                 //  отбражается строка к строке с каждой строкой, не длше80
@@ -63,5 +64,5 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 		break;
 	
 	}
-	send(user.getFd(), mess.c_str(), mess.size(), 0);
+	send(user.getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 }

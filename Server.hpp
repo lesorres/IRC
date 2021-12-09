@@ -18,6 +18,7 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include <cctype>
 
 
 #define BUF_SIZE 1024
@@ -75,10 +76,11 @@ class Server {
 		int			part( User & user );
 		int			list( User & user );
 		
-
-		bool		notRegistr(User &);
-    	bool		connection(User &);
-    	void		motd(User &);
+		void		killUser(User & user );
+    	int			connection(User & user );
+		bool		notRegistr(User & user );
+		bool 		validNick(User & user );
+    	void		motd(User & user );
 		void		errorMEss(int err, User &user);
 		void		replyMEss(int reply, User &user, const std::string &str = "");
 		void		showMEss( User const & user, Channel const * channel );

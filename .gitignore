@@ -3,5 +3,6 @@ bircd/
 .DS_Store
 a.out
 irc
+ircserv
 *.o
 Server1.hpp
