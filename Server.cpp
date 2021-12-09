@@ -179,11 +179,11 @@ void Server::initCommandMap( void )
     // commands.insert(make_pair("AWAY", &Server::away));
     // commands.insert(make_pair("NOTICE", &Server::notice));
     commands.insert(std::make_pair("WHO", &Server::who));
-    commands.insert(std::make_pair("JOIN", &Server::join));
     // commands.insert(make_pair("WHOIS", &Server::whois));
     // commands.insert(make_pair("WHOWAS", &Server::whowas));
+    commands.insert(std::make_pair("JOIN", &Server::join));
     // commands.insert(make_pair("MODE", &Server::mode));
-    // commands.insert(make_pair("TOPIC", &Server::topic));
+    commands.insert(std::make_pair("TOPIC", &Server::topic));
     // commands.insert(make_pair("INVITE", &Server::invite));
     // commands.insert(make_pair("KICK", &Server::kick));
     commands.insert(std::make_pair("PART", &Server::part));
@@ -210,7 +210,7 @@ void Server::killUser(User & user ){
         channels[temp[i]]->disconnectUser(user);
     eraseUser(userData, user.getNick());
     std::vector<struct pollfd>::iterator it = userFds.begin();
-    for (; it != userFds.end(); ++it) {
+    for ( ; it != userFds.end(); ++it) {
         if (user.getFd() == (*it).fd) {
             userFds.erase(it);
             break ;

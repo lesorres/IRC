@@ -23,15 +23,13 @@ int Server::names( User & user )
     {
         for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); it++)
         {
+            list = it->first + " :";
             users = (it->second)->getUserList();
             for (size_t i = 0; i < users.size(); i++)
-            {
                 list += users[i]->getNick() + " ";
-            }
-            list += "\n";
-            send(user.getFd(), (it->first + "\n\n").c_str(), it->first.size() + 2, 0);
-            send(user.getFd(), list.c_str(), list.size(), 0);
-            list.clear();
+            replyMEss(353, user, list);
+            list = it->first;
+            replyMEss(366, user, list);
         }
     }
     else
@@ -41,17 +39,46 @@ int Server::names( User & user )
         {
             if (*(channellist[i].begin()) == '#')
             {
+                list = channellist[i] + " :";
                 users = channels[channellist[i]]->getUserList();
                 for (size_t i = 0; i < users.size(); i++)
-                {
                     list += users[i]->getNick() + " ";
-                }
-                list += "\n\n";
-                send(user.getFd(), (channellist[i] + "\n").c_str(), channellist[i].size() + 1, 0);
-                send(user.getFd(), list.c_str(), list.size(), 0);
-                list.clear();
+                replyMEss(353, user, list);
+                list = channellist[i];
+                replyMEss(366, user, list);
             }
         }
+    }
+    return (0);
+}
+
+int Server::topic( User & user )
+{
+    if (msg.midParams.size() < 1)
+        errorMEss(461, user);
+    else
+    {
+        if (contains(user.getChannelList(), msg.midParams[0]))
+        {
+            Channel * current = channels.at(msg.midParams[0]);
+            if (msg.midParams.size() == 1 && msg.trailing.empty())
+            {
+                if (current->getTopic().empty())
+                    replyMEss(331, user, msg.midParams[0]);
+                else
+                    replyMEss(332, user, msg.midParams[0] + " :" + current->getTopic());
+            }
+            else
+            {
+                std::string top;
+                for (size_t i = 1; i < msg.midParams.size(); i++)
+                    top += msg.midParams[i] + " ";
+                top += msg.trailing;
+                current->setTopic(top);
+            }
+        }
+        else
+            errorMEss(442, user, msg.midParams[0]);
     }
     return (0);
 }

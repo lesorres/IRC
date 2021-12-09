@@ -11,6 +11,7 @@ class Channel
 {
     private:
         std::string         name;
+        std::string         topic;
         std::vector<User*>  users;
         std::vector<User*>  operators;
         unsigned int        countUsers;
@@ -23,6 +24,8 @@ class Channel
     public:
 
         std::string getName( void ) const;
+        std::string getTopic( void ) const;
+        void setTopic( std::string & _topic );
         void addUser( User * user );
         void disconnectUser( User const & user);
         std::vector<User*> const & getUserList( void ) const;

@@ -10,10 +10,10 @@
 #define ERR_PASSWDMISMATCH ":Password incorrect\n"					// 464
 #define ERR_NOTREGISTERED ":You have not registered\n"				// 451
 #define ERR_NOMOTD ":MOTD File is missing"							// 422
-#define ERR_NOTONCHANNEL  "<channel> :You're not on that channel"	// 442
-#define ERR_NOSUCHCHANNEL "<channel name> :No such channel"			// 403
+#define ERR_NOTONCHANNEL  ":You're not on that channel\n"			// 442
+#define ERR_NOSUCHCHANNEL ":No such channel\n"						// 403
 
-void Server::errorMEss(int err, User &user) {
+void Server::errorMEss(int err, User &user, const std::string &str) {
 	std::string messg;
 	switch (err) {
 	case 431:
@@ -47,10 +47,10 @@ void Server::errorMEss(int err, User &user) {
 		messg = ERR_NOOPERHOST;
 		break ;
 	case 442:
-		messg = ERR_NOTONCHANNEL;
+		messg = str + " " + ERR_NOTONCHANNEL;
 		break;
 	case 403:
-		messg = ERR_NOSUCHCHANNEL;
+		messg = str + " " + ERR_NOSUCHCHANNEL;
 		break;
 	default:
 		messg = "Something wrong\n";
