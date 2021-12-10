@@ -24,7 +24,7 @@ class User {
         bool                        breakconnect;
 
         User();
-        User operator=( User const & src );
+        User &operator=( User const & src );
     
     public:
         User( User const & src );

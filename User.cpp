@@ -17,35 +17,13 @@ User::User(int serverSocket)
 
 User::User( User const & src )
 {
-	// std::cout << "here6\n";
-	// *this = src;
-	// std::cout << "here7\n";
-	if (this == &src)
-		return;
-	std::cout << "here3\n";
-	username = src.username;
-	nickname = src.nickname;
-	password = src.password;
-	realname = src.realname;
-	hostname = src.hostname;
-	servername = src.servername;
-	quitMess = src.quitMess;
-	std::cout << "here4\n";
-	channels = src.channels;
-	activeChannel = src.activeChannel;
-	fd = src.fd;
-	srvFd = src.srvFd;
-	registred = src.registred;
-	breakconnect = src.breakconnect;
-	std::cout << "here5\n";
-	messages = src.messages;
+	*this = src;
 }
 
-User User::operator=( User const & src )
+User &User::operator=( User const & src )
 {
 	if (this == &src)
 		return(*this);
-	std::cout << "here3\n";
 	username = src.username;
 	nickname = src.nickname;
 	password = src.password;
@@ -53,14 +31,12 @@ User User::operator=( User const & src )
 	hostname = src.hostname;
 	servername = src.servername;
 	quitMess = src.quitMess;
-	std::cout << "here4\n";
 	channels = src.channels;
 	activeChannel = src.activeChannel;
 	fd = src.fd;
 	srvFd = src.srvFd;
 	registred = src.registred;
 	breakconnect = src.breakconnect;
-	std::cout << "here5\n";
 	messages = src.messages;
 	return(*this);
 }
