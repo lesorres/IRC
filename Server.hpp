@@ -18,6 +18,7 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include <cctype>
 
 
 #define BUF_SIZE 1024
@@ -74,29 +75,29 @@ class Server {
 		int			join( User & user );
 		int			part( User & user );
 		int			list( User & user );
+		int	 		names( User & user );
+		int			topic( User & user );
+		int			mode( User & user );
 		
-
-		bool		notRegistr(User &);
-    	bool		connection(User &);
-    	void		motd(User &);
-		void		errorMEss(int err, User &user);
+		void		killUser(User & user );
+    	int			connection(User & user );
+		bool		notRegistr(User & user );
+		bool 		validNick(User & user );
+    	void		motd(User & user );
+		void		errorMEss(int err, User &user, const std::string &str = "");
 		void		replyMEss(int reply, User &user, const std::string &str = "");
 		void		showMEss( User const & user, Channel const * channel );
 
-		Server( Server const & _ot );
-		Server operator=( Server const & _ot ); 
+		Server( Server const & );
+		Server operator=( Server const & ); 
 
 	public:
 
-		Server( std::string const & _port, std::string const & _pass);
+		Server( std::string const & port, std::string const & pass);
 		~Server();
 
 		void create( void );
 		void run( void );
-
-		
-
-		// void passw( std::string const &str, User &user) { std::cout << str << " User: " << user.getNick();}
 
 };
 

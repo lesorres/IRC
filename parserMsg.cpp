@@ -29,7 +29,7 @@ int Server::parseMsg(size_t id)
 				msg.midParams.push_back(parsed);
 		}
 	}
-	std::cout << "before trailing check:\n";
+	//std::cout << "before trailing check:\n";
 	printStuct();
 	std::cout << "\n";
 
@@ -64,9 +64,9 @@ int Server::parseMsg(size_t id)
 
 	msg.paramN = msg.midParams.size() + !msg.trailing.empty();
 
-	std::cout << "parsed structure:\n";
+	//std::cout << "parsed structure:\n";
 	printStuct();
-	std::cout << "\n";
+	//std::cout << "\n";
 
 	//check tokents validity
 	if (checkMsgFormat(cmdStr, id))
@@ -124,10 +124,10 @@ void Server::printStuct()
 	beginIt = msg.midParams.begin();
 	endIt = msg.midParams.end();
 
-	std::cout << "prefx      : |" << msg.prefx << "|\n";
-	std::cout << "cmd        : |" << msg.cmd << "|\n";
-	for ( ; beginIt != endIt; ++beginIt)
-		std::cout << "midParam   : |" << *beginIt << "|\n";
-	std::cout << "trailing   : |" << msg.trailing << "|\n";
-	std::cout << "paramN     : |" << msg.paramN << "|\n";
+	// std::cout << "prefx      : |" << msg.prefx << "|\n";
+	// std::cout << "cmd        : |" << msg.cmd << "|\n";
+	// for ( ; beginIt != endIt; ++beginIt)
+	// 	std::cout << "midParam   : |" << *beginIt << "|\n";
+	// std::cout << "trailing   : |" << msg.trailing << "|\n";
+	// std::cout << "paramN     : |" << msg.paramN << "|\n";
 }

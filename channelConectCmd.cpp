@@ -3,7 +3,7 @@
 int Server::join( User & user )
 {
     if (msg.midParams.size() > 2 || msg.midParams.empty())
-        errorMEss(0, user);
+        errorMEss(461, user);  // ERR_NEEDMOREPARAMS
     std::vector<std::string> channellist = split(msg.midParams[0], ",");
     std::vector<std::string> channelpass;
     if (msg.midParams.size() == 2)
@@ -28,6 +28,15 @@ int Server::join( User & user )
                     if (i == 0 && user.getActiveChannel() != channellist[i])
                         user.setActiveChannel(channellist[i]);
                     std::cout << user.getNick() << " connect to channel " << channellist[i] << "\n";
+                    if (current->getTopic().empty())
+                        replyMEss(331, user, channellist[i]);
+                    else
+                        replyMEss(332, user, channellist[i] + " :" + current->getTopic());
+                    std::string list = channellist[i] + " :";
+                    std::vector<User *> users = current->getUserList();
+                    for (size_t i = 0; i < users.size(); i++)
+                        list += users[i]->getNick() + " ";
+                    replyMEss(353, user, list);
                 }
             }
             catch (std::exception & e)
@@ -40,10 +49,12 @@ int Server::join( User & user )
                 if (user.getActiveChannel() != channellist[i])
                     user.setActiveChannel(channellist[i]);
                 std::cout << user.getNick() << " created new channel " << channellist[i] << "\n";
+                replyMEss(331, user, channellist[i]);
+                replyMEss(353, user, channellist[i] + " :" + user.getNick());
             }
         }
         else
-            errorMEss(0, user); // ERR_NOSUCHCHANNEL
+            errorMEss(403, user, channellist[i]); // ERR_NOSUCHCHANNEL
     }
     return (0);
 }
@@ -51,7 +62,7 @@ int Server::join( User & user )
 int Server::part( User & user )
 {
     if (msg.midParams.size() > 1 || msg.midParams.empty())
-        errorMEss(0, user); // ERR_NEEDMOREPARAMS or too many
+        errorMEss(461, user); // ERR_NEEDMOREPARAMS
     std::vector<std::string> channellist = split(msg.midParams[0], ",");
     for (size_t i = 0; i < channellist.size(); i++)
     {
@@ -70,10 +81,10 @@ int Server::part( User & user )
                 }
             }
             else
-                errorMEss(0, user); // ERR_NOTONCHANNEL
+                errorMEss(442, user, channellist[i]); // ERR_NOTONCHANNEL
         }
         else
-            errorMEss(0, user); // ERR_NOSUCHCHANNEL
+            errorMEss(403, user, channellist[i]); // ERR_NOSUCHCHANNEL
     }
     return (0);
-}
+} 
