@@ -131,29 +131,8 @@ void Server::executeCommand( size_t const id )
     //if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
     parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
 
-
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
-    // CHECK REGISTER //
-    // if (userData[id]->getRegistred() != 3 && msg.cmd != "PASS" && msg.cmd != "NICK" &&\
-    //     msg.cmd != "USER" && msg.cmd != "QUIT")
-    //     send(userFds[id].fd, "You not registred\n", 19, 0);
-    // else
-    // {
-    //     send(userFds[id].fd, "MOTD\n", 5, 0);
-    // }
-    
-    //////
-
-
-    //
-    // if ((msg.cmd != "USER" && msg.cmd != "PASS" && msg.cmd != "NICK") && userData[id]->getRegistred() != 3 ) {
-    //      cleanMsgStruct();
-	// 	    errorMEss(451, *userData[id]);
-    //      return ;
-    // }
-
-
     execute(msg.cmd, *userData[id]); // <---- Command HERE
 	
 	cleanMsgStruct();

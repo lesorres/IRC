@@ -25,15 +25,12 @@ int	Server::time( User & user ){
 	std::string str = checkTime();
 	replyMEss(391, user, str);
 	return 0;
-
 }
 
 int	Server::admin( User & user ){
 	return 0;
-
 }
 
 int	Server::info( User & user ){
 	return 0;
-
 }

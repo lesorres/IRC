@@ -8,6 +8,7 @@ User::User(int serverSocket)
     password = "";
     realname = "";
     hostname = "";
+    quitMess = "";
     servername = "";
     activeChannel = "";
     registred = 0;

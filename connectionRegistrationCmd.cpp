@@ -105,15 +105,14 @@ int Server::oper(User &user) {
 }
 
 int Server::quit(User &user){
-	history.push_back(&user);
-	if (!msg.trailing.empty())
-		(*history.end())->setQuitMess(msg.trailing);
+	history.push_back(new User(user));
+	if (!msg.trailing.empty()) 
+		(*(history.end() - 1))->setQuitMess(msg.trailing);
 	killUser(user);
 	return DISCONNECT;
 }
 
 void Server::motd(User &user) {
-	std::cout << "In MOTD\n";
 	std::ifstream infile("conf/ircd.motd");
 	if (infile) {
 		std::string message;
