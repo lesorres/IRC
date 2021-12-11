@@ -1,35 +1,5 @@
 #include "Server.hpp"
 
-#define ERR_NOTREGISTERED 451 //":You have not registered"
-
-//pass + user
-#define ERR_NEEDMOREPARAMS 461
-#define ERR_ALREADYREGISTRED 462        //":You may not reregister"
-
-//oper
- #define ERR_PASSWDMISMATCH 464 //":Password incorrect"
-
-//nick
-#define ERR_NONICKNAMEGIVEN 431         // ":No nickname given"
-#define ERR_ERRONEUSNICKNAME 432        // "<nick> :Erroneus nickname"
-                                        // - Возвращается после получения NICK-сообщения, которое
-                                        // содержит символы, которые запрещены. Смотрите раздел
-                                        // х.х.х для более подробной информации.
-
-// <nick>       ::= <letter> { <letter> | <number> | <special> }
-// <letter>     ::= 'a' ... 'z' | 'A' ... 'Z'
-//    <number>     ::= '0' ... '9'
-//    <special>    ::= '-' | '[' | ']' | '\' | '`' | '^' | '{' | '}'
-
-
-#define ERR_NICKNAMEINUSE 433           // "<nick> :Nickname is already in use"
-                                        // Возвращается при смене никнейма на другой, уже используемый.
-#define ERR_NICKCOLLISION 436           // "<nick> :Nickname collision KILL"
-                                        //  - Возвращается сервером к клиенту, когда сервер видит
-                                        //  конфликт никнейма (зарегистрированный никнейм уже есть).
-#define ERR_NOOPERHOST 491				// ":No O-lines for your host"
-										// - Если сервер не настроен на поддержку клиентского хоста
-                						//  для сообщения OPER, клиенту будет возвращена эта ошибка.
 #define DISCONNECT		1				// если количество параметров, необходимых для регистрации пользователя
 										// не соответствует требуемому (!= 3), пользователь не должен подключаться
 
@@ -109,17 +79,10 @@ int Server::nick(User &user) {
 				return connection(user);
 			}
 			else if (user.getNick().empty() == false ) {
-				// записать предыдущий ник если пришел новый для замены: Для умеренной истории, серверу следует хранить предыдущие никнеймы для
-				//   каждого известного ему клиента, если они все решатся их изменить. 
-				std::cout << "here1\n";
 				history.push_back(new User(user));
-				std::cout << "here2\n";
 				user.setNick(msg.midParams[0]);
-				std::cout << "userData:\n";
-				printUserVector(userData);
-				std::cout << "history :\n";
-				printUserVector(history);
-				std::cout << "\n";
+				// printUserVector(userData);
+				// printUserVector(history);
 			}
 		}
 	}
@@ -163,7 +126,6 @@ void Server::motd(User &user) {
 }
 
 int Server::connection(User &user) {
-	std::cout << "msg.cmd - " << msg.cmd << std::endl;
 	if (user.getRegistred() == 3) {
 		motd(user);
 		return 1;
