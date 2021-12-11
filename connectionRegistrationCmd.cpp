@@ -81,8 +81,6 @@ int Server::nick(User &user) {
 			else if (user.getNick().empty() == false ) {
 				history.push_back(new User(user));
 				user.setNick(msg.midParams[0]);
-				// printUserVector(userData);
-				// printUserVector(history);
 			}
 		}
 	}
@@ -113,6 +111,7 @@ int Server::quit(User &user){
 }
 
 void Server::motd(User &user) {
+	std::cout << "In MOTD\n";
 	std::ifstream infile("conf/ircd.motd");
 	if (infile) {
 		std::string message;
@@ -120,6 +119,7 @@ void Server::motd(User &user) {
 		while (std::getline(infile, message))
 			replyMEss(372, user, message);
 		replyMEss(376, user, message);
+		std::cout << "MOTD sended to " << user.getNick() << "\n";
 	}
 	else
 		errorMEss(422, user);
