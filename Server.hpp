@@ -48,6 +48,7 @@ class Server {
 		std::string			srvPass;
 		struct sockaddr_in	address;
 		int					addrlen;
+		std::string			srvVersion = "1.0.0";
 
 		void 		connectUsers( void );
 		void 		clientRequest( void );
@@ -76,32 +77,35 @@ class Server {
 		int			join( User & user );
 		int			part( User & user );
 		int			list( User & user );
+		int	 		names( User & user );
+		int			topic( User & user );
+		int			mode( User & user );
+		int			version( User & user );
+		int			time( User & user );
+		int			admin( User & user );
+		int			info( User & user );
 		
 		void		killUser(User & user );
     	int			connection(User & user );
 		bool		notRegistr(User & user );
 		bool 		validNick(User & user );
     	void		motd(User & user );
-		void		errorMEss(int err, User &user);
+		void		errorMEss(int err, User &user, const std::string &str = "");
 		void		replyMEss(int reply, User &user, const std::string &str = "");
 		void		showMEss( User const & user, Channel const * channel );
 
 		void		printUserVector(std::vector<User*> users);
 
-		Server( Server const & _ot );
-		Server operator=( Server const & _ot ); 
+		Server( Server const & src );
+		Server operator=( Server const & src ); 
 
 	public:
 
-		Server( std::string const & _port, std::string const & _pass);
+		Server( std::string const & port, std::string const & pass);
 		~Server();
 
 		void create( void );
 		void run( void );
-
-		
-
-		// void passw( std::string const &str, User &user) { std::cout << str << " User: " << user.getNick();}
 
 };
 
