@@ -81,6 +81,8 @@ int Server::nick(User &user) {
 			else if (user.getNick().empty() == false ) {
 				history.push_back(new User(user));
 				user.setNick(msg.midParams[0]);
+				printUserVector(history);
+				printUserVector(userData);
 			}
 		}
 	}

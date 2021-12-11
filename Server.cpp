@@ -227,8 +227,8 @@ void	Server::printUserVector(std::vector<User*> users)
 	{
 		std::cout << "nick :" << (*itBegin)->getNick() << "\n";
 		std::cout << "user :" << (*itBegin)->getUser() << "\n";
-		std::cout << "user :" << (*itBegin)->getHostn() << "\n";
-		std::cout << "user :" << (*itBegin)->getRealn() << "\n";
+		std::cout << "host :" << (*itBegin)->getHostn() << "\n";
+		std::cout << "real name :" << (*itBegin)->getRealn() << "\n";
 		itBegin++;
 	}
 }
@@ -237,8 +237,8 @@ Server::Server( std::string const & _port, std::string const & _pass)
 {
 	msg.paramN = 0;
     initCommandMap();
-	serverName = "IRCat";
-
+	serverName = "IRC.1";
+    srvVersion = "RFC 1459";
     // (this->*(command.at("PASS")))("DATA", *bob);
     try
     {

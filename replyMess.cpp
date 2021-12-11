@@ -1,22 +1,23 @@
 #include "Server.hpp"
 
 
-#define RPL_YOUREOPER ":You are now an IRC operator\n"			// 381
-#define RPL_WHOISUSER "<nick> <user> <host> * :<real name>"		// 311
-#define RPL_WHOISSERVER "<nick> <server> :<server info>" 		// 312
-#define RPL_WHOISOPERATOR " :is an IRC operator\n"				// 313
-#define RPL_WHOISIDLE " <integer> :seconds idle\n"				// 317
-#define RPL_ENDOFWHOIS " :End of /WHOIS list\n"					// 318
-#define RPL_LISTSTART "Channel :Users  Name\n"					// 321
-#define RPL_LIST "<channel> <# visible> :<topic>"				// 322
-#define RPL_VERSION " :<comments>"								// 351
-#define RPL_MOTD ":- "											// 372
-#define RPL_MOTDSTART " Message of the day - \n"				// 375
-#define RPL_ENDOFMOTD ":End of /MOTD command\n"					// 376
+#define RPL_YOUREOPER ":You are now an IRC operator\n"				// 381
+#define RPL_WHOISUSER "<nick> <user> <host> * :<real name>"			// 311
+#define RPL_WHOISSERVER "<nick> <server> :<server info>" 			// 312
+#define RPL_WHOISOPERATOR " :is an IRC operator\n"					// 313
+#define RPL_WHOISIDLE " <integer> :seconds idle\n"					// 317
+#define RPL_ENDOFWHOIS " :End of /WHOIS list\n"						// 318
+#define RPL_LISTSTART "Channel :Users  Name\n"						// 321
+#define RPL_LIST "<channel> <# visible> :<topic>"					// 322
+#define RPL_VERSION " :<Internet Relay Chat Protocol | May 1993>\n"	// 351
+#define RPL_MOTD ":- "												// 372
+#define RPL_MOTDSTART " Message of the day - \n"					// 375
+#define RPL_ENDOFMOTD ":End of /MOTD command\n"						// 376
 #define RPL_NAMREPLY "<channel> :[[@|+]<nick> [[@|+]<nick> [...]]]" // 353
-#define RPL_ENDOFNAMES ":End of /NAMES list\n" 					// 366 
-#define RPL_TOPIC "<channel> :<topic>\n"			 			//332  
-#define RPL_NOTOPIC ":No topic is set\n" 						//331 
+#define RPL_ENDOFNAMES ":End of /NAMES list\n" 						// 366 
+#define RPL_TOPIC "<channel> :<topic>\n"			 				// 332  
+#define RPL_NOTOPIC ":No topic is set\n" 							// 331 
+#define RPL_TIME " :local time - "	// 391
 
 
 #if __APPLE__
@@ -37,7 +38,7 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 	mess = ":" + serverName + " " + ss.str() + " " + user.getNick() + " ";
 	switch (reply)
 	{
-	case  311:
+	case 311:
 		mess += user.getNick() + " " + user.getUser() + " " + user.getHostn() + " " + user.getRealn() + "\n";
 		break ;
 	case 312:
@@ -58,12 +59,24 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 	case 322:
 		mess = RPL_LIST;
 		break ;
+	case 331:
+		mess += str + " " + RPL_NOTOPIC;
+		break ;
+	case 332:
+		mess += str + "\n";
+		break ;
 	case 351:
 		mess += srvVersion + ".1 " + serverName + RPL_VERSION;
 		break ;
 	case 352:	//нужно добавить канал вместо звездочки
 		mess += str;
 		break ;
+	case 353:
+		mess += str + "\n";
+		break ;
+	case 366:
+		mess += str + " " + RPL_ENDOFNAMES;
+		break ; 
 	case 375:
 		mess += ":- " + serverName + RPL_MOTDSTART;
 		break ;
@@ -71,23 +84,13 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += RPL_MOTD + str + "\n";
 		break ;
 	case 376:
-		mess = ":" + serverName + " " + ss.str() + " " + user.getNick() + " " + RPL_ENDOFMOTD;
+		mess += RPL_ENDOFMOTD;
 		break ;
 	case 381:
 		mess += RPL_YOUREOPER;
 		break;
-	case 366:
-		mess += str + " " + RPL_ENDOFNAMES;
-		break ; 
-	case 353:
-		mess += str + "\n";
-		break ;
-	case 332:
-		mess += str + "\n";
-		break ;
-	case 331:
-		mess += str + " " + RPL_NOTOPIC;
-		break ;
+	case 391:
+		mess += serverName + RPL_TIME + str;
 	}
 	send(user.getFd(), mess.c_str(), mess.size(), 0);
 }

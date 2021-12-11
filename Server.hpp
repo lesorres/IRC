@@ -19,7 +19,7 @@
 #include <string>
 #include <map>
 #include <cctype>
-
+#include <ctime>
 
 #define BUF_SIZE 1024
 
@@ -48,7 +48,7 @@ class Server {
 		std::string			srvPass;
 		struct sockaddr_in	address;
 		int					addrlen;
-		std::string			srvVersion = "1.0.0";
+		std::string			srvVersion;
 
 		void 		connectUsers( void );
 		void 		clientRequest( void );
@@ -93,6 +93,7 @@ class Server {
 		void		errorMEss(int err, User &user, const std::string &str = "");
 		void		replyMEss(int reply, User &user, const std::string &str = "");
 		void		showMEss( User const & user, Channel const * channel );
+		std::string checkTime();
 
 		void		printUserVector(std::vector<User*> users);
 
