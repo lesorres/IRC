@@ -9,11 +9,15 @@
 #define ERR_NEEDMOREPARAMS " :Not enough parameters\n"
 #define ERR_PASSWDMISMATCH ":Password incorrect\n"
 #define ERR_NOTREGISTERED ":You have not registered\n"
-#define ERR_NOMOTD ":MOTD File is missing"
+#define ERR_NOMOTD ":MOTD File is missing\n"
+#define ERR_NOSUCHSERVER " :No such server\n"	//402
 
 void Server::errorMEss(int err, User &user) {
 	std::string messg;
 	switch (err) {
+	case 402:
+		messg = msg.midParams[0] + ERR_NOSUCHSERVER;
+		break ;
 	case 431:
 		messg = ERR_NONICKNAMEGIVEN;
 		break ;
