@@ -11,8 +11,7 @@
 #define RPL_MOTD ":- "											//372
 #define RPL_MOTDSTART " Message of the day - \n"				//375
 #define RPL_ENDOFMOTD ":End of /MOTD command\n"					//376
-#define IRC_NOSIGNAL SO_NOSIGPIPE
-
+#define RPL_VERSION " :<comments>"								//351
             //    - При ответе на MOTD-сообщение и MOTD-файл найден, файл
                 //  отбражается строка к строке с каждой строкой, не длше80
                 //  символов, используя RPL_MOTD-формат ответов. Их следует
@@ -47,6 +46,9 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 	case 322:
 		mess = RPL_LIST;
 		break ;
+	case 351:
+		mess += srvVersion + ".1 " + serverName + RPL_VERSION;
+		break ;
 	case 352:	//нужно добавить канал вместо звездочки
 		mess += str;
 		break ;
@@ -62,7 +64,6 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 	case 381:
 		mess += RPL_YOUREOPER;
 		break;
-	
 	}
-	send(user.getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+	send(user.getFd(), mess.c_str(), mess.size(), 0);
 }
