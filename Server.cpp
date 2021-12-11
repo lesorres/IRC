@@ -191,10 +191,10 @@ void Server::initCommandMap( void )
     // commands.insert(make_pair("PONG", &Server::pong));
     // commands.insert(make_pair("ISON", &Server::ison));
     // commands.insert(make_pair("USERHOST", &Server::userhost));
-    // commands.insert(make_pair("VERSION", &Server::version));
-    // commands.insert(make_pair("INFO", &Server::info));
-    // commands.insert(make_pair("ADMIN", &Server::admin));
-    // commands.insert(make_pair("TIME", &Server::time));
+    commands.insert(std::make_pair("VERSION", &Server::version));
+    commands.insert(std::make_pair("INFO", &Server::info));
+    commands.insert(std::make_pair("ADMIN", &Server::admin));
+    commands.insert(std::make_pair("TIME", &Server::time));
     // commands.insert(make_pair("REHASH", &Server::rehash));
     // commands.insert(make_pair("RESTART", &Server::restart));
     // commands.insert(make_pair("KILL", &Server::kill));
@@ -242,7 +242,7 @@ Server::Server( std::string const & _port, std::string const & _pass)
         if (_port.find_first_not_of("0123456789") != std::string::npos)
             throw std::invalid_argument("Port must contain only numbers");
         srvPort = atoi(_port.c_str());
-        if (srvPort < 1000 || srvPort > 65555) // надо взять правельный рендж портов...
+        if (srvPort < 1000 || srvPort > 65555) // надо взять правильный рендж портов...
             throw std::invalid_argument("Port out of range");
     }
     catch ( std::exception & e)

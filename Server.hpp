@@ -48,6 +48,7 @@ class Server {
 		std::string			srvPass;
 		struct sockaddr_in	address;
 		int					addrlen;
+		std::string			srvVersion = "1.0.0";
 
 		void 		connectUsers( void );
 		void 		clientRequest( void );
@@ -76,6 +77,10 @@ class Server {
 		int			join( User & user );
 		int			part( User & user );
 		int			list( User & user );
+		int			version( User & user );
+		int			time( User & user );
+		int			admin( User & user );
+		int			info( User & user );
 		
 		void		killUser(User & user );
     	int			connection(User & user );
