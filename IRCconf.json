@@ -1,0 +1,11 @@
+{
+	"serverName": "IRCat",
+	"version": "v1.2",
+	"adminName": "Askhab",
+	"adminEmail": "askhab@gmail.com",
+	"operators": {
+		"fhyman": "qwe",
+		"etorren": "qwe",
+		"kmeeseek": "qwe"
+	}
+}
