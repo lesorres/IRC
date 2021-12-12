@@ -1,25 +1,28 @@
 #include "Server.hpp"
 
-
-#define RPL_WHOISUSER "<nick> <user> <host> * :<real name>"			// 311
-#define RPL_WHOISSERVER "<nick> <server> :<server info>" 			// 312
-#define RPL_WHOISOPERATOR " :is an IRC operator\n"					// 313
-#define RPL_WHOISIDLE " <integer> :seconds idle\n"					// 317
-#define RPL_ENDOFWHOIS " :End of /WHOIS list\n"						// 318
-#define RPL_LISTSTART "Channel :Users  Name\n"						// 321
-#define RPL_LIST "<channel> <# visible> :<topic>"					// 322
-#define RPL_NOTOPIC ":No topic is set\n" 							// 331 
-#define RPL_TOPIC "<channel> :<topic>\n"			 				// 332  
-#define RPL_VERSION " :RFC 1459  | May 1993\n"						// 351
-#define RPL_NAMREPLY "<channel> :[[@|+]<nick> [[@|+]<nick> [...]]]" // 353
-#define RPL_ENDOFNAMES ":End of /NAMES list\n" 						// 366 
-#define RPL_INFO ":"												// 371
-#define RPL_MOTD ":- "												// 372
-#define RPL_ENDOFINFO ":End of /INFO list\n"						// 374
-#define RPL_MOTDSTART " Message of the day - \n"					// 375
-#define RPL_ENDOFMOTD ":End of /MOTD command\n"						// 376
-#define RPL_YOUREOPER ":You are now an IRC operator\n"				// 381
-#define RPL_TIME " :local time - "									// 391
+#define RPL_ADMINME " :Admin name - "													// 256
+#define RPL_ADMINLOC1 "Location - Kazan, Republic of Tatarstan, Russian Federation\n" 	// 257
+#define RPL_ADMINEMAIL ":Admin email - "												// 259
+#define RPL_WHOISUSER "<nick> <user> <host> * :<real name>"								// 311
+#define RPL_WHOISSERVER "<nick> <server> :<server info>" 								// 312
+#define RPL_WHOISOPERATOR " :is an IRC operator\n"										// 313
+#define RPL_WHOISIDLE " <integer> :seconds idle\n"										// 317
+#define RPL_ENDOFWHOIS " :End of /WHOIS list\n"											// 318
+#define RPL_LISTSTART "Channel :Users  Name\n"											// 321
+#define RPL_LIST "<channel> <# visible> :<topic>"										// 322
+#define RPL_NOTOPIC ":No topic is set\n" 												// 331 
+#define RPL_TOPIC "<channel> :<topic>\n"			 									// 332  
+#define RPL_VERSION " :RFC 1459  | May 1993\n"											// 351
+#define RPL_NAMREPLY "<channel> :[[@|+]<nick> [[@|+]<nick> [...]]]" 					// 353
+#define RPL_ENDOFNAMES ":End of /NAMES list\n" 											// 366 
+#define RPL_INFO ":"																	// 371
+#define RPL_MOTD ":- "																	// 372
+#define RPL_ENDOFINFO ":End of /INFO list\n"											// 374
+#define RPL_MOTDSTART " Message of the day - \n"										// 375
+#define RPL_ENDOFMOTD ":End of /MOTD command\n"											// 376
+#define RPL_YOUREOPER ":You are now an IRC operator\n"									// 381
+#define RPL_REHASHING ":Rehashing"														// 382
+#define RPL_TIME " :Local time - "														// 391
 
 
 #if __APPLE__
@@ -37,9 +40,18 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 	std::string mess;
 	std::stringstream ss;
 	ss << reply;
-	mess = ":" + serverName + " " + ss.str() + " " + user.getNick() + " ";
+	mess = ":" + inf.serverName + " " + ss.str() + " " + user.getNick() + " ";
 	switch (reply)
 	{
+	case 256:
+		mess += inf.serverName + RPL_ADMINME + inf.adminName + "\n";
+		break ;
+	case 257:
+		mess += RPL_ADMINLOC1;
+		break ;
+	case 259:
+		mess += RPL_ADMINEMAIL + inf.adminEmail + "\n";
+		break ;
 	case 311:
 		mess += user.getNick() + " " + user.getUser() + " " + user.getHostn() + " " + user.getRealn() + "\n";
 		break ;
@@ -68,7 +80,7 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += str + "\n";
 		break ;
 	case 351:
-		mess += srvVersion + ".1 " + serverName + RPL_VERSION;
+		mess += inf.srvVersion + ".1 " + inf.serverName + RPL_VERSION;
 		break ;
 	case 352:	//нужно добавить канал вместо звездочки
 		mess += str;
@@ -89,7 +101,7 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += RPL_ENDOFINFO;
 		break ;
 	case 375:
-		mess += ":- " + serverName + RPL_MOTDSTART;
+		mess += ":- " + inf.serverName + RPL_MOTDSTART;
 		break ;
 	case 376:
 		mess += RPL_ENDOFMOTD;
@@ -97,8 +109,12 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 	case 381:
 		mess += RPL_YOUREOPER;
 		break;
+	case 382:
+		mess += CONF_NAME;
+		mess += RPL_REHASHING;
+		break ;
 	case 391:
-		mess += serverName + RPL_TIME + str;
+		mess += inf.serverName + RPL_TIME + str;
 	}
 	send(user.getFd(), mess.c_str(), mess.size(), 0);
 }
