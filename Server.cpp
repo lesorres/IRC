@@ -180,6 +180,13 @@ void Server::initCommandMap( void )
     // commands.insert(make_pair("REHASH", &Server::rehash));
     // commands.insert(make_pair("RESTART", &Server::restart));
     // commands.insert(make_pair("KILL", &Server::kill));
+
+
+    // init server info-vector 
+    servInfo.push_back("Server name - " + serverName + "\n");
+	servInfo.push_back("Server version - " + srvVersion + "\n");
+	servInfo.push_back("Patchlevel - 1\n");
+	servInfo.push_back("Server strat time - " + srvStartTime);
 }
 
 void Server::killUser(User & user ){
@@ -215,9 +222,10 @@ void	Server::printUserVector(std::vector<User*> users)
 Server::Server( std::string const & _port, std::string const & _pass)
 {
 	msg.paramN = 0;
-    initCommandMap();
+    srvStartTime = checkTime();
 	serverName = "IRC.1";
-    srvVersion = "RFC 1459";
+    srvVersion = "v1.0.0";
+    initCommandMap();
     // (this->*(command.at("PASS")))("DATA", *bob);
     try
     {

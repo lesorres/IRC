@@ -32,5 +32,14 @@ int	Server::admin( User & user ){
 }
 
 int	Server::info( User & user ){
+	if (msg.midParams.size() != 0 && msg.midParams[0] != serverName) {
+		errorMEss(402, user);
+		return 1;
+	}
+	std::vector<std::string>::iterator it = servInfo.begin();
+	for ( ; it != servInfo.end(); ++it) {
+		replyMEss(371, user, *it);
+	}
+	replyMEss(374, user);
 	return 0;
 }

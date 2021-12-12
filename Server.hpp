@@ -41,10 +41,12 @@ class Server {
 		typedef int (Server:: * PType)( User &user );
     	std::map<std::string, PType>	commands;
 		std::map<std::string, Channel *> channels;
+		std::vector<std::string>	servInfo;
 		t_msg 						msg;
 
 		int					srvFd;
 		int					srvPort;
+		std::string			srvStartTime;
 		std::string			srvPass;
 		struct sockaddr_in	address;
 		int					addrlen;
