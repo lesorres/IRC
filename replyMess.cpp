@@ -1,7 +1,6 @@
 #include "Server.hpp"
 
 
-#define RPL_YOUREOPER ":You are now an IRC operator\n"				// 381
 #define RPL_WHOISUSER "<nick> <user> <host> * :<real name>"			// 311
 #define RPL_WHOISSERVER "<nick> <server> :<server info>" 			// 312
 #define RPL_WHOISOPERATOR " :is an IRC operator\n"					// 313
@@ -9,15 +8,18 @@
 #define RPL_ENDOFWHOIS " :End of /WHOIS list\n"						// 318
 #define RPL_LISTSTART "Channel :Users  Name\n"						// 321
 #define RPL_LIST "<channel> <# visible> :<topic>"					// 322
-#define RPL_VERSION " :<Internet Relay Chat Protocol | May 1993>\n"	// 351
-#define RPL_MOTD ":- "												// 372
-#define RPL_MOTDSTART " Message of the day - \n"					// 375
-#define RPL_ENDOFMOTD ":End of /MOTD command\n"						// 376
+#define RPL_NOTOPIC ":No topic is set\n" 							// 331 
+#define RPL_TOPIC "<channel> :<topic>\n"			 				// 332  
+#define RPL_VERSION " :RFC 1459  | May 1993\n"						// 351
 #define RPL_NAMREPLY "<channel> :[[@|+]<nick> [[@|+]<nick> [...]]]" // 353
 #define RPL_ENDOFNAMES ":End of /NAMES list\n" 						// 366 
-#define RPL_TOPIC "<channel> :<topic>\n"			 				// 332  
-#define RPL_NOTOPIC ":No topic is set\n" 							// 331 
-#define RPL_TIME " :local time - "	// 391
+#define RPL_INFO ":"												// 371
+#define RPL_MOTD ":- "												// 372
+#define RPL_ENDOFINFO ":End of /INFO list\n"						// 374
+#define RPL_MOTDSTART " Message of the day - \n"					// 375
+#define RPL_ENDOFMOTD ":End of /MOTD command\n"						// 376
+#define RPL_YOUREOPER ":You are now an IRC operator\n"				// 381
+#define RPL_TIME " :local time - "									// 391
 
 
 #if __APPLE__
@@ -76,12 +78,18 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 		break ;
 	case 366:
 		mess += str + " " + RPL_ENDOFNAMES;
-		break ; 
-	case 375:
-		mess += ":- " + serverName + RPL_MOTDSTART;
+		break ;
+	case 371:
+		mess += RPL_INFO + str;
 		break ;
 	case 372:
 		mess += RPL_MOTD + str + "\n";
+		break ;
+	case 374:
+		mess += RPL_ENDOFINFO;
+		break ;
+	case 375:
+		mess += ":- " + serverName + RPL_MOTDSTART;
 		break ;
 	case 376:
 		mess += RPL_ENDOFMOTD;
