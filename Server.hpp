@@ -40,6 +40,7 @@ typedef struct s_servInf
 	std::string	srvVersion;
 	std::string	adminName;
 	std::string	adminEmail;
+	std::map<std::string, std::string> oper;
 }				t_servInf;
 
 class Server {
@@ -75,8 +76,6 @@ class Server {
 		void		cleanMsgStruct();
 		void		processWildcard();
 		void		printStuct();
-
-		// int			parseConf();
 
 		// commands
 		void		initCommandMap( void );
@@ -121,8 +120,9 @@ class Server {
 		Server( std::string const & port, std::string const & pass);
 		~Server();
 
-		void create( void );
-		void run( void );
+		void	create( void );
+		void	run( void );
+		int		parseConf();
 
 };
 

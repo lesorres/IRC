@@ -221,7 +221,7 @@ void	Server::printUserVector(std::vector<User*> users)
 
 Server::Server( std::string const & _port, std::string const & _pass)
 {
-	// parseConf();
+	parseConf();
 	msg.paramN = 0;
     inf.srvStartTime = checkTime();
 	inf.serverName = "IRC.1";
