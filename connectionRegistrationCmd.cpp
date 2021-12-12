@@ -120,7 +120,6 @@ void Server::motd(User &user) {
 		while (std::getline(infile, message))
 			replyMEss(372, user, message);
 		replyMEss(376, user, message);
-		std::cout << "MOTD sended to " << user.getNick() << "\n";
 	}
 	else
 		errorMEss(422, user);

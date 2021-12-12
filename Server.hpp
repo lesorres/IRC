@@ -76,7 +76,7 @@ class Server {
 		void		processWildcard();
 		void		printStuct();
 
-		int			parseConf();
+		// int			parseConf();
 
 		// commands
 		void		initCommandMap( void );
@@ -99,6 +99,7 @@ class Server {
 		int			time( User & user );
 		int			admin( User & user );
 		int			info( User & user );
+		int			ison( User & user );
 		
 		void		killUser(User & user );
     	int			connection(User & user );
