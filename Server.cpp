@@ -183,10 +183,10 @@ void Server::initCommandMap( void )
 
 
     // init server info-vector 
-    servInfo.push_back("Server name - " + serverName + "\n");
-	servInfo.push_back("Server version - " + srvVersion + "\n");
+    servInfo.push_back("Server name - " + inf.serverName + "\n");
+	servInfo.push_back("Server version - " + inf.srvVersion + "\n");
 	servInfo.push_back("Patchlevel - 1\n");
-	servInfo.push_back("Server strat time - " + srvStartTime);
+	servInfo.push_back("Server strat time - " + inf.srvStartTime);
 }
 
 void Server::killUser(User & user ){
@@ -221,10 +221,11 @@ void	Server::printUserVector(std::vector<User*> users)
 
 Server::Server( std::string const & _port, std::string const & _pass)
 {
+	parseConf();
 	msg.paramN = 0;
-    srvStartTime = checkTime();
-	serverName = "IRC.1";
-    srvVersion = "v1.0.0";
+    inf.srvStartTime = checkTime();
+	inf.serverName = "IRC.1";
+    inf.srvVersion = "v1.0.0";
     initCommandMap();
     // (this->*(command.at("PASS")))("DATA", *bob);
     try

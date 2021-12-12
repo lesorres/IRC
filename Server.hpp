@@ -32,9 +32,18 @@ typedef struct s_msg
 	int paramN;
 }				t_msg;
 
+typedef struct s_servInf
+{
+	std::string	serverName;
+	std::string	srvStartTime;
+	std::string	srvVersion;
+	std::string	adminName;
+	std::string	adminEmail;
+}				t_servInf;
+
 class Server {
 	private:
-		std::string serverName;
+
 		std::vector<struct pollfd>	userFds;
 		std::vector<User*>			userData;
 		std::vector<User*>			history;
@@ -43,14 +52,15 @@ class Server {
 		std::map<std::string, Channel *> channels;
 		std::vector<std::string>	servInfo;
 		t_msg 						msg;
+		t_servInf					inf;
 
 		int					srvFd;
 		int					srvPort;
-		std::string			srvStartTime;
+		
 		std::string			srvPass;
 		struct sockaddr_in	address;
 		int					addrlen;
-		std::string			srvVersion;
+		
 
 		void 		connectUsers( void );
 		void 		clientRequest( void );
@@ -64,6 +74,8 @@ class Server {
 		void		cleanMsgStruct();
 		void		processWildcard();
 		void		printStuct();
+
+		int			parseConf();
 
 		// commands
 		void		initCommandMap( void );
