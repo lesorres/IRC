@@ -186,7 +186,7 @@ void Server::initCommandMap( void )
     servInfo.push_back("Server name - " + inf.serverName + "\n");
 	servInfo.push_back("Server version - " + inf.srvVersion + "\n");
 	servInfo.push_back("Patchlevel - 1\n");
-	servInfo.push_back("Server strat time - " + inf.srvStartTime);
+	servInfo.push_back("Server start time - " + inf.srvStartTime);
 }
 
 void Server::killUser(User & user ){
