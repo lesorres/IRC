@@ -3,6 +3,7 @@
 #define RPL_ADMINME " :Admin name - "													// 256
 #define RPL_ADMINLOC1 "Location - Kazan, Republic of Tatarstan, Russian Federation\n" 	// 257
 #define RPL_ADMINEMAIL ":Admin email - "												// 259
+#define RPL_ISON ":"																	// 303
 #define RPL_WHOISUSER "<nick> <user> <host> * :<real name>"								// 311
 #define RPL_WHOISSERVER "<nick> <server> :<server info>" 								// 312
 #define RPL_WHOISOPERATOR " :is an IRC operator\n"										// 313
@@ -51,6 +52,9 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 		break ;
 	case 259:
 		mess += RPL_ADMINEMAIL + inf.adminEmail + "\n";
+		break ;
+	case 303:
+		mess += RPL_ISON + str + "\n";
 		break ;
 	case 311:
 		mess += user.getNick() + " " + user.getUser() + " " + user.getHostn() + " " + user.getRealn() + "\n";
