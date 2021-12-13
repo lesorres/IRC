@@ -5,16 +5,14 @@
 #include "User.hpp"
 #include <vector>
 
-// #define OPERATOR    0x001   //o - брать/давать привилегии операторов канала
-// #define PRIVATE     0x002   //p - флаг приватности канала;
-// #define SECRET      0x004   //s - флаг секретности канала;
-// #define INVITE      0x008   //i - флаг канала invite-only;
-// #define TOPIC       0x010   //t - при установке этого флага, менять топик могут только операторы;
-// #define NO_MESS     0x020   //n - запрещает сообщения на канал от посторонних клиентов;
-// #define MODERATE    0x040   //m - модерируемый канал;
-// #define LIMITS      0x080   //l - установка ограничения на количество пользователей;
-// #define BANMASC     0x100   //b - установка маски бана;
-// #define KEY         0x400   //k - установка на канал ключа (пароля).
+#define KEY         0x01   //k - установка на канал ключа (пароля).
+#define PRIVATE     0x02   //p - флаг приватности канала;
+#define SECRET      0x04   //s - флаг секретности канала;
+#define INVITE      0x08   //i - флаг канала invite-only;
+#define TOPIC       0x10   //t - при установке этого флага, менять топик могут только операторы;
+#define NO_MESS     0x20   //n - запрещает сообщения на канал от посторонних клиентов;
+#define MODERATE    0x40   //m - модерируемый канал;
+#define LIMITS      0x80   //l - установка ограничения на количество пользователей;
 
 
 class User;
@@ -30,25 +28,28 @@ class Channel
         std::string             password;
         unsigned int            countUsers;
         unsigned int            userLimit;
-        unsigned int            flags;
 
         Channel();
         Channel( Channel const & _ot );
         Channel operator=( Channel const & _ot );
     public:
 
-        void setTopic( std::string & _topic );
+        unsigned int            flags;
         void addUser( User * user );
-        void disconnectUser( User const & user);
-        void changeFlags( std::string & newflags );
+        void addBanMask( std::string & masc );
+        void disconnectUser( User const & user );
+        void deleteBanMasc( std::string masc );
 
         std::string getName( void ) const;
         std::string getTopic( void ) const;
         std::string getPass( void ) const;
-        unsigned int getFlags( void ) const;
         unsigned int getCountUsers( void ) const;
         unsigned int getUserLimit( void ) const;
+        std::vector<std::string> getBanMasc( void ) const;
         std::vector<User*> const & getUserList( void ) const;
+        void setUserLimit( unsigned int limit );
+        void setTopic( std::string & topic );
+        void setPass( std::string & pass );
 
         Channel(User * creater, std::string name, std::string pass = "");
         ~Channel();

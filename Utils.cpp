@@ -14,7 +14,7 @@ void eraseString( std::vector<std::string> & vect, std::string name )
     while (*it != name)
     {
         if (it == vect.end())
-            throw std::range_error("eraseName::not contains name");
+            return ;
         it++;
     }
     vect.erase(it);
@@ -26,7 +26,7 @@ void eraseUser( std::vector<User*> & vect, std::string name )
     while ((*it)->getNick() != name)
     {
         if (it == vect.end())
-            throw std::range_error("eraseName::not contains user");
+            return ;
         it++;
     }
     vect.erase(it);

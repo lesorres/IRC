@@ -83,40 +83,94 @@ int Server::topic( User & user )
     return (0);
 }
 
+static int checkModeChar( std::string str )
+{
+    if (str.find_first_not_of("+-opsitnmlbvk") != std::string::npos
+     || str.size() != 2 || (str[0] != '-' && str[0] != '+'))
+        return (1);
+    return(0);
+}
+
 int Server::mode( User & user )
 {
-    // if (msg.midParams.size() < 2 && msg.trailing.empty())
-    //     errorMEss(461, user); // ERR_NEEDMOREPARAMS
-    // else
-    // {
-    //     if (*(msg.midParams[0].begin()) == '#') // channels mode
-    //     {
-    //         if (size_t it = msg.midParams[1].find_first_not_of("+-opsitnmlbvk") != std::string::npos)
-    //             errorMEss(472, user, msg.midParams[1].substr(it, 1)); // ERR_UNKNOWNMODE
-    //         try {
-    //             Channel * current = channels.at(msg.midParams[0]);
-    //             if (!contains(user.getChannelList(), msg.midParams[0]))
-    //                 errorMEss(442, user, msg.midParams[0]); // ERR_NOTONCHANNEL
-    //             else
-    //             {
-    //                 if (msg.midParams[1].find("k") != std::string::npos &&\
-    //                         msg.midParams[1].find("+") != std::string::npos &&\
-    //                             !current->getPass().empty())
-    //                             errorMEss(467, user, msg.midParams[0]); // ERR_KEYSET
-    //                 else
-    //                 {
-    //                     current->changeFlags(msg.midParams);
-    //                 }
-    //             }
-    //         }
-    //         catch (std::exception & e) {
-    //             errorMEss(403, user, msg.midParams[0]); // ERR_NOSUCHCHANNEL
-    //         }
-    //     }
-    //     else // user mode
-    //     {
-    //         ;
-    //     }
-    // }
+    if (msg.midParams.size() < 1 && msg.trailing.empty())
+        errorMEss(461, user); // ERR_NEEDMOREPARAMS
+    else
+    {
+        if (*(msg.midParams[0].begin()) == '#') // channels mode
+        {
+            if (checkModeChar(msg.midParams[1]))
+                errorMEss(472, user, msg.midParams[1]); // ERR_UNKNOWNMODE
+            try {
+                Channel * current = channels.at(msg.midParams[0]);
+                if (!contains(user.getChannelList(), msg.midParams[0]))
+                    errorMEss(442, user, msg.midParams[0]); // ERR_NOTONCHANNEL
+                else
+                    setChannelMode(current, user);
+            }
+            catch (std::exception & e) {
+                errorMEss(403, user, msg.midParams[0]); // ERR_NOSUCHCHANNEL
+            }
+        }
+        else // user mode
+        {
+            ;
+        }
+    }
     return(0);
+}
+
+void Server::setChannelMode(Channel * channel, User & user )
+{
+    char flag = msg.midParams[1][1];
+    if (msg.midParams[1][0] == '-') {
+        switch (flag) {
+            case 'o':
+                break;
+            case 'v':
+                break;
+            case 'b': 
+                if (msg.midParams.size() < 3)
+                    errorMEss(461, user);
+                channel->deleteBanMasc(msg.midParams[2]);
+                break;
+            case 'k': channel->flags &= ~KEY; break;
+            case 'l': channel->flags &= ~LIMITS; break;
+            case 'p': channel->flags &= ~PRIVATE; break;
+            case 's': channel->flags &= ~SECRET; break;
+            case 'i': channel->flags &= ~INVITE; break;
+            case 't': channel->flags &= ~TOPIC; break;
+            case 'n': channel->flags &= ~NO_MESS; break;
+            case 'm': channel->flags &= ~MODERATE; break;
+        }
+    }
+    else if (msg.midParams[1][0] == '+') {
+        switch (flag){
+            case 'o':
+                break;
+            case 'v':
+                break;
+            case 'b': 
+                if (msg.midParams.size() < 3)
+                    errorMEss(461, user);
+                channel->addBanMask(msg.midParams[2]);
+                break;
+            case 'k': channel->flags |= KEY;
+                if (msg.midParams.size() < 3)
+                    errorMEss(461, user);
+                channel->setPass(msg.midParams[2]);
+                break;
+            case 'l': channel->flags |= LIMITS;
+                if (msg.midParams.size() < 3)
+                    errorMEss(461, user);
+                channel->setUserLimit(stoi(msg.midParams[2]));
+                break;
+            case 'p': channel->flags |= PRIVATE; break;
+            case 's': channel->flags |= SECRET; break;
+            case 'i': channel->flags |= INVITE; break;
+            case 't': channel->flags |= TOPIC; break;
+            case 'n': channel->flags |= NO_MESS; break;
+            case 'm': channel->flags |= MODERATE; break;
+        } 
+    }
 }

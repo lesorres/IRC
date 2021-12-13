@@ -100,6 +100,7 @@ class Server {
 		int			info( User & user );
 		int			ison( User & user );
 		
+		void		setChannelMode(Channel * channel, User & user);
 		void		killUser(User & user );
     	int			connection(User & user );
 		bool		notRegistr(User & user );

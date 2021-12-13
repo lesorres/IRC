@@ -13,7 +13,7 @@ int	Server::version( User & user )	{
 std::string Server::checkTime()	{
     std::time_t result = std::time(nullptr);
     char buffer[32];
-    std::strncpy(buffer, std::ctime(&result), 26);
+    // std::strncpy(buffer, std::ctime(&result), 26);
 	std::string str(buffer);
 	return str;
 }
