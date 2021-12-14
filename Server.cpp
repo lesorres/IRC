@@ -168,11 +168,10 @@ void Server::initCommandMap( void )
     commands.insert(std::make_pair("PART", &Server::part));
     commands.insert(std::make_pair("NAMES", &Server::names));
     commands.insert(std::make_pair("LIST", &Server::list));
-    // commands.insert(make_pair("WALLOPS", &Server::wallops));
     // commands.insert(make_pair("PING", &Server::ping));
     // commands.insert(make_pair("PONG", &Server::pong));
     commands.insert(std::make_pair("ISON", &Server::ison));
-    // commands.insert(make_pair("USERHOST", &Server::userhost));
+    commands.insert(std::make_pair("USERHOST", &Server::userhost));
     commands.insert(std::make_pair("VERSION", &Server::version));
     commands.insert(std::make_pair("INFO", &Server::info));
     commands.insert(std::make_pair("ADMIN", &Server::admin));

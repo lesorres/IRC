@@ -99,6 +99,7 @@ class Server {
 		int			admin( User & user );
 		int			info( User & user );
 		int			ison( User & user );
+		int			userhost( User & user );
 		
 		void		setChannelMode( Channel * channel, User & user );
 		User& 		getUserByNick( std::string nick );
