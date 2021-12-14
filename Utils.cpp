@@ -86,3 +86,34 @@ bool isDigitStr(std::string str)
 	}
 	return(0);
 }
+
+int checkWildcard(const char *str, const char *mask)
+{
+	const char *strIt = str;
+	const char *maskIt = mask;
+
+	while (*maskIt)
+	{
+		if (*maskIt == '?')
+		{
+			if (!*strIt)
+				return (0);
+			strIt++;
+			maskIt++;
+		}
+		else if (*maskIt == '*')
+		{
+			if (checkWildcard(strIt, maskIt + 1))
+				return (1);
+			if (*strIt && checkWildcard(strIt + 1, maskIt))
+				return(1);
+			return (0);
+		}
+		else
+		{
+			if (*strIt++ != *maskIt++)
+				return (0);
+		}
+	}
+	return (!*strIt && !*maskIt);
+}
