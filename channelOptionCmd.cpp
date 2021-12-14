@@ -70,6 +70,9 @@ int Server::topic( User & user )
             }
             else
             {
+                if (current->flags & TOPIC)
+                    if (!current->isOperator(&user))
+                        return(errorMEss(ERR_CHANOPRIVSNEEDED, user, msg.midParams[0]));
                 std::string top;
                 for (size_t i = 1; i < msg.midParams.size(); i++)
                     top += msg.midParams[i] + " ";

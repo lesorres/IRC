@@ -189,11 +189,15 @@ void Server::initCommandMap( void )
 	servInfo.push_back("Server start time - " + inf.srvStartTime);
 }
 
-int Server::killUser(User & user ){
+int Server::killUser( User & user ){
     close(user.getFd());
     std::vector<std::string> temp = user.getChannelList();
     for (size_t i = 0; i < temp.size(); ++i)
+    {
         channels[temp[i]]->disconnectUser(&user);
+        if (!channels[temp[i]]->getCountUsers())
+            closeChannel(channels[temp[i]]);
+    }
     eraseUser(userData, &user);
     std::vector<struct pollfd>::iterator it = userFds.begin();
     for ( ; it != userFds.end(); ++it) {
@@ -203,6 +207,12 @@ int Server::killUser(User & user ){
         }
     }
     return 1;
+}
+
+void		Server::closeChannel( Channel * channel )
+{
+    channels.erase(channel->getName());
+    delete channel;
 }
 
 User& 		Server::getUserByNick( std::string nick )

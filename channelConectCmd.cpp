@@ -36,7 +36,12 @@ int Server::join( User & user )
                 std::string list = channellist[i] + " :";
                 std::vector<User *> users = current->getUserList();
                 for (size_t i = 0; i < users.size(); i++)
-                    list += users[i]->getNick() + " ";
+                {
+                    if (current->isOperator(users[i]))
+                        list += "@" + users[i]->getNick() + " ";
+                    else
+                        list += users[i]->getNick() + " ";
+                }
                 replyMEss(RPL_NAMREPLY, user, list);
                 replyMEss(RPL_ENDOFNAMES, user, channellist[i]);
             }
@@ -54,7 +59,7 @@ int Server::join( User & user )
             std::cout << user.getNick() << " created new channel " << channellist[i] << "\n";
             showMEss(user, channels[channellist[i]], 1);
             replyMEss(RPL_NOTOPIC, user, channellist[i]);
-            replyMEss(RPL_NAMREPLY, user, channellist[i] + " :" + user.getNick());
+            replyMEss(RPL_NAMREPLY, user, channellist[i] + " :@" + user.getNick());
             replyMEss(RPL_ENDOFNAMES, user, channellist[i]);
         }
     }
@@ -76,11 +81,8 @@ int Server::part( User & user )
                 user.leaveChannel(channellist[i]);
                 current->disconnectUser(&user);
                 std::cout << user.getNick() << " leave channel " << channellist[i] << "\n";
-                if (current->getUserList().empty())
-                {
-                    channels.erase(channellist[i]);
-                    delete current;
-                }
+                if (!current->getCountUsers())
+                    closeChannel(current);
             }
             else
                 errorMEss(ERR_NOTONCHANNEL, user, channellist[i]);

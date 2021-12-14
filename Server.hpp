@@ -100,6 +100,7 @@ class Server {
 		int			userhost( User & user );
 		
 		void		setChannelMode( Channel * channel, User & user );
+		void		closeChannel( Channel * channel );
 		User& 		getUserByNick( std::string nick );
 		int			killUser( User & user );
     	int			connection( User & user );
