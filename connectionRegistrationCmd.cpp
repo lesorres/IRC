@@ -21,7 +21,7 @@ bool Server::validNick(User &user) {
 int Server::pass(User &user) {
 	if (msg.midParams.size() == 1 || !msg.trailing.empty()) {
 		if (user.getRegistred() == 3)
-			errorMEss(462, user);
+			return errorMEss(ERR_ALREADYREGISTRED, user);
 		else if (user.getPass().empty() == true) {
 			if (msg.trailing.empty())
 				user.setPass(msg.midParams[0]);
@@ -34,16 +34,16 @@ int Server::pass(User &user) {
 		}
 	}
 	else if (msg.midParams.size() < 1)
-		errorMEss(461, user);
-	return DISCONNECT;
+		return errorMEss(ERR_NEEDMOREPARAMS, user);
+	return 0;
 }
 
 int Server::user(User &user){
 	if (!((msg.midParams.size() == 3 && !msg.trailing.empty()) \
 	|| (msg.midParams.size() == 4 && msg.trailing.empty())))
-		errorMEss(461, user);
+		return errorMEss(ERR_NEEDMOREPARAMS, user);
 	else if (user.getRegistred() == 3)
-		errorMEss(462, user);
+		return errorMEss(ERR_ALREADYREGISTRED, user);
 	else if (user.getUser().empty() && user.getHostn().empty() && \
 			user.getServern().empty() && user.getRealn().empty()) {
 		user.setUser(msg.midParams[0]);
@@ -56,7 +56,7 @@ int Server::user(User &user){
 		user.setRegistred(user.getRegistred() + 1);
 		return connection(user);
 	}
-	return DISCONNECT;
+	return 0;
 }
 
 int Server::nick(User &user) {
@@ -64,13 +64,13 @@ int Server::nick(User &user) {
 	if (msg.midParams.size() == 1) {
 		for (int i = 0; i < userData.size(); ++i) {
 			if (userData[i]->getNick() == msg.midParams[0])
-				errorMEss(436, user);
+				return errorMEss(ERR_NICKCOLLISION, user);
 		}
 		if (user.getNick() == msg.midParams[0]) {
-			errorMEss(433, user);
+			return errorMEss(ERR_NICKNAMEINUSE, user);
 		}
 		else if (msg.midParams[0].size() > 9 || validNick(user) == false){
-			errorMEss(432, user);
+			return errorMEss(ERR_ERRONEUSNICKNAME, user);
 		}
 		else {
 			if (user.getNick().empty() == true ) {
@@ -88,20 +88,20 @@ int Server::nick(User &user) {
 	}
 	else {
 		if (msg.midParams.size() < 1 )
-			errorMEss(431, user);
+			return errorMEss(ERR_NONICKNAMEGIVEN, user);
 	}
-	return DISCONNECT;
+	return 0;
 }
 
 int Server::oper(User &user) {
 	if (user.getNick() == msg.midParams[0] && user.getPass() == msg.midParams[1])
-		replyMEss(381, user);
+		replyMEss(RPL_YOUREOPER, user);
 	else if (msg.midParams.size() < 2)
-		errorMEss(461, user);
+		return errorMEss(ERR_NEEDMOREPARAMS, user);
 	else if (user.getPass() != msg.midParams[1]) {
-		errorMEss(464, user);
+		return errorMEss(ERR_PASSWDMISMATCH, user);
 	}
-	return DISCONNECT;
+	return 0;
 }
 
 int Server::quit(User &user){
@@ -109,20 +109,20 @@ int Server::quit(User &user){
 	if (!msg.trailing.empty()) 
 		(*(history.end() - 1))->setQuitMess(msg.trailing);
 	killUser(user);
-	return DISCONNECT;
+	return 0;
 }
 
 void Server::motd(User &user) {
 	std::ifstream infile("conf/ircd.motd");
 	if (infile) {
 		std::string message;
-		replyMEss(375, user, message);
+		replyMEss(RPL_MOTDSTART, user, message);
 		while (std::getline(infile, message))
-			replyMEss(372, user, message);
-		replyMEss(376, user, message);
+			replyMEss(RPL_MOTD, user, message);
+		replyMEss(RPL_ENDOFMOTD, user, message);
 	}
 	else
-		errorMEss(422, user);
+		return errorMEss(ERR_NOMOTD, user);
 }
 
 int Server::connection(User &user) {
@@ -135,7 +135,7 @@ int Server::connection(User &user) {
 
 bool Server::notRegistr(User &user) {
 	if (user.getRegistred() != 3 && (msg.cmd != "USER" && msg.cmd != "PASS" && msg.cmd != "NICK")) {
-		errorMEss(451, user);
+		return errorMEss(ERR_NOTREGISTERED, user);
 		return true;
 	}
 	return false;
