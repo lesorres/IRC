@@ -1,17 +1,19 @@
 #include "Server.hpp"
 
-void Server::showMEss( User const & from, Channel const * channel )
+void Server::showMEss( User const & from, Channel const * channel, int andfrom )
 {
-    std::string mess = "< " + from.getNick() + " >:";
-    mess += msg.cmd + " ";
+    std::string prefix = ":" + from.getNick() + "!" + from.getUser() + "@" + from.getIp() + " ";
+    std::string mess = msg.cmd + " ";
     for (size_t i = 0; i < msg.midParams.size(); i++)
         mess += msg.midParams[i] + " ";
-    mess += "\n";
+    mess += msg.trailing + "\n";
     std::vector<User *> users = channel->getUserList();
     for(unsigned int i = 0; i < users.size(); i++)
     {
-        if (users[i]->getActiveChannel() == channel->getName())
-            if (from.getNick() != users[i]->getNick())
-                send(users[i]->getFd(), mess.c_str(), mess.size(), 0);
+        if (from.getNick() != users[i]->getNick() || andfrom)
+        {
+            send(users[i]->getFd(), prefix.c_str(), prefix.size(), 0);
+            send(users[i]->getFd(), mess.c_str(), mess.size(), 0);
+        }
     }
 }

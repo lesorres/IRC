@@ -68,7 +68,7 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += str;
 		break ;
 	case 353:
-		mess += str + "\n";
+		mess += "= " + str + "\n";
 		break ;
 	case 366:
 		mess += str + " :End of /NAMES list\n";

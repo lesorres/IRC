@@ -61,9 +61,7 @@ class Server {
 		
 		std::string			srvPass;
 		struct sockaddr_in	address;
-		int					addrlen;
 		
-
 		void 		connectUsers( void );
 		void 		clientRequest( void );
 		void 		disconnectClient( size_t const id );
@@ -110,7 +108,7 @@ class Server {
     	int			motd( User & user );
 		int			errorMEss( int err, User &user, const std::string &str = "" );
 		int			replyMEss( int reply, User &user, const std::string &str = "" );
-		void		showMEss( User const & user, Channel const * channel );
+		void		showMEss( User const & from, Channel const * channel, int andfrom = 0 );
 		std::string checkTime();
 
 		void		printUserVector( std::vector<User*> users );
