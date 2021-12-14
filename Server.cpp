@@ -128,7 +128,7 @@ void Server::execute(std::string const &com, User &user)
 
 void Server::executeCommand( size_t const id )
 {
-    //if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
+    // if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
     parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
 
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
@@ -188,7 +188,7 @@ void Server::initCommandMap( void )
 	servInfo.push_back("Server start time - " + inf.srvStartTime);
 }
 
-void Server::killUser(User & user ){
+int Server::killUser(User & user ){
     close(user.getFd());
     std::vector<std::string> temp = user.getChannelList();
     for (size_t i = 0; i < temp.size(); ++i)
@@ -201,6 +201,7 @@ void Server::killUser(User & user ){
             break ;
         }
     }
+    return 1;
 }
 
 User& 		Server::getUserByNick( std::string nick )
@@ -221,8 +222,8 @@ void	Server::printUserVector(std::vector<User*> users)
 	{
 		std::cout << "nick :" << (*itBegin)->getNick() << "\n";
 		std::cout << "user :" << (*itBegin)->getUser() << "\n";
-		std::cout << "host :" << (*itBegin)->getHostn() << "\n";
-		std::cout << "real name :" << (*itBegin)->getRealn() << "\n";
+		std::cout << "host :" << (*itBegin)->getHost() << "\n";
+		std::cout << "real name :" << (*itBegin)->getReal() << "\n";
 		itBegin++;
 	}
 }
