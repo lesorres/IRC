@@ -19,7 +19,7 @@
 #define ERR_CHANOPRIVSNEEDED ":You're not channel operator\n"		// 482
 #define ERR_USERSDONTMATCH ":Cant change mode for other users\n"	// 502
 
-void Server::errorMEss(int err, User &user, const std::string &str) {
+int Server::errorMEss(int err, User &user, const std::string &str) {
 	std::string messg;
 	switch (err) {
 	case 402:
@@ -81,4 +81,5 @@ void Server::errorMEss(int err, User &user, const std::string &str) {
 	}
 	send(user.getFd(), messg.c_str(), messg.size(), 0);
 	std::cout << "\e[31mSend error to " << user.getNick() << "< socket " << user.getFd() << " >:\e[0m " << messg;
+	return 1;
 }

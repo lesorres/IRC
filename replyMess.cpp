@@ -37,7 +37,7 @@
                 //  разместить между RPL_MOTDSTART (перед RPL_MOTD) и
                 //  RPL_ENDOFMOTD (после).
 
-void Server::replyMEss(int reply, User &user, const std::string &str) {
+int Server::replyMEss(int reply, User &user, const std::string &str) {
 	std::string mess;
 	std::stringstream ss;
 	ss << reply;
@@ -90,7 +90,7 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += str;
 		break ;
 	case 353:
-		mess += str + "\n";
+		mess += "= " + str + "\n";
 		break ;
 	case 366:
 		mess += str + " " + RPL_ENDOFNAMES;
@@ -121,4 +121,5 @@ void Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += inf.serverName + RPL_TIME + str;
 	}
 	send(user.getFd(), mess.c_str(), mess.size(), 0);
+	return 1;
 }
