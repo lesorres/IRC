@@ -46,6 +46,7 @@ int Server::join( User & user )
                 else
                     channels[channellist[i]] = new Channel(&user, channellist[i]);
                 user.addChannel(channellist[i]);
+                user.imOper(channellist[i]);
                 if (user.getActiveChannel() != channellist[i])
                     user.setActiveChannel(channellist[i]);
                 std::cout << user.getNick() << " created new channel " << channellist[i] << "\n";
@@ -72,7 +73,7 @@ int Server::part( User & user )
             {
                 Channel * current = channels.at(channellist[i]);
                 user.leaveChannel(channellist[i]);
-                current->disconnectUser(user);
+                current->disconnectUser(&user);
                 std::cout << user.getNick() << " leave channel " << channellist[i] << "\n";
                 if (current->getUserList().empty())
                 {

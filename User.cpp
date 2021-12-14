@@ -67,11 +67,13 @@ void User::setQuitMess( std::string const & mess ) { quitMess = mess; }
 void User::setFd( int const & _fd ) { fd = _fd; }
 void User::setRegistred( int const & status ) { registred = status; }
 
-void User::addChannel(std::string & name) { channels.push_back(name); }
+void User::imOper( std::string const & name ) { opchannels.push_back(name); }
+void User::imNotOper( std::string const & name ) { eraseString(opchannels, name); }
+void User::addChannel(std::string const & name) { channels.push_back(name); }
 std::vector<std::string> User::getChannelList( void ) const { return (channels); }
-void User::setActiveChannel( std::string &name ) { activeChannel = name; }
+void User::setActiveChannel( std::string const & name ) { activeChannel = name; }
 std::string User::getActiveChannel( void ) const { return(activeChannel); }
-void User::leaveChannel(std::string & name)
+void User::leaveChannel(std::string const & name)
 {
     if (name == activeChannel)
         activeChannel = "";
