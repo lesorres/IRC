@@ -43,17 +43,18 @@ void Server::run( void )
 void Server::connectUsers( void )
 {
     int new_client_fd;
+    struct sockaddr_in clientaddr;
+    int addrlen = sizeof(clientaddr);
 
-    if ((new_client_fd = accept(srvFd, (struct sockaddr*)&address, (socklen_t*)&addrlen)) > 0) 
+    if ((new_client_fd = accept(srvFd, (struct sockaddr*)&clientaddr, (socklen_t*)&addrlen)) > 0) 
     {
         struct pollfd nw;
 
         nw.fd = new_client_fd;
         nw.events = POLLIN;
         nw.revents = 0;
-        userData.push_back(new User(srvFd));
+        userData.push_back(new User(srvFd, nw.fd, clientaddr));
         userFds.push_back(nw);
-        userData[userData.size() - 1]->setFd(new_client_fd);
         std::cout << "New client on " << new_client_fd << " socket." << "\n";
     }
 }
@@ -128,7 +129,7 @@ void Server::execute(std::string const &com, User &user)
 
 void Server::executeCommand( size_t const id )
 {
-    //if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
+    // if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
     parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
 
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
@@ -188,7 +189,7 @@ void Server::initCommandMap( void )
 	servInfo.push_back("Server start time - " + inf.srvStartTime);
 }
 
-void Server::killUser(User & user ){
+int Server::killUser(User & user ){
     close(user.getFd());
     std::vector<std::string> temp = user.getChannelList();
     for (size_t i = 0; i < temp.size(); ++i)
@@ -201,6 +202,7 @@ void Server::killUser(User & user ){
             break ;
         }
     }
+    return 1;
 }
 
 User& 		Server::getUserByNick( std::string nick )
@@ -250,7 +252,6 @@ Server::Server( std::string const & _port, std::string const & _pass)
         exit(EXIT_FAILURE);
     }
     srvPass = _pass;
-    addrlen = sizeof(address);
     std::cout << "Done!\n";
 }
 

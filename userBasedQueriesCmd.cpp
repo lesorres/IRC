@@ -21,8 +21,8 @@ int Server::who( User & user)
 		{
 			if (!(*userIt)->empty())
 			{
-				message = "* " + (*userIt)->getUser() + " " + (*userIt)->getHostn() + " " \
-				+ (*userIt)->getServern() + " " + (*userIt)->getNick() + "\n";
+				message = "* " + (*userIt)->getUser() + " " + (*userIt)->getHost() + " " \
+				+ (*userIt)->getServer() + " " + (*userIt)->getNick() + "\n";
 				replyMEss(352, user, message);
 			}
 			userIt++;
@@ -36,8 +36,8 @@ int Server::who( User & user)
 		{
 			if (!(*userIt)->empty()) //добавить условие на оператора
 			{
-				message = "* " + (*userIt)->getUser() + " " + (*userIt)->getHostn() + " " \
-				+ (*userIt)->getServern() + " " + (*userIt)->getNick() + "\n";
+				message = "* " + (*userIt)->getUser() + " " + (*userIt)->getHost() + " " \
+				+ (*userIt)->getServer() + " " + (*userIt)->getNick() + "\n";
 				replyMEss(352, user, message);
 			}
 			userIt++;

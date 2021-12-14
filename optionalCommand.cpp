@@ -26,7 +26,7 @@ int	Server::userhost( User & user) {
 					if ((*i)->getUserFlags() & OPERATOR) str += "*";
 					if ((*i)->getUserFlags() & AWAY) str += "+";
 					else str += "-";
-					str += (*i)->getHostn() + " ";
+					str += (*i)->getHost() + " ";
 				}
 			}
 		}

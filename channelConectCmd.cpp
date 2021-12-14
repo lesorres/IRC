@@ -28,6 +28,7 @@ int Server::join( User & user )
                 if (i == 0 && user.getActiveChannel() != channellist[i])
                     user.setActiveChannel(channellist[i]);
                 std::cout << user.getNick() << " connect to channel " << channellist[i] << "\n";
+                showMEss(user, current, 1);
                 if (current->getTopic().empty())
                     replyMEss(RPL_NOTOPIC, user, channellist[i]);
                 else
@@ -51,6 +52,7 @@ int Server::join( User & user )
             if (user.getActiveChannel() != channellist[i])
                 user.setActiveChannel(channellist[i]);
             std::cout << user.getNick() << " created new channel " << channellist[i] << "\n";
+            showMEss(user, channels[channellist[i]], 1);
             replyMEss(RPL_NOTOPIC, user, channellist[i]);
             replyMEss(RPL_NAMREPLY, user, channellist[i] + " :" + user.getNick());
             replyMEss(RPL_ENDOFNAMES, user, channellist[i]);

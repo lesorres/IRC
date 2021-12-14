@@ -1,6 +1,8 @@
 #ifndef User_hpp
 #define User_hpp
 
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <iostream>
 #include <queue>
 #include <map>
@@ -15,6 +17,7 @@ class User {
         std::string                 nickname;
         std::string                 password;
 
+        std::string                 ipv4;
         std::string                 realname;
         std::string                 hostname;
         std::string                 servername;
@@ -23,6 +26,7 @@ class User {
         std::vector<std::string>    opchannels;
         std::string                 activeChannel;
 
+        struct sockaddr_in          sockaddr;
         int                         fd;
         int                         srvFd;
         int                         registred;
@@ -39,6 +43,8 @@ class User {
         std::string const & getNick( void ) const;
         std::string const & getUser( void ) const;
         std::string const & getPass( void ) const;
+        std::string const & getIp( void ) const;
+        struct sockaddr_in & getSockAddr( void );
 
         std::string const & getReal( void ) const;
         std::string const & getHost( void ) const;
@@ -53,13 +59,12 @@ class User {
         void setUser( std::string const & name );
         void setPass( std::string const & pass );
 
-        void setRealn( std::string const & relaname );
-        void setHostn( std::string const & host );
-        void setServern( std::string const & server );
+        void setReal( std::string const & relaname );
+        void setHost( std::string const & host );
+        void setServer( std::string const & server );
         void setQuitMess( std::string const & mess );
-        void setFd( int const & fd );
         void setRegistred( int const & registred );
-        void setUSerFlags( char const & flags );
+        void setUserFlags( char const & flags );
 
         void checkConnection( std::string const & mess );
         bool empty();
@@ -73,7 +78,7 @@ class User {
         std::string getActiveChannel( void ) const;
         std::vector<std::string> getChannelList( void ) const;
 
-        User(int serverSocket);
+        User(int serverSocket, int mySocket, struct sockaddr_in address);
         ~User();
 };
 

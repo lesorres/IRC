@@ -1,7 +1,7 @@
 #include "User.hpp"
 #include "Utils.hpp"
 
-User::User(int serverSocket)
+User::User(int serverSocket, int mySocket, struct sockaddr_in address)
 {
     username = "";
     nickname = "";
@@ -11,10 +11,16 @@ User::User(int serverSocket)
     quitMess = "";
     servername = "";
     activeChannel = "";
+    userFlags = 0;
     registred = 0;
     breakconnect = false;
     srvFd = serverSocket;
-    userFlags = 0;
+    fd = mySocket;
+    sockaddr = address;
+    char ip[INET_ADDRSTRLEN];
+    inet_ntop( AF_INET, &sockaddr.sin_addr, ip, INET_ADDRSTRLEN );
+    ipv4 = ip;
+    std::cout << "ip=" << ipv4 << "\n";
 }
 
 User::User( User const & src )
@@ -48,27 +54,28 @@ User::~User() {}
 std::string const & User::getNick( void ) const { return(nickname); }
 std::string const & User::getUser( void ) const { return(username); }
 std::string const & User::getPass( void ) const { return(password); }
+std::string const & User::getIp( void ) const { return(ipv4); }
 
-std::string const & User::getRealn( void ) const { return(realname); }
-std::string const & User::getHostn( void ) const { return(hostname); }
-std::string const & User::getServern( void ) const { return(servername); }
+std::string const & User::getReal( void ) const { return(realname); }
+std::string const & User::getHost( void ) const { return(hostname); }
+std::string const & User::getServer( void ) const { return(servername); }
 std::string const & User::getQuitMess( void ) const { return(quitMess); }
 int const & User::getFd( void ) const { return(fd); }
 int const & User::getRegistred( void ) const { return(registred); }
 bool const & User::getBreakconnect( void ) const { return(breakconnect); }
 char const & User::getUserFlags( void ) const { return userFlags; }
+struct sockaddr_in & User::getSockAddr( void ) { return(sockaddr); }
 
 void User::setNick( std::string const & nick ) { nickname = nick; }
 void User::setUser( std::string const & name ) { username = name; }
 void User::setPass( std::string const & pass ) { password = pass; }
 
-void User::setRealn( std::string const & real ) { realname = real; }
-void User::setHostn( std::string const & host ) { hostname = host; }
-void User::setServern( std::string const & server ) { servername = server; }
+void User::setReal( std::string const & real ) { realname = real; }
+void User::setHost( std::string const & host ) { hostname = host; }
+void User::setServer( std::string const & server ) { servername = server; }
 void User::setQuitMess( std::string const & mess ) { quitMess = mess; }
-void User::setFd( int const & _fd ) { fd = _fd; }
 void User::setRegistred( int const & status ) { registred = status; }
-void User::setUSerFlags( char const & flag ) { userFlags = flag; }
+void User::setUserFlags( char const & flag ) { userFlags = flag; }
 
 void User::imOper( std::string const & name ) { opchannels.push_back(name); }
 void User::imNotOper( std::string const & name ) { eraseString(opchannels, name); }

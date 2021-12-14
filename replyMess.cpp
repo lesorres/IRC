@@ -1,5 +1,11 @@
 #include "Server.hpp"
 
+
+#if __APPLE__
+	#define IRC_NOSIGNAL SO_NOSIGPIPE
+#else
+	#define IRC_NOSIGNAL MSG_NOSIGNAL
+#endif
             //    - При ответе на MOTD-сообщение и MOTD-файл найден, файл
                 //  отбражается строка к строке с каждой строкой, не длше80
                 //  символов, используя RPL_MOTD-формат ответов. Их следует
@@ -29,10 +35,10 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += ":" + str + "\n";
 		break ;
 	case 311:
-		mess += user.getNick() + " " + user.getUser() + " " + user.getHostn() + " " + user.getRealn() + "\n";
+		mess += user.getNick() + " " + user.getUser() + " " + user.getHost() + " " + user.getReal() + "\n";
 		break ;
 	case 312:
-		mess += user.getNick() + " " + user.getServern() + ":";
+		mess += user.getNick() + " " + user.getServer() + ":";
 		break ;
 	case 313:
 		mess += user.getNick() + " " + " :is an IRC operator\n";
