@@ -193,8 +193,8 @@ void Server::killUser(User & user ){
     close(user.getFd());
     std::vector<std::string> temp = user.getChannelList();
     for (size_t i = 0; i < temp.size(); ++i)
-        channels[temp[i]]->disconnectUser(user);
-    eraseUser(userData, user.getNick());
+        channels[temp[i]]->disconnectUser(&user);
+    eraseUser(userData, &user);
     std::vector<struct pollfd>::iterator it = userFds.begin();
     for ( ; it != userFds.end(); ++it) {
         if (user.getFd() == (*it).fd) {
@@ -202,6 +202,15 @@ void Server::killUser(User & user ){
             break ;
         }
     }
+}
+
+User& 		Server::getUserByNick( std::string nick )
+{
+    std::vector<User*>::iterator it = userData.begin();
+    for (; it != userData.end(); it++)
+        if ((*it)->getNick() == nick)
+            break ;
+    return(*(*it));
 }
 
 void	Server::printUserVector(std::vector<User*> users)
