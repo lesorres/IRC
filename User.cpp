@@ -70,6 +70,8 @@ void User::setFd( int const & _fd ) { fd = _fd; }
 void User::setRegistred( int const & status ) { registred = status; }
 void User::setUSerFlags( char const & flag ) { userFlags = flag; }
 
+void User::imOper( std::string const & name ) { opchannels.push_back(name); }
+void User::imNotOper( std::string const & name ) { eraseString(opchannels, name); }
 void User::addChannel(std::string & name) { channels.push_back(name); }
 std::vector<std::string> User::getChannelList( void ) const { return (channels); }
 void User::setActiveChannel( std::string &name ) { activeChannel = name; }

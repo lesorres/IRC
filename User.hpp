@@ -5,9 +5,9 @@
 #include <queue>
 #include <map>
 
-#define REGISTRED   0x00000001
-#define OPERATOR    0x00000010
-#define AWAY        0x00000100
+#define REGISTRED   0b00000001
+#define OPERATOR    0b00000010
+#define AWAY        0b00000100
 
 class User {
     private:
@@ -20,6 +20,7 @@ class User {
         std::string                 servername;
         std::string                 quitMess;
         std::vector<std::string>    channels;
+        std::vector<std::string>    opchannels;
         std::string                 activeChannel;
 
         int                         fd;
@@ -65,6 +66,8 @@ class User {
 
         // channels
         void addChannel( std::string & name );
+        void imOper( std::string const & channelname );
+        void imNotOper( std::string const & channelname );
         void leaveChannel( std::string & name );
         void setActiveChannel( std::string &name );
         std::string getActiveChannel( void ) const;
