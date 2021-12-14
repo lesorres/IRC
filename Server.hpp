@@ -103,11 +103,11 @@ class Server {
 		
 		void		setChannelMode( Channel * channel, User & user );
 		User& 		getUserByNick( std::string nick );
-		void		killUser( User & user );
+		int			killUser( User & user );
     	int			connection( User & user );
 		bool		notRegistr( User & user );
 		bool 		validNick( User & user );
-    	void		motd( User & user );
+    	int			motd( User & user );
 		int			errorMEss( int err, User &user, const std::string &str = "" );
 		int			replyMEss( int reply, User &user, const std::string &str = "" );
 		void		showMEss( User const & user, Channel const * channel );

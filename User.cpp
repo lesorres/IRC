@@ -49,7 +49,7 @@ std::string const & User::getNick( void ) const { return(nickname); }
 std::string const & User::getUser( void ) const { return(username); }
 std::string const & User::getPass( void ) const { return(password); }
 
-std::string const & User::getRealn( void ) const { return(realname); }
+std::string const & User::getReal( void ) const { return(realname); }
 std::string const & User::getHostn( void ) const { return(hostname); }
 std::string const & User::getServern( void ) const { return(servername); }
 std::string const & User::getQuitMess( void ) const { return(quitMess); }
@@ -62,13 +62,13 @@ void User::setNick( std::string const & nick ) { nickname = nick; }
 void User::setUser( std::string const & name ) { username = name; }
 void User::setPass( std::string const & pass ) { password = pass; }
 
-void User::setRealn( std::string const & real ) { realname = real; }
-void User::setHostn( std::string const & host ) { hostname = host; }
-void User::setServern( std::string const & server ) { servername = server; }
+void User::setReal( std::string const & real ) { realname = real; }
+void User::setHost( std::string const & host ) { hostname = host; }
+void User::setServer( std::string const & server ) { servername = server; }
 void User::setQuitMess( std::string const & mess ) { quitMess = mess; }
 void User::setFd( int const & _fd ) { fd = _fd; }
 void User::setRegistred( int const & status ) { registred = status; }
-void User::setUSerFlags( char const & flag ) { userFlags = flag; }
+void User::setUserFlags( char const & flag ) { userFlags = flag; }
 
 void User::imOper( std::string const & name ) { opchannels.push_back(name); }
 void User::imNotOper( std::string const & name ) { eraseString(opchannels, name); }
