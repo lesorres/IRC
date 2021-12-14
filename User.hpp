@@ -5,6 +5,10 @@
 #include <queue>
 #include <map>
 
+#define REGISTRED   0b00000001
+#define OPERATOR    0b00000010
+#define AWAY        0b00000100
+
 class User {
     private:
         std::string                 username;
@@ -22,6 +26,7 @@ class User {
         int                         fd;
         int                         srvFd;
         int                         registred;
+        char                        userFlags;
         bool                        breakconnect;
 
         User();
@@ -42,6 +47,7 @@ class User {
         int const & getFd( void ) const;
         int const & getRegistred( void ) const;
         bool const & getBreakconnect( void ) const;
+        char const & getUserFlags( void ) const;
 
         void setNick( std::string const & nick );
         void setUser( std::string const & name );
@@ -53,16 +59,17 @@ class User {
         void setQuitMess( std::string const & mess );
         void setFd( int const & fd );
         void setRegistred( int const & registred );
+        void setUSerFlags( char const & flags );
 
         void checkConnection( std::string const & mess );
         bool empty();
 
         // channels
-        void addChannel( std::string const & name );
+        void addChannel( std::string & name );
         void imOper( std::string const & channelname );
         void imNotOper( std::string const & channelname );
-        void leaveChannel( std::string const & name );
-        void setActiveChannel( std::string const & name );
+        void leaveChannel( std::string & name );
+        void setActiveChannel( std::string &name );
         std::string getActiveChannel( void ) const;
         std::vector<std::string> getChannelList( void ) const;
 
