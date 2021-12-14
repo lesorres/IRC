@@ -35,7 +35,7 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += ":" + str + "\n";
 		break ;
 	case 311:
-		mess += user.getNick() + " " + user.getUser() + " " + user.getHostn() + " " + user.getRealn() + "\n";
+		mess += user.getNick() + " " + user.getUser() + " " + user.getHostn() + " " + user.getReal() + "\n";
 		break ;
 	case 312:
 		mess += user.getNick() + " " + user.getServern() + ":";

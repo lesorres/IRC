@@ -40,7 +40,7 @@ class User {
         std::string const & getUser( void ) const;
         std::string const & getPass( void ) const;
 
-        std::string const & getRealn( void ) const;
+        std::string const & getReal( void ) const;
         std::string const & getHostn( void ) const;
         std::string const & getServern( void ) const;
         std::string const & getQuitMess( void ) const;
@@ -53,13 +53,13 @@ class User {
         void setUser( std::string const & name );
         void setPass( std::string const & pass );
 
-        void setRealn( std::string const & relaname );
-        void setHostn( std::string const & host );
-        void setServern( std::string const & server );
+        void setReal( std::string const & relaname );
+        void setHost( std::string const & host );
+        void setServer( std::string const & server );
         void setQuitMess( std::string const & mess );
         void setFd( int const & fd );
         void setRegistred( int const & registred );
-        void setUSerFlags( char const & flags );
+        void setUserFlags( char const & flags );
 
         void checkConnection( std::string const & mess );
         bool empty();
