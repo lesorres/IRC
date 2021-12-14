@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "User.hpp"
+#include "Utils.hpp"
 #include <vector>
 
 #define KEY         0x01   //k - установка на канал ключа (пароля).
@@ -36,8 +37,11 @@ class Channel
 
         unsigned int            flags;
         void addUser( User * user );
+        void opUser( User * user );
+        void deopUser( User * user );
+        int  isOperator( User * user );
+        void disconnectUser( User * user );
         void addBanMask( std::string & masc );
-        void disconnectUser( User const & user );
         void deleteBanMasc( std::string masc );
 
         std::string getName( void ) const;

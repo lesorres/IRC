@@ -16,6 +16,7 @@ class User {
         std::string                 servername;
         std::string                 quitMess;
         std::vector<std::string>    channels;
+        std::vector<std::string>    opchannels;
         std::string                 activeChannel;
 
         int                         fd;
@@ -57,9 +58,11 @@ class User {
         bool empty();
 
         // channels
-        void addChannel( std::string & name );
-        void leaveChannel( std::string & name );
-        void setActiveChannel( std::string &name );
+        void addChannel( std::string const & name );
+        void imOper( std::string const & channelname );
+        void imNotOper( std::string const & channelname );
+        void leaveChannel( std::string const & name );
+        void setActiveChannel( std::string const & name );
         std::string getActiveChannel( void ) const;
         std::vector<std::string> getChannelList( void ) const;
 

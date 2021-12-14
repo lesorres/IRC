@@ -100,18 +100,19 @@ class Server {
 		int			info( User & user );
 		int			ison( User & user );
 		
-		void		setChannelMode(Channel * channel, User & user);
-		void		killUser(User & user );
-    	int			connection(User & user );
-		bool		notRegistr(User & user );
-		bool 		validNick(User & user );
-    	void		motd(User & user );
-		void		errorMEss(int err, User &user, const std::string &str = "");
-		void		replyMEss(int reply, User &user, const std::string &str = "");
+		void		setChannelMode( Channel * channel, User & user );
+		User& 		getUserByNick( std::string nick );
+		void		killUser( User & user );
+    	int			connection( User & user );
+		bool		notRegistr( User & user );
+		bool 		validNick( User & user );
+    	void		motd( User & user );
+		void		errorMEss( int err, User &user, const std::string &str = "" );
+		void		replyMEss( int reply, User &user, const std::string &str = "" );
 		void		showMEss( User const & user, Channel const * channel );
 		std::string checkTime();
 
-		void		printUserVector(std::vector<User*> users);
+		void		printUserVector( std::vector<User*> users );
 
 		Server( Server const & src );
 		Server operator=( Server const & src ); 

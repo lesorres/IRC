@@ -16,6 +16,8 @@
 #define ERR_UNKNOWNMODE ":is unknown mode char to me\n"				// 472
 #define ERR_NOPRIVILEGES ":Permission Denied- You're not an IRC operator" // 481
 #define ERR_NOOPERHOST ":No O-lines for your host\n"				// 491
+#define ERR_CHANOPRIVSNEEDED ":You're not channel operator\n"		// 482
+#define ERR_USERSDONTMATCH ":Cant change mode for other users\n"	// 502
 
 void Server::errorMEss(int err, User &user, const std::string &str) {
 	std::string messg;
@@ -67,6 +69,12 @@ void Server::errorMEss(int err, User &user, const std::string &str) {
 		break ;
 	case 491:
 		messg = ERR_NOOPERHOST;
+		break ;
+	case 482:
+		messg = str + " " + ERR_CHANOPRIVSNEEDED;
+		break ;
+	case 502:
+		messg = ERR_USERSDONTMATCH;
 		break ;
 	default:
 		messg = "Something wrong\n";

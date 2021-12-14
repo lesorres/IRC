@@ -1,11 +1,19 @@
 #include "Server.hpp"
 #include <algorithm>
 
-bool    contains(std::vector<std::string> vect, std::string str)
+bool    contains( std::vector<std::string> vect, std::string str )
 {
     if (find(vect.begin(), vect.end(), str) != vect.end())
         return (true);
     return (false);
+}
+
+bool    contains( std::vector<User*> vect, User * user )
+{
+    for (std::vector<User*>::iterator it = vect.begin(); it != vect.end(); it++)
+        if ((*it)->getNick() == user->getNick())
+            return (true);
+    return(false);
 }
 
 void eraseString( std::vector<std::string> & vect, std::string name )
@@ -20,10 +28,10 @@ void eraseString( std::vector<std::string> & vect, std::string name )
     vect.erase(it);
 }
 
-void eraseUser( std::vector<User*> & vect, std::string name )
+void eraseUser( std::vector<User*> & vect, User * user )
 {
     std::vector<User*>::iterator it = vect.begin();
-    while ((*it)->getNick() != name)
+    while ((*it)->getNick() != user->getNick())
     {
         if (it == vect.end())
             return ;

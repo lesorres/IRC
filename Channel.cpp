@@ -1,15 +1,23 @@
 #include "Channel.hpp"
 #include "Utils.hpp"
 
+int  Channel::isOperator( User * user )
+{
+    if (contains(operators, user))
+        return (1);
+    return (0);
+}
+
 void Channel::addUser( User * user )
 {
     users.push_back(user);
     countUsers++;
 }
 
-void Channel::disconnectUser( User const & user )
+void Channel::disconnectUser( User * user )
 {
-    eraseUser(users, user.getNick());
+    eraseUser(users, user);
+    eraseUser(operators, user);
     countUsers--;
 }
 
@@ -23,6 +31,9 @@ void Channel::deleteBanMasc( std::string masc )
     eraseString(banmascs, masc);
 }
 
+
+void Channel::opUser( User * user ) { operators.push_back(user); }
+void Channel::deopUser( User * user ) { eraseUser(operators, user); }
 void Channel::setPass( std::string & pass ) { password = pass; }
 void Channel::setUserLimit( unsigned int limit ) { userLimit = limit; }
 void Channel::setTopic( std::string & _topic ) { topic = _topic; }

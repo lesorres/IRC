@@ -100,11 +100,16 @@ int Server::mode( User & user )
         if (*(msg.midParams[0].begin()) == '#') // channels mode
         {
             if (checkModeChar(msg.midParams[1]))
+            {
                 errorMEss(472, user, msg.midParams[1]); // ERR_UNKNOWNMODE
+                return (1);
+            }
             try {
                 Channel * current = channels.at(msg.midParams[0]);
                 if (!contains(user.getChannelList(), msg.midParams[0]))
                     errorMEss(442, user, msg.midParams[0]); // ERR_NOTONCHANNEL
+                else if (!current->isOperator(&user))
+                    errorMEss(482, user, msg.midParams[0]); // ERR_CHANOPRIVSNEEDED
                 else
                     setChannelMode(current, user);
             }
@@ -126,12 +131,19 @@ void Server::setChannelMode(Channel * channel, User & user )
     if (msg.midParams[1][0] == '-') {
         switch (flag) {
             case 'o':
-                break;
+                if (msg.midParams.size() < 3) {
+                    errorMEss(461, user); break; }
+                else if (contains(channel->getUserList(), &getUserByNick(msg.midParams[2]))) {
+                    channel->deopUser(&getUserByNick(msg.midParams[2]));
+                    getUserByNick(msg.midParams[2]).imNotOper(channel->getName());
+                    break ; }
+                else {
+                    errorMEss(502, user); break; }
             case 'v':
                 break;
             case 'b': 
-                if (msg.midParams.size() < 3)
-                    errorMEss(461, user);
+                if (msg.midParams.size() < 3) {
+                    errorMEss(461, user); break; }
                 channel->deleteBanMasc(msg.midParams[2]);
                 break;
             case 'k': channel->flags &= ~KEY; break;
@@ -147,22 +159,29 @@ void Server::setChannelMode(Channel * channel, User & user )
     else if (msg.midParams[1][0] == '+') {
         switch (flag){
             case 'o':
-                break;
+                if (msg.midParams.size() < 3) {
+                    errorMEss(461, user); break; }
+                else if (contains(channel->getUserList(), &getUserByNick(msg.midParams[2]))) {
+                    channel->opUser(&getUserByNick(msg.midParams[2]));
+                    getUserByNick(msg.midParams[2]).imOper(channel->getName());
+                    break ; }
+                else {
+                    errorMEss(502, user); break; }
             case 'v':
                 break;
             case 'b': 
-                if (msg.midParams.size() < 3)
-                    errorMEss(461, user);
+                if (msg.midParams.size() < 3) {
+                    errorMEss(461, user); break; }
                 channel->addBanMask(msg.midParams[2]);
                 break;
             case 'k': channel->flags |= KEY;
-                if (msg.midParams.size() < 3)
-                    errorMEss(461, user);
+                if (msg.midParams.size() < 3) {
+                    errorMEss(461, user); break; }
                 channel->setPass(msg.midParams[2]);
                 break;
             case 'l': channel->flags |= LIMITS;
-                if (msg.midParams.size() < 3)
-                    errorMEss(461, user);
+                if (msg.midParams.size() < 3) {
+                    errorMEss(461, user); break; }
                 channel->setUserLimit(stoi(msg.midParams[2]));
                 break;
             case 'p': channel->flags |= PRIVATE; break;
