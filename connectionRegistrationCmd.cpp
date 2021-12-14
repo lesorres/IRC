@@ -122,7 +122,7 @@ void Server::motd(User &user) {
 		replyMEss(RPL_ENDOFMOTD, user, message);
 	}
 	else
-		return errorMEss(ERR_NOMOTD, user);
+		errorMEss(ERR_NOMOTD, user);
 }
 
 int Server::connection(User &user) {
