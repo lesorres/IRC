@@ -20,7 +20,7 @@ bool Server::validNick(User &user) {
 
 int Server::pass(User &user) {
 	if (msg.midParams.size() == 1 || !msg.trailing.empty()) {
-		if (user.getRegistred() == 3)
+		if (user.getUserFlags() & REGISTRED)
 			return errorMEss(ERR_ALREADYREGISTRED, user);
 		else if (user.getPass().empty() == true) {
 			if (msg.trailing.empty())
@@ -28,8 +28,9 @@ int Server::pass(User &user) {
 			else
 				user.setPass(msg.trailing);
 			if (user.getPass() != srvPass)
-				killUser(user);
-			user.setRegistred(user.getRegistred() + 1);
+				return killUser(user);
+			if (!user.getNick().empty() && !user.getUser().empty())
+				user.setUserFlags(REGISTRED);
 			return connection(user);
 		}
 	}
@@ -42,18 +43,19 @@ int Server::user(User &user){
 	if (!((msg.midParams.size() == 3 && !msg.trailing.empty()) \
 	|| (msg.midParams.size() == 4 && msg.trailing.empty())))
 		return errorMEss(ERR_NEEDMOREPARAMS, user);
-	else if (user.getRegistred() == 3)
+	else if (user.getUserFlags() & REGISTRED)
 		return errorMEss(ERR_ALREADYREGISTRED, user);
-	else if (user.getUser().empty() && user.getHostn().empty() && \
-			user.getServern().empty() && user.getRealn().empty()) {
+	else if (user.getUser().empty() && user.getHost().empty() && \
+			user.getServer().empty() && user.getReal().empty()) {
 		user.setUser(msg.midParams[0]);
-		user.setHostn(msg.midParams[1]);
-		user.setServern(msg.midParams[2]);
+		user.setHost(msg.midParams[1]);
+		user.setServer(msg.midParams[2]);
 		if (msg.trailing.empty())
-			user.setRealn(msg.midParams[3]);
+			user.setReal(msg.midParams[3]);
 		else
-			user.setRealn(msg.trailing);
-		user.setRegistred(user.getRegistred() + 1);
+			user.setReal(msg.trailing);
+		if (!user.getPass().empty() && !user.getNick().empty())
+			user.setUserFlags(REGISTRED);
 		return connection(user);
 	}
 	return 0;
@@ -75,14 +77,13 @@ int Server::nick(User &user) {
 		else {
 			if (user.getNick().empty() == true ) {
 				user.setNick(msg.midParams[0]);
-				user.setRegistred(user.getRegistred() + 1);
+				if (!user.getPass().empty() && !user.getUser().empty())
+					user.setUserFlags(REGISTRED);
 				return connection(user);
 			}
 			else if (user.getNick().empty() == false ) {
 				history.push_back(new User(user));
 				user.setNick(msg.midParams[0]);
-				printUserVector(history);
-				printUserVector(userData);
 			}
 		}
 	}
@@ -108,11 +109,10 @@ int Server::quit(User &user){
 	history.push_back(new User(user));
 	if (!msg.trailing.empty()) 
 		(*(history.end() - 1))->setQuitMess(msg.trailing);
-	killUser(user);
-	return 0;
+	return killUser(user);
 }
 
-void Server::motd(User &user) {
+int Server::motd(User &user) {
 	std::ifstream infile("conf/ircd.motd");
 	if (infile) {
 		std::string message;
@@ -122,20 +122,19 @@ void Server::motd(User &user) {
 		replyMEss(RPL_ENDOFMOTD, user, message);
 	}
 	else
-		errorMEss(ERR_NOMOTD, user);
+		return errorMEss(ERR_NOMOTD, user);
+	return 0;
 }
 
 int Server::connection(User &user) {
-	if (user.getRegistred() == 3) {
-		motd(user);
-		return 1;
-	}
+	if (user.getUserFlags() & REGISTRED)
+		return motd(user);
 	return -1;
 }
 
 bool Server::notRegistr(User &user) {
-	if (user.getRegistred() != 3 && (msg.cmd != "USER" && msg.cmd != "PASS" && msg.cmd != "NICK")) {
-		return errorMEss(ERR_NOTREGISTERED, user);
+	if (!(user.getUserFlags() & REGISTRED) && (msg.cmd != "USER" && msg.cmd != "PASS" && msg.cmd != "NICK")) {
+		errorMEss(ERR_NOTREGISTERED, user);
 		return true;
 	}
 	return false;
