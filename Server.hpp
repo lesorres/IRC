@@ -99,6 +99,7 @@ class Server {
 		int			admin( User & user );
 		int			info( User & user );
 		int			ison( User & user );
+		int			userhost( User & user );
 		
 		void		setChannelMode( Channel * channel, User & user );
 		User& 		getUserByNick( std::string nick );
@@ -109,7 +110,7 @@ class Server {
     	void		motd( User & user );
 		int			errorMEss( int err, User &user, const std::string &str = "" );
 		int			replyMEss( int reply, User &user, const std::string &str = "" );
-		void		showMEss( User const & user, Channel const * channel );
+		void		showMEss( User const & from, Channel const * channel, int andfrom = 0 );
 		std::string checkTime();
 
 		void		printUserVector( std::vector<User*> users );

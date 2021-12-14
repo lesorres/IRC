@@ -55,7 +55,7 @@ int Server::names( User & user )
 int Server::topic( User & user )
 {
     if (msg.midParams.size() < 1)
-        errorMEss(461, user); // ERR_NEEDMOREPARAMS
+        errorMEss(ERR_NEEDMOREPARAMS, user);
     else
     {
         if (contains(user.getChannelList(), msg.midParams[0]))
@@ -78,7 +78,7 @@ int Server::topic( User & user )
             }
         }
         else
-            errorMEss(442, user, msg.midParams[0]); // ERR_NOTONCHANNEL
+            errorMEss(ERR_NOTONCHANNEL, user, msg.midParams[0]); 
     }
     return (0);
 }
@@ -94,22 +94,22 @@ static int checkModeChar( std::string str )
 int Server::mode( User & user )
 {
     if (msg.midParams.size() < 1 && msg.trailing.empty())
-        return(errorMEss(461, user)); // ERR_NEEDMOREPARAMS
+        return(errorMEss(ERR_NEEDMOREPARAMS, user));
     if (*(msg.midParams[0].begin()) == '#') // channels mode
     {
         if (checkModeChar(msg.midParams[1]))
-            return(errorMEss(472, user, msg.midParams[1])); // ERR_UNKNOWNMODE
+            return(errorMEss(ERR_UNKNOWNMODE, user, msg.midParams[1]));
         try {
             Channel * current = channels.at(msg.midParams[0]);
             if (!contains(user.getChannelList(), msg.midParams[0]))
-                errorMEss(442, user, msg.midParams[0]); // ERR_NOTONCHANNEL
+                errorMEss(ERR_NOTONCHANNEL, user, msg.midParams[0]);
             else if (!current->isOperator(&user))
-                errorMEss(482, user, msg.midParams[0]); // ERR_CHANOPRIVSNEEDED
+                errorMEss(ERR_CHANOPRIVSNEEDED, user, msg.midParams[0]);
             else
                 setChannelMode(current, user);
         }
         catch (std::exception & e) {
-            errorMEss(403, user, msg.midParams[0]); // ERR_NOSUCHCHANNEL
+            errorMEss(ERR_NOSUCHCHANNEL, user, msg.midParams[0]);
         }
     }
     else // user mode

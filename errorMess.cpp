@@ -1,80 +1,61 @@
 #include "Server.hpp"
 
-#define ERR_NOSUCHSERVER " :No such server\n"						// 402
-#define ERR_NOSUCHCHANNEL ":No such channel\n"						// 403
-#define ERR_NOMOTD ":MOTD File is missing"							// 422
-#define ERR_NONICKNAMEGIVEN ":No nickname given\n"					// 431
-#define ERR_ERRONEUSNICKNAME " :Erroneus nickname\n"				// 432
-#define ERR_NICKNAMEINUSE " :Nickname is already in use\n"			// 433
-#define ERR_NICKCOLLISION "<nick> :Nickname collision KILL\n"		// 436
-#define ERR_NOTONCHANNEL  ":You're not on that channel\n"			// 442
-#define ERR_NOTREGISTERED ":You have not registered\n"				// 451
-#define ERR_NEEDMOREPARAMS " :Not enough parameters\n"				// 461
-#define ERR_ALREADYREGISTRED ":You may not reregister\n"			// 462
-#define ERR_PASSWDMISMATCH ":Password incorrect\n"					// 464
-#define ERR_KEYSET ":Channel key already set\n"						// 467
-#define ERR_UNKNOWNMODE ":is unknown mode char to me\n"				// 472
-#define ERR_NOPRIVILEGES ":Permission Denied- You're not an IRC operator" // 481
-#define ERR_NOOPERHOST ":No O-lines for your host\n"				// 491
-#define ERR_CHANOPRIVSNEEDED ":You're not channel operator\n"		// 482
-#define ERR_USERSDONTMATCH ":Cant change mode for other users\n"	// 502
-
 int Server::errorMEss(int err, User &user, const std::string &str) {
 	std::string messg;
 	switch (err) {
 	case 402:
-		messg = msg.midParams[0] + ERR_NOSUCHSERVER;
+		messg = msg.midParams[0] + " :No such server\n";
 		break ;
 	case 403:
-		messg = str + " " + ERR_NOSUCHCHANNEL;
+		messg = str + " " + ":No such channel\n";
 		break;
 	case 422:
-		messg = ERR_NOMOTD;
+		messg = ":MOTD File is missing\n";
 		break ;
 	case 431:
-		messg = ERR_NONICKNAMEGIVEN;
+		messg = ":No nickname given\n";
 		break ;
 	case 432:
-		messg = user.getNick() + ERR_ERRONEUSNICKNAME;
+		messg = user.getNick() + " :Erroneus nickname\n";
 		break ;
 	case 433:
-		messg = user.getNick() + ERR_NICKNAMEINUSE;
+		messg = user.getNick() + " :Nickname is already in use\n";
 		break ;
 	case 436:
-		messg = user.getNick() + ERR_NICKCOLLISION;
+		messg = user.getNick() +  " :Nickname collision KILL\n";
 		break ;
 	case 442:
-		messg = str + " " + ERR_NOTONCHANNEL;
+		messg = str + " :You're not on that channel\n";
 		break;
 	case 451:
-		messg = ERR_NOTREGISTERED;
+		messg = ":You have not registered\n";
 		break ;
 	case 461:
-		messg = msg.cmd + ERR_NEEDMOREPARAMS;
+		messg = msg.cmd + " :Not enough parameters\n";
 		break ;
 	case 462:
-		messg = ERR_ALREADYREGISTRED;
+		messg = ":You may not reregister\n";
 		break ;
 	case 464:
-		messg = ERR_PASSWDMISMATCH;
+		messg = ":Password incorrect\n";
 		break ;
 	case 467:
-		messg = str + " " + ERR_KEYSET;
+		messg = str + " " + ":Channel key already set\n";
 		break ;
 	case 472:
-		messg = str + " " + ERR_UNKNOWNMODE;
+		messg = str + " :is unknown mode char to me\n";
 		break ;
 	case 481:
-		messg = ERR_NOPRIVILEGES;
-		break ;
-	case 491:
-		messg = ERR_NOOPERHOST;
+		messg = " :Permission Denied- You're not an IRC operator";
 		break ;
 	case 482:
-		messg = str + " " + ERR_CHANOPRIVSNEEDED;
+		messg = str + " :You're not channel operator\n";
+		break ;
+	case 491:
+		messg = ":No O-lines for your host\n";
 		break ;
 	case 502:
-		messg = ERR_USERSDONTMATCH;
+		messg = ":Cant change mode for other users\n";
 		break ;
 	default:
 		messg = "Something wrong\n";
