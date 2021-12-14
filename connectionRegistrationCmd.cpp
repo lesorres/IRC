@@ -45,8 +45,8 @@ int Server::user(User &user){
 		return errorMEss(ERR_NEEDMOREPARAMS, user);
 	else if (user.getUserFlags() & REGISTRED)
 		return errorMEss(ERR_ALREADYREGISTRED, user);
-	else if (user.getUser().empty() && user.getHostn().empty() && \
-			user.getServern().empty() && user.getReal().empty()) {
+	else if (user.getUser().empty() && user.getHost().empty() && \
+			user.getServer().empty() && user.getReal().empty()) {
 		user.setUser(msg.midParams[0]);
 		user.setHost(msg.midParams[1]);
 		user.setServer(msg.midParams[2]);

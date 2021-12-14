@@ -222,7 +222,7 @@ void	Server::printUserVector(std::vector<User*> users)
 	{
 		std::cout << "nick :" << (*itBegin)->getNick() << "\n";
 		std::cout << "user :" << (*itBegin)->getUser() << "\n";
-		std::cout << "host :" << (*itBegin)->getHostn() << "\n";
+		std::cout << "host :" << (*itBegin)->getHost() << "\n";
 		std::cout << "real name :" << (*itBegin)->getReal() << "\n";
 		itBegin++;
 	}

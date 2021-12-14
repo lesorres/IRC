@@ -41,8 +41,8 @@ class User {
         std::string const & getPass( void ) const;
 
         std::string const & getReal( void ) const;
-        std::string const & getHostn( void ) const;
-        std::string const & getServern( void ) const;
+        std::string const & getHost( void ) const;
+        std::string const & getServer( void ) const;
         std::string const & getQuitMess( void ) const;
         int const & getFd( void ) const;
         int const & getRegistred( void ) const;

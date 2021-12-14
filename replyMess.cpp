@@ -35,10 +35,10 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += ":" + str + "\n";
 		break ;
 	case 311:
-		mess += user.getNick() + " " + user.getUser() + " " + user.getHostn() + " " + user.getReal() + "\n";
+		mess += user.getNick() + " " + user.getUser() + " " + user.getHost() + " " + user.getReal() + "\n";
 		break ;
 	case 312:
-		mess += user.getNick() + " " + user.getServern() + ":";
+		mess += user.getNick() + " " + user.getServer() + ":";
 		break ;
 	case 313:
 		mess += user.getNick() + " " + " :is an IRC operator\n";

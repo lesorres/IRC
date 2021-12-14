@@ -50,8 +50,8 @@ std::string const & User::getUser( void ) const { return(username); }
 std::string const & User::getPass( void ) const { return(password); }
 
 std::string const & User::getReal( void ) const { return(realname); }
-std::string const & User::getHostn( void ) const { return(hostname); }
-std::string const & User::getServern( void ) const { return(servername); }
+std::string const & User::getHost( void ) const { return(hostname); }
+std::string const & User::getServer( void ) const { return(servername); }
 std::string const & User::getQuitMess( void ) const { return(quitMess); }
 int const & User::getFd( void ) const { return(fd); }
 int const & User::getRegistred( void ) const { return(registred); }
