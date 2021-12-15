@@ -41,6 +41,7 @@
 #define RPL_WHOISUSER 311		//"<nick> <user> <host> * :<real name>"								// 311
 #define RPL_WHOISSERVER 312		//"<nick> <server> :<server info>" 								// 312
 #define RPL_WHOISOPERATOR 313	//" :is an IRC operator\n"										// 313
+#define RPL_ENDOFWHO 315
 #define RPL_WHOISIDLE 317		//" <integer> :seconds idle\n"										// 317
 #define RPL_ENDOFWHOIS 318		//" :End of /WHOIS list\n"											// 318
 #define RPL_LISTSTART 321		//"Channel :Users  Name\n"											// 321
@@ -48,6 +49,7 @@
 #define RPL_NOTOPIC 331			//":No topic is set\n" 												// 331 
 #define RPL_TOPIC 332			//"<channel> :<topic>\n"			 									// 332  
 #define RPL_VERSION 351			//" :RFC 1459  | May 1993\n"											// 351
+#define RPL_WHOREPLY 352
 #define RPL_NAMREPLY 353		//"<channel> :[[@|+]<nick> [[@|+]<nick> [...]]]" 					// 353
 #define RPL_ENDOFNAMES 366		//":End of /NAMES list\n" 											// 366 
 #define RPL_INFO 371			//":"																	// 371
