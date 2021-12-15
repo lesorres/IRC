@@ -57,8 +57,11 @@ int Server::errorMEss(int err, User &user, const std::string &str) {
 	case 502:
 		messg = ":Cant change mode for other users\n";
 		break ;
-	default:
+	case 1000:
 		messg = str + "\n";
+		break ;
+	default:
+		messg = "something wrong\n";
 	}
 	send(user.getFd(), messg.c_str(), messg.size(), 0);
 	std::cout << "\e[31mSend error to " << user.getNick() << "< socket " << user.getFd() << " >:\e[0m " << messg;

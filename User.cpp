@@ -81,6 +81,7 @@ void User::imOper( std::string const & name ) { opchannels.push_back(name); }
 void User::imNotOper( std::string const & name ) { eraseString(opchannels, name); }
 void User::addChannel(std::string & name) { channels.push_back(name); }
 std::vector<std::string> User::getChannelList( void ) const { return (channels); }
+std::vector<std::string> User::getOpChannelList( void ) const { return (opchannels); }
 void User::setActiveChannel( std::string &name ) { activeChannel = name; }
 std::string User::getActiveChannel( void ) const { return(activeChannel); }
 void User::leaveChannel(std::string & name)

@@ -35,13 +35,16 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += ":" + str + "\n";
 		break ;
 	case 311:
-		mess += user.getNick() + " " + user.getUser() + " " + user.getHost() + " " + user.getReal() + "\n";
+		mess += str;
 		break ;
 	case 312:
 		mess += user.getNick() + " " + user.getServer() + ":";
 		break ;
 	case 313:
 		mess += user.getNick() + " " + " :is an IRC operator\n";
+		break ;
+	case 315:
+		mess += msg.midParams[0] + " :End of /WHO list\n";
 		break ;
 	case 317:
 		mess += user.getNick() + " <integer> :seconds idle\n";
@@ -64,7 +67,7 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 	case 351:
 		mess += inf.srvVersion + ".1 " + inf.serverName + " :RFC 1459  | May 1993\n";
 		break ;
-	case 352:	//нужно добавить канал вместо звездочки
+	case 352:
 		mess += str;
 		break ;
 	case 353:
