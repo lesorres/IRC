@@ -107,7 +107,7 @@ int Server::oper(User &user) {
 
 int Server::quit(User &user){
 	history.push_back(new User(user));
-	if (!msg.trailing.empty()) 
+	if (!msg.trailing.empty())
 		(*(history.end() - 1))->setQuitMess(msg.trailing);
 	return killUser(user);
 }
