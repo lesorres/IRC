@@ -120,45 +120,45 @@ int Server::who( User & user)
 
 int Server::whois( User & user)
 {
-	// [<server>] parameter of command is not checked
-	std::string message;
+	// // [<server>] parameter of command is not checked
+	// std::string message;
 
-	std::vector<User *>::iterator userIt = userData.begin();
-	std::vector<User *>::iterator endUserIt = userData.end();
-	std::vector<std::string>::iterator paramIt = msg.midParams.begin();
-	std::vector<std::string>::iterator endPramIt = msg.midParams.end();
+	// std::vector<User *>::iterator userIt = userData.begin();
+	// std::vector<User *>::iterator endUserIt = userData.end();
+	// std::vector<std::string>::iterator paramIt = msg.midParams.begin();
+	// std::vector<std::string>::iterator endPramIt = msg.midParams.end();
 
-	while (paramIt != endPramIt)
-	{
-		message = (*userIt)->getNick() + " " + (*userIt)->getUser() \
-				+ " " + (*userIt)->getHost() + " * :" + (*userIt)->getReal() + "\n";
-		while (userIt != endUserIt)
-		{
-			replyMEss(RPL_ENDOFWHO, user, "");
-			checkWildcard((*userIt)->getHost().c_str(), msg.midParams[0].c_str())
-		}
-	}
+	// while (paramIt != endPramIt)
+	// {
+	// 	message = (*userIt)->getNick() + " " + (*userIt)->getUser() \
+	// 			+ " " + (*userIt)->getHost() + " * :" + (*userIt)->getReal() + "\n";
+	// 	while (userIt != endUserIt)
+	// 	{
+	// 		replyMEss(RPL_ENDOFWHO, user, "");
+	// 		checkWildcard((*userIt)->getHost().c_str(), msg.midParams[0].c_str())
+	// 	}
+	// }
 
-	if (msg.midParams.size() < 1)
-	{
-		errorMEss(431, user, 0); 
-		return (1);
-	}
-	if (msg.midParams.size() == 1 || msg.midParams.size() == 0)
-	{
-		while (userIt != endIt)
-		{
-			if (!(*userIt)->empty())
-			{
-				message = "* " + (*userIt)->getUser() + " " + (*userIt)->getHostn() + " " \
-				+ (*userIt)->getServern() + " " + (*userIt)->getNick() + "\n";
-				replyMEss(352, user, message);
-			}
-			userIt++;
-		}
-		std::cout << msg.midParams[0] << " :End of /WHO list\n";
-	}
-	return 0;	
+	// if (msg.midParams.size() < 1)
+	// {
+	// 	errorMEss(431, user, 0); 
+	// 	return (1);
+	// }
+	// if (msg.midParams.size() == 1 || msg.midParams.size() == 0)
+	// {
+	// 	while (userIt != endIt)
+	// 	{
+	// 		if (!(*userIt)->empty())
+	// 		{
+	// 			message = "* " + (*userIt)->getUser() + " " + (*userIt)->getHostn() + " " \
+	// 			+ (*userIt)->getServern() + " " + (*userIt)->getNick() + "\n";
+	// 			replyMEss(352, user, message);
+	// 		}
+	// 		userIt++;
+	// 	}
+	// 	std::cout << msg.midParams[0] << " :End of /WHO list\n";
+	// }
+	// return 0;	
 }
 
 //? ERR_NOSUCHSERVER 402
