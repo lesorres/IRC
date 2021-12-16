@@ -44,6 +44,7 @@
 #define RPL_ENDOFWHO 315
 #define RPL_WHOISIDLE 317		//" <integer> :seconds idle\n"										// 317
 #define RPL_ENDOFWHOIS 318		//" :End of /WHOIS list\n"											// 318
+#define RPL_WHOISCHANNELS 319
 #define RPL_LISTSTART 321		//"Channel :Users  Name\n"											// 321
 #define RPL_LIST 322			//"<channel> <# visible> :<topic>"										// 322
 #define RPL_NOTOPIC 331			//":No topic is set\n" 												// 331 
