@@ -99,6 +99,7 @@ class Server {
 		int			info( User & user );
 		int			ison( User & user );
 		int			userhost( User & user );
+		int			kill( User & user );
 		
 		void		setChannelMode( Channel * channel, User & user );
 		void		closeChannel( Channel * channel );
