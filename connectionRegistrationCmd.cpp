@@ -95,12 +95,19 @@ int Server::nick(User &user) {
 }
 
 int Server::oper(User &user) {
-	if (user.getNick() == msg.midParams[0] && user.getPass() == msg.midParams[1])
-		replyMEss(RPL_YOUREOPER, user);
-	else if (msg.midParams.size() < 2)
+	if (msg.midParams.size() < 2)
 		return errorMEss(ERR_NEEDMOREPARAMS, user);
-	else if (user.getPass() != msg.midParams[1]) {
-		return errorMEss(ERR_PASSWDMISMATCH, user);
+	for (std::map<std::string, std::string>::iterator it = inf.oper.begin(); it != inf.oper.end(); ++it)	{
+		if (msg.midParams[0] == (*it).first) {
+		 	if (sha256(msg.midParams[1]) == (*it).second) {
+				user.setUserFlags(OPERATOR);
+				return replyMEss(RPL_YOUREOPER, user);
+			}
+			else if (sha256(msg.midParams[1]) != (*it).second)
+				return errorMEss(ERR_PASSWDMISMATCH, user);
+		}
+		else
+			return errorMEss(ERR_NOOPERHOST, user);
 	}
 	return 0;
 }

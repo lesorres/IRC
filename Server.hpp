@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include "User.hpp"
 #include "Utils.hpp"
+#include "SHA256.hpp"
 #include "Channel.hpp"
 #include <fstream>
 #include <sstream>
