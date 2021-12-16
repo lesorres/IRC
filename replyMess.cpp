@@ -28,6 +28,9 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 	case 259:
 		mess += ":Admin email - " + inf.adminEmail + "\n";
 		break ;
+	case 301:
+		mess += str + "\n";
+		break ;
 	case 302:
 		mess += ":" + str + "\n";
 		break ;
@@ -38,19 +41,22 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += str;
 		break ;
 	case 312:
-		mess += user.getNick() + " " + user.getServer() + ":";
+		// mess += user.getNick() + " " + user.getServer() + ":";
 		break ;
 	case 313:
-		mess += user.getNick() + " " + " :is an IRC operator\n";
+		mess += str + " :is an IRC operator\n";
 		break ;
 	case 315:
 		mess += msg.midParams[0] + " :End of /WHO list\n";
 		break ;
 	case 317:
-		mess += user.getNick() + " <integer> :seconds idle\n";
+		// mess += user.getNick() + " <integer> :seconds idle\n";
 		break ;
 	case 318:
-		mess += user.getNick() + " :End of /WHOIS list\n";
+		mess += str + " :End of /WHOIS list\n";
+		break ;
+	case 319:
+		mess += str + "\n";
 		break ;
 	case 321:
 		mess = "Channel :Users  Name\n";
