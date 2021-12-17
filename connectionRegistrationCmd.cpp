@@ -20,7 +20,7 @@ bool Server::validNick(User &user) {
 
 int Server::pass(User &user) {
 	if (msg.midParams.size() == 1 || !msg.trailing.empty()) {
-		if (user.getUserFlags() & REGISTRED)
+		if (user.getFlags() & REGISTRED)
 			return errorMEss(ERR_ALREADYREGISTRED, user);
 		else if (user.getPass().empty() == true) {
 			if (msg.trailing.empty())
@@ -30,7 +30,7 @@ int Server::pass(User &user) {
 			if (user.getPass() != srvPass)
 				return killUser(user);
 			if (!user.getNick().empty() && !user.getUser().empty())
-				user.setUserFlags(REGISTRED);
+				user.setFlags(REGISTRED);
 			return connection(user);
 		}
 	}
@@ -43,7 +43,7 @@ int Server::user(User &user){
 	if (!((msg.midParams.size() == 3 && !msg.trailing.empty()) \
 	|| (msg.midParams.size() == 4 && msg.trailing.empty())))
 		return errorMEss(ERR_NEEDMOREPARAMS, user);
-	else if (user.getUserFlags() & REGISTRED)
+	else if (user.getFlags() & REGISTRED)
 		return errorMEss(ERR_ALREADYREGISTRED, user);
 	else if (user.getUser().empty() && user.getHost().empty() && \
 			user.getServer().empty() && user.getReal().empty()) {
@@ -55,7 +55,7 @@ int Server::user(User &user){
 		else
 			user.setReal(msg.trailing);
 		if (!user.getPass().empty() && !user.getNick().empty())
-			user.setUserFlags(REGISTRED);
+			user.setFlags(REGISTRED);
 		return connection(user);
 	}
 	return 0;
@@ -78,7 +78,7 @@ int Server::nick(User &user) {
 			if (user.getNick().empty() == true ) {
 				user.setNick(msg.midParams[0]);
 				if (!user.getPass().empty() && !user.getUser().empty())
-					user.setUserFlags(REGISTRED);
+					user.setFlags(REGISTRED);
 				return connection(user);
 			}
 			else if (user.getNick().empty() == false ) {
@@ -100,7 +100,7 @@ int Server::oper(User &user) {
 	for (std::map<std::string, std::string>::iterator it = inf.oper.begin(); it != inf.oper.end(); ++it)	{
 		if (msg.midParams[0] == (*it).first) {
 		 	if (sha256(msg.midParams[1]) == (*it).second) {
-				user.setUserFlags(OPERATOR);
+				user.setFlags(OPERATOR);
 				return replyMEss(RPL_YOUREOPER, user);
 			}
 			else if (sha256(msg.midParams[1]) != (*it).second)
@@ -134,13 +134,13 @@ int Server::motd(User &user) {
 }
 
 int Server::connection(User &user) {
-	if (user.getUserFlags() & REGISTRED)
+	if (user.getFlags() & REGISTRED)
 		return motd(user);
 	return -1;
 }
 
 bool Server::notRegistr(User &user) {
-	if (!(user.getUserFlags() & REGISTRED) && (msg.cmd != "USER" && msg.cmd != "PASS" && msg.cmd != "NICK")) {
+	if (!(user.getFlags() & REGISTRED) && (msg.cmd != "USER" && msg.cmd != "PASS" && msg.cmd != "NICK")) {
 		errorMEss(ERR_NOTREGISTERED, user);
 		return true;
 	}

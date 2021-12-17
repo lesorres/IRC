@@ -13,12 +13,14 @@
                 //  RPL_ENDOFMOTD (после).
 
 int Server::replyMEss(int reply, User &user, const std::string &str) {
-	std::string mess;
 	std::stringstream ss;
 	ss << reply;
-	mess = ":" + inf.serverName + " " + ss.str() + " " + user.getNick() + " ";
+	std::string mess = ":" + inf.serverName + " " + ss.str() + " " + user.getNick() + " ";
 	switch (reply)
 	{
+	case 221:
+		mess += ":MODE " + str + "\n";
+		break ;
 	case 256:
 		mess += inf.serverName + " :Admin name - " + inf.adminName + "\n";
 		break ;
@@ -64,6 +66,9 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 	case 322:
 		mess = "<channel> <# visible> :<topic>";
 		break ;
+	case 324:
+		mess += str + "\n";
+		break ;
 	case 331:
 		mess += str + " :No topic is set\n" ;
 		break ;
@@ -77,10 +82,16 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += str;
 		break ;
 	case 353:
-		mess += "= " + str + "\n";
+		mess += str + "\n";
 		break ;
 	case 366:
 		mess += str + " :End of /NAMES list\n";
+		break ;
+	case 367:
+		mess += str + " <banid>\n";
+		break ;
+	case 368:
+		mess += str + " :End of channel ban list\n";
 		break ;
 	case 371:
 		mess += ":" + str;

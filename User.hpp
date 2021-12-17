@@ -10,6 +10,9 @@
 #define REGISTRED   0b00000001
 #define OPERATOR    0b00000010
 #define AWAY        0b00000100
+#define INVISIBLE   0b00001000
+#define WALLOPS     0b00010000
+#define SNOTICE     0b00100000
 
 class User {
     private:
@@ -31,7 +34,7 @@ class User {
         int                         fd;
         int                         srvFd;
         int                         registred;
-        char                        userFlags;
+        char                        flags;
         bool                        breakconnect;
 
         User();
@@ -55,7 +58,7 @@ class User {
         int const & getFd( void ) const;
         int const & getRegistred( void ) const;
         bool const & getBreakconnect( void ) const;
-        char const & getUserFlags( void ) const;	
+        char const & getFlags( void ) const;	
 
         void setNick( std::string const & nick );
         void setUser( std::string const & name );
@@ -66,7 +69,8 @@ class User {
         void setServer( std::string const & server );
         void setQuitMess( std::string const & mess );
         void setRegistred( int const & registred );
-        void setUserFlags( char const & flags );
+        void setFlags( char const & flags );
+        void unsetFlags( char const & flag );
         void setKillComment( char const & flags );
 
         void checkConnection( std::string const & mess );

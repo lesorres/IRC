@@ -1,5 +1,8 @@
 #include "Server.hpp"
 
+#define CHANNEL 1
+#define USER 0
+
 int Server::list( User & user )
 {
     if (msg.midParams.empty())
@@ -19,6 +22,7 @@ int Server::names( User & user )
 {
     std::string list;
     std::vector<User *> users;
+    std::vector<User *>::iterator it = userData.begin();
     if (msg.midParams.empty())
     {
         for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); it++)
@@ -29,16 +33,27 @@ int Server::names( User & user )
                 users = (it->second)->getUserList();
                 for (size_t i = 0; i < users.size(); i++)
                 {
-                    if ((it->second)->isOperator(users[i]))
-                        list += "@" + users[i]->getNick() + " ";
-                    else
-                        list += users[i]->getNick() + " ";
+                    if (user.getFlags() & OPERATOR || !((it->second)->flags & INVISIBLE)) {
+                        if ((it->second)->isOperator(users[i]))
+                            list += "@" + users[i]->getNick() + " ";
+                        else
+                            list += users[i]->getNick() + " ";
+                    }
                 }
                 replyMEss(RPL_NAMREPLY, user, list);
                 list = it->first;
                 replyMEss(RPL_ENDOFNAMES, user, list);
             }
         }
+        list = "* :";
+        for ( ; it != userData.end(); it++)
+        {
+            if ((*it)->getChannelList().empty())
+                if (user.getFlags() & OPERATOR || !((*it)->getFlags() & INVISIBLE))
+                    list += (*it)->getNick() + " ";
+        }
+        replyMEss(RPL_NAMREPLY, user, list);
+        replyMEss(RPL_ENDOFNAMES, user, "*");
     }
     else
     {
@@ -48,25 +63,27 @@ int Server::names( User & user )
             if (*(channellist[i].begin()) == '#')
             {
                 try {
-                    if (!(channels.at(channellist[i])->flags & (PRIVATE|SECRET) && !contains(channels.at(channellist[i])->getUserList(), &user)))
+                    Channel * current = channels.at(channellist[i]);
+                    if (!(current->flags & (PRIVATE|SECRET) && !contains(current->getUserList(), &user)))
                     {
                         list = channellist[i] + " :";
-                        users = channels[channellist[i]]->getUserList();
+                        users = current->getUserList();
                         for (size_t i = 0; i < users.size(); i++)
                         {
-                            if (channels[channellist[i]]->isOperator(users[i]))
-                                list += "@" + users[i]->getNick() + " ";
-                            else
-                                list += users[i]->getNick() + " ";
+                            if (user.getFlags() & OPERATOR || !((*it)->getFlags() & INVISIBLE)) {
+                                if (current->isOperator(users[i]))
+                                    list += "@" + users[i]->getNick() + " ";
+                                else
+                                    list += users[i]->getNick() + " ";
+                            }
                         }
                         replyMEss(RPL_NAMREPLY, user, list);
                         list = channellist[i];
                         replyMEss(RPL_ENDOFNAMES, user, list);
                     }
                 }
-                catch (std::exception & e)
-                {
-                    ;
+                catch (std::exception & e) {
+                    replyMEss(RPL_ENDOFNAMES, user, channellist[i]);
                 }
             }
         }
@@ -108,21 +125,28 @@ int Server::topic( User & user )
     return (0);
 }
 
-static int checkModeChar( std::string str )
+static int checkModeChar( std::string str, bool channel)
 {
-    if (str.find_first_not_of("+-opsitnmlbvk") != std::string::npos
-     || str.size() != 2 || (str[0] != '-' && str[0] != '+'))
-        return (1);
+    if (channel) {
+        if (str.find_first_not_of("+-opsitnmlbvk") != std::string::npos
+        || str.size() != 2 || (str[0] != '-' && str[0] != '+'))
+            return (1);
+    }
+    else {
+        if (str.find_first_not_of("+-osiw") != std::string::npos
+        || str.size() != 2 || (str[0] != '-' && str[0] != '+'))
+            return (1);
+    }
     return(0);
 }
 
 int Server::mode( User & user )
 {
-    if (msg.midParams.size() < 1 && msg.trailing.empty())
+    if (msg.midParams.size() < 2)
         return(errorMEss(ERR_NEEDMOREPARAMS, user));
     if (*(msg.midParams[0].begin()) == '#') // channels mode
     {
-        if (checkModeChar(msg.midParams[1]))
+        if (checkModeChar(msg.midParams[1], CHANNEL))
             return(errorMEss(ERR_UNKNOWNMODE, user, msg.midParams[1]));
         try {
             Channel * current = channels.at(msg.midParams[0]);
@@ -136,15 +160,47 @@ int Server::mode( User & user )
         catch (std::exception & e) {
             errorMEss(ERR_NOSUCHCHANNEL, user, msg.midParams[0]);
         }
-    }
+    }  
     else // user mode
     {
-        ;
+        if (checkModeChar(msg.midParams[1], USER))
+            return(errorMEss(ERR_UMODEUNKNOWNFLAG, user));
+        else if (user.getNick() != msg.midParams[0])
+            return(errorMEss(ERR_USERSDONTMATCH, user));
+        else
+            setUserMode(user);
     }
     return(0);
 }
 
-void Server::setChannelMode(Channel * channel, User & user )
+void    Server::setUserMode( User & user )
+{
+    char flag = msg.midParams[1][1];
+    if (msg.midParams[1][0] == '-') {
+        switch (flag) {
+            case 'i': user.unsetFlags(INVISIBLE); break;
+            case 'w': user.unsetFlags(WALLOPS); break;
+            case 's': user.unsetFlags(SNOTICE); break;
+            case 'o': user.unsetFlags(OPERATOR); break;
+        }
+    }
+    else if (msg.midParams[1][0] == '+') {
+        switch (flag) {
+            case 'i': user.setFlags(INVISIBLE); break;
+            case 'w': user.setFlags(WALLOPS); break;
+            case 's': user.setFlags(SNOTICE); break;
+            case 'o': break;
+        }
+    }
+    std::string modes;
+    user.getFlags() & OPERATOR ? modes = "+o " : modes = "-o ";
+    user.getFlags() & INVISIBLE ? modes += "+i " : modes += "-i ";
+    user.getFlags() & SNOTICE ? modes += "+s " : modes += "-s ";
+    user.getFlags() & WALLOPS ? modes += "+w " : modes += "-w ";
+    replyMEss(RPL_UMODEIS, user, modes);
+}
+
+void    Server::setChannelMode(Channel * channel, User & user )
 {
     char flag = msg.midParams[1][1];
     if (msg.midParams[1][0] == '-') {
@@ -211,4 +267,15 @@ void Server::setChannelMode(Channel * channel, User & user )
             case 'm': channel->flags |= MODERATE; break;
         } 
     }
+    std::string modes = channel->getName() + " ";
+    channel->flags & PRIVATE ? modes += "+p " : modes += "-p ";
+    channel->flags & SECRET ? modes += "+s " : modes += "-s ";
+    channel->flags & INVITE ? modes += "+i " : modes += "-i ";
+    channel->flags & TOPIC ? modes += "+t " : modes += "-t ";
+    channel->flags & NO_MESS ? modes += "+n " : modes += "-n ";
+    channel->flags & MODERATE ? modes += "+m " : modes += "-m ";
+    channel->flags & KEY ? modes += "+k" : modes += "-k ";
+    channel->flags & LIMITS ? modes += "+l" : modes += "-l ";
+    replyMEss(RPL_CHANNELMODEIS, user, modes);
+    showMEss(user, channel, 1);
 }

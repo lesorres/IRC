@@ -150,7 +150,7 @@ int Server::whois( User & user)
 				message = (*userIt)->getNick() + " " + (*userIt)->getUser() \
 						+ " " + (*userIt)->getHost() + " * :" + (*userIt)->getReal() + "\n";
 				replyMEss(RPL_WHOISUSER, user, message);
-				if ((*userIt)->getUserFlags() & OPERATOR)
+				if ((*userIt)->getFlags() & OPERATOR)
 					replyMEss(RPL_WHOISOPERATOR, user, (*userIt)->getNick());
 				if (!(*userIt)->getOpChannelList().empty())
 				{
@@ -161,7 +161,7 @@ int Server::whois( User & user)
 						message += "@" + *opListIt + " ";
 					replyMEss(RPL_WHOISCHANNELS, user, message);
 				}
-				if ((*userIt)->getUserFlags() & AWAY)
+				if ((*userIt)->getFlags() & AWAY)
 				{
 					message = 
 					replyMEss(RPL_AWAY, user);
