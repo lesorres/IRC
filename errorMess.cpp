@@ -60,6 +60,9 @@ int Server::errorMEss(int err, User &user, const std::string &str) {
 	case 491:
 		messg = ":No O-lines for your host\n";
 		break ;
+	case 501:
+		messg = ":Unknown MODE flag\n";
+		break ;
 	case 502:
 		messg = ":Cant change mode for other users\n";
 		break ;

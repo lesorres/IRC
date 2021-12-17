@@ -11,7 +11,7 @@ User::User(int serverSocket, int mySocket, struct sockaddr_in address)
     quitMess = "";
     servername = "";
     activeChannel = "";
-    userFlags = 0;
+    flags = 0;
     registred = 0;
     breakconnect = false;
     srvFd = serverSocket;
@@ -64,7 +64,7 @@ std::string const & User::getKillComment( void ) const { return(killComment); }
 int const & User::getFd( void ) const { return(fd); }
 int const & User::getRegistred( void ) const { return(registred); }
 bool const & User::getBreakconnect( void ) const { return(breakconnect); }
-char const & User::getUserFlags( void ) const { return userFlags; }
+char const & User::getFlags( void ) const { return flags; }
 struct sockaddr_in & User::getSockAddr( void ) { return(sockaddr); }
 
 void User::setNick( std::string const & nick ) { nickname = nick; }
@@ -76,8 +76,9 @@ void User::setHost( std::string const & host ) { hostname = host; }
 void User::setServer( std::string const & server ) { servername = server; }
 void User::setQuitMess( std::string const & mess ) { quitMess = mess; }
 void User::setRegistred( int const & status ) { registred = status; }
-void User::setUserFlags( char const & flag ) { userFlags = flag; }
+void User::setFlags( char const & flag ) { flags |= flag; }
 void User::setKillComment( char const & comment ) { killComment = comment; }
+void User::unsetFlags( char const & flag ) { flags &= ~flag; }
 
 void User::imOper( std::string const & name ) { opchannels.push_back(name); }
 void User::imNotOper( std::string const & name ) { eraseString(opchannels, name); }

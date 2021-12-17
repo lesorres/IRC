@@ -23,8 +23,8 @@ int	Server::userhost( User & user) {
 			for (std::vector<User*>::iterator i = userData.begin(); i != userData.end(); ++i)	{
 				if (*it == (*i)->getNick()) {
 					str += *it + "=";
-					if ((*i)->getUserFlags() & OPERATOR) str += "*";
-					if ((*i)->getUserFlags() & AWAY) str += "+";
+					if ((*i)->getFlags() & OPERATOR) str += "*";
+					if ((*i)->getFlags() & AWAY) str += "+";
 					else str += "-";
 					str += (*i)->getIp() + " ";
 				}

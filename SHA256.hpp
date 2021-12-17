@@ -1,7 +1,8 @@
 #ifndef SHA256_H
 #define SHA256_H
 #include <string>
- 
+#include <cstring>
+
 class SHA256
 {
 protected:

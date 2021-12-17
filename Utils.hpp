@@ -37,7 +37,9 @@
 										// Any attempts to use the KILL command on a server are 
 										// to be refused and this error returned directly to the client.
 #define ERR_NOOPERHOST 491				//":No O-lines for your host\n"			
+#define ERR_UMODEUNKNOWNFLAG 501      	// ":Unknown MODE flag"
 #define ERR_USERSDONTMATCH 502			//":Cant change mode for other users\n"
+
 
 		// replies
 #define RPL_ADMINME 256 		//" :Admin name - "													// 256
