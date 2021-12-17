@@ -100,6 +100,8 @@ class Server {
 		int			ison( User & user );
 		int			userhost( User & user );
 		int			kill( User & user );
+		int			restart( User & user );
+		int			rehash( User & user );
 		
 		void		setChannelMode( Channel * channel, User & user );
 		void		setUserMode( User & user );

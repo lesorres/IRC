@@ -159,7 +159,7 @@ void Server::initCommandMap( void )
     // commands.insert(make_pair("AWAY", &Server::away));
     // commands.insert(make_pair("NOTICE", &Server::notice));
     commands.insert(std::make_pair("WHO", &Server::who));
-    // commands.insert(make_pair("WHOIS", &Server::whois));
+    commands.insert(std::make_pair("WHOIS", &Server::whois));
     // commands.insert(make_pair("WHOWAS", &Server::whowas));
     commands.insert(std::make_pair("JOIN", &Server::join));
     commands.insert(std::make_pair("MODE", &Server::mode));
@@ -177,8 +177,8 @@ void Server::initCommandMap( void )
     commands.insert(std::make_pair("INFO", &Server::info));
     commands.insert(std::make_pair("ADMIN", &Server::admin));
     commands.insert(std::make_pair("TIME", &Server::time));
-    // commands.insert(make_pair("REHASH", &Server::rehash));
-    // commands.insert(make_pair("RESTART", &Server::restart));
+    commands.insert(std::make_pair("REHASH", &Server::rehash));
+    commands.insert(std::make_pair("RESTART", &Server::restart));
     commands.insert(std::make_pair("KILL", &Server::kill));
 
 

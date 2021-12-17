@@ -113,7 +113,7 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 		break;
 	case 382:
 		mess += CONF_NAME;
-		mess += ":Rehashing\n";
+		mess += " :Rehashing\n";
 		break ;
 	case 391:
 		mess += inf.serverName + " :Local time - " + str;
