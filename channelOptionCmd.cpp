@@ -48,13 +48,14 @@ int Server::names( User & user )
             if (*(channellist[i].begin()) == '#')
             {
                 try {
-                    if (!(channels.at(channellist[i])->flags & (PRIVATE|SECRET) && !contains(channels.at(channellist[i])->getUserList(), &user)))
+                    Channel * current = channels.at(channellist[i]);
+                    if (!(current->flags & (PRIVATE|SECRET) && !contains(current->getUserList(), &user)))
                     {
                         list = channellist[i] + " :";
-                        users = channels[channellist[i]]->getUserList();
+                        users = current->getUserList();
                         for (size_t i = 0; i < users.size(); i++)
                         {
-                            if (channels[channellist[i]]->isOperator(users[i]))
+                            if (current->isOperator(users[i]))
                                 list += "@" + users[i]->getNick() + " ";
                             else
                                 list += users[i]->getNick() + " ";
@@ -64,9 +65,8 @@ int Server::names( User & user )
                         replyMEss(RPL_ENDOFNAMES, user, list);
                     }
                 }
-                catch (std::exception & e)
-                {
-                    ;
+                catch (std::exception & e) {
+                    return (1);
                 }
             }
         }
