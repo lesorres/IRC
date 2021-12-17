@@ -22,6 +22,7 @@ class User {
         std::string                 hostname;
         std::string                 servername;
         std::string                 quitMess;
+        std::string                 killComment;
         std::vector<std::string>    channels;
         std::vector<std::string>    opchannels;
         std::string                 activeChannel;
@@ -50,10 +51,11 @@ class User {
         std::string const & getHost( void ) const;
         std::string const & getServer( void ) const;
         std::string const & getQuitMess( void ) const;
+        std::string const & getKillComment( void ) const;
         int const & getFd( void ) const;
         int const & getRegistred( void ) const;
         bool const & getBreakconnect( void ) const;
-        char const & getUserFlags( void ) const;
+        char const & getUserFlags( void ) const;	
 
         void setNick( std::string const & nick );
         void setUser( std::string const & name );
@@ -65,6 +67,7 @@ class User {
         void setQuitMess( std::string const & mess );
         void setRegistred( int const & registred );
         void setUserFlags( char const & flags );
+        void setKillComment( char const & flags );
 
         void checkConnection( std::string const & mess );
         bool empty();
@@ -77,6 +80,7 @@ class User {
         void setActiveChannel( std::string &name );
         std::string getActiveChannel( void ) const;
         std::vector<std::string> getChannelList( void ) const;
+		std::vector<std::string> getOpChannelList( void ) const;
 
         User(int serverSocket, int mySocket, struct sockaddr_in address);
         ~User();

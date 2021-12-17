@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include "User.hpp"
 #include "Utils.hpp"
+#include "SHA256.hpp"
 #include "Channel.hpp"
 #include <fstream>
 #include <sstream>
@@ -98,6 +99,7 @@ class Server {
 		int			info( User & user );
 		int			ison( User & user );
 		int			userhost( User & user );
+		int			kill( User & user );
 		
 		void		setChannelMode( Channel * channel, User & user );
 		void		closeChannel( Channel * channel );

@@ -179,7 +179,7 @@ void Server::initCommandMap( void )
     commands.insert(std::make_pair("TIME", &Server::time));
     // commands.insert(make_pair("REHASH", &Server::rehash));
     // commands.insert(make_pair("RESTART", &Server::restart));
-    // commands.insert(make_pair("KILL", &Server::kill));
+    commands.insert(std::make_pair("KILL", &Server::kill));
 
 
     // init server info-vector 

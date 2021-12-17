@@ -30,8 +30,8 @@ int Server::parseMsg(size_t id)
 		}
 	}
 	//std::cout << "before trailing check:\n";
-	printStuct();
-	std::cout << "\n";
+	// printStuct();
+	// std::cout << "\n";
 
 	//identifying if trailing is presented amond mid parameters
 	trailingIt = msg.midParams.begin();
@@ -65,7 +65,7 @@ int Server::parseMsg(size_t id)
 	msg.paramN = msg.midParams.size() + !msg.trailing.empty();
 
 	//std::cout << "parsed structure:\n";
-	printStuct();
+	// printStuct();
 	//std::cout << "\n";
 
 	//check tokents validity
@@ -112,11 +112,6 @@ void Server::cleanMsgStruct()
 	msg.paramN = 0;
 }
 
-void Server::processWildcard()
-{
-	
-}
-
 void Server::printStuct()
 {
 	std::vector <std::string>::iterator beginIt;
@@ -124,10 +119,10 @@ void Server::printStuct()
 	beginIt = msg.midParams.begin();
 	endIt = msg.midParams.end();
 
-	// std::cout << "prefx      : |" << msg.prefx << "|\n";
-	// std::cout << "cmd        : |" << msg.cmd << "|\n";
-	// for ( ; beginIt != endIt; ++beginIt)
-	// 	std::cout << "midParam   : |" << *beginIt << "|\n";
-	// std::cout << "trailing   : |" << msg.trailing << "|\n";
-	// std::cout << "paramN     : |" << msg.paramN << "|\n";
+	std::cout << "prefx      : |" << msg.prefx << "|\n";
+	std::cout << "cmd        : |" << msg.cmd << "|\n";
+	for ( ; beginIt != endIt; ++beginIt)
+		std::cout << "midParam   : |" << *beginIt << "|\n";
+	std::cout << "trailing   : |" << msg.trailing << "|\n";
+	std::cout << "paramN     : |" << msg.paramN << "|\n";
 }

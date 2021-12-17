@@ -3,6 +3,9 @@
 int Server::errorMEss(int err, User &user, const std::string &str) {
 	std::string messg;
 	switch (err) {
+	case 401:
+		messg = str + " :No such nick/channel";
+		break ;
 	case 402:
 		messg = msg.midParams[0] + " :No such server\n";
 		break ;
@@ -51,14 +54,20 @@ int Server::errorMEss(int err, User &user, const std::string &str) {
 	case 482:
 		messg = str + " :You're not channel operator\n";
 		break ;
+	case 483:
+		messg = ":You cant kill a server!";
+		break ;
 	case 491:
 		messg = ":No O-lines for your host\n";
 		break ;
 	case 502:
 		messg = ":Cant change mode for other users\n";
 		break ;
-	default:
+	case 1000:
 		messg = str + "\n";
+		break ;
+	default:
+		messg = "something wrong\n";
 	}
 	send(user.getFd(), messg.c_str(), messg.size(), 0);
 	std::cout << "\e[31mSend error to " << user.getNick() << "< socket " << user.getFd() << " >:\e[0m " << messg;
