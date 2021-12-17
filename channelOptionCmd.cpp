@@ -23,13 +23,21 @@ int Server::names( User & user )
     {
         for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); it++)
         {
-            list = it->first + " :";
-            users = (it->second)->getUserList();
-            for (size_t i = 0; i < users.size(); i++)
-                list += users[i]->getNick() + " ";
-            replyMEss(353, user, list);
-            list = it->first;
-            replyMEss(366, user, list);
+            if (!((it->second)->flags & (PRIVATE|SECRET) && !contains((it->second)->getUserList(), &user)))
+            {
+                list = it->first + " :";
+                users = (it->second)->getUserList();
+                for (size_t i = 0; i < users.size(); i++)
+                {
+                    if ((it->second)->isOperator(users[i]))
+                        list += "@" + users[i]->getNick() + " ";
+                    else
+                        list += users[i]->getNick() + " ";
+                }
+                replyMEss(RPL_NAMREPLY, user, list);
+                list = it->first;
+                replyMEss(RPL_ENDOFNAMES, user, list);
+            }
         }
     }
     else
@@ -39,13 +47,27 @@ int Server::names( User & user )
         {
             if (*(channellist[i].begin()) == '#')
             {
-                list = channellist[i] + " :";
-                users = channels[channellist[i]]->getUserList();
-                for (size_t i = 0; i < users.size(); i++)
-                    list += users[i]->getNick() + " ";
-                replyMEss(353, user, list);
-                list = channellist[i];
-                replyMEss(366, user, list);
+                try {
+                    if (!(channels.at(channellist[i])->flags & (PRIVATE|SECRET) && !contains(channels.at(channellist[i])->getUserList(), &user)))
+                    {
+                        list = channellist[i] + " :";
+                        users = channels[channellist[i]]->getUserList();
+                        for (size_t i = 0; i < users.size(); i++)
+                        {
+                            if (channels[channellist[i]]->isOperator(users[i]))
+                                list += "@" + users[i]->getNick() + " ";
+                            else
+                                list += users[i]->getNick() + " ";
+                        }
+                        replyMEss(RPL_NAMREPLY, user, list);
+                        list = channellist[i];
+                        replyMEss(RPL_ENDOFNAMES, user, list);
+                    }
+                }
+                catch (std::exception & e)
+                {
+                    ;
+                }
             }
         }
     }
