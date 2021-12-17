@@ -22,6 +22,7 @@ int Server::names( User & user )
 {
     std::string list;
     std::vector<User *> users;
+    std::vector<User *>::iterator it = userData.begin();
     if (msg.midParams.empty())
     {
         for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); it++)
@@ -32,16 +33,27 @@ int Server::names( User & user )
                 users = (it->second)->getUserList();
                 for (size_t i = 0; i < users.size(); i++)
                 {
-                    if ((it->second)->isOperator(users[i]))
-                        list += "@" + users[i]->getNick() + " ";
-                    else
-                        list += users[i]->getNick() + " ";
+                    if (user.getFlags() & OPERATOR || !((it->second)->flags & INVISIBLE)) {
+                        if ((it->second)->isOperator(users[i]))
+                            list += "@" + users[i]->getNick() + " ";
+                        else
+                            list += users[i]->getNick() + " ";
+                    }
                 }
                 replyMEss(RPL_NAMREPLY, user, list);
                 list = it->first;
                 replyMEss(RPL_ENDOFNAMES, user, list);
             }
         }
+        list = "* :";
+        for ( ; it != userData.end(); it++)
+        {
+            if ((*it)->getChannelList().empty())
+                if (user.getFlags() & OPERATOR || !((*it)->getFlags() & INVISIBLE))
+                    list += (*it)->getNick() + " ";
+        }
+        replyMEss(RPL_NAMREPLY, user, list);
+        replyMEss(RPL_ENDOFNAMES, user, "*");
     }
     else
     {
@@ -58,10 +70,12 @@ int Server::names( User & user )
                         users = current->getUserList();
                         for (size_t i = 0; i < users.size(); i++)
                         {
-                            if (current->isOperator(users[i]))
-                                list += "@" + users[i]->getNick() + " ";
-                            else
-                                list += users[i]->getNick() + " ";
+                            if (user.getFlags() & OPERATOR || !((*it)->getFlags() & INVISIBLE)) {
+                                if (current->isOperator(users[i]))
+                                    list += "@" + users[i]->getNick() + " ";
+                                else
+                                    list += users[i]->getNick() + " ";
+                            }
                         }
                         replyMEss(RPL_NAMREPLY, user, list);
                         list = channellist[i];
@@ -69,7 +83,7 @@ int Server::names( User & user )
                     }
                 }
                 catch (std::exception & e) {
-                    return (1);
+                    replyMEss(RPL_ENDOFNAMES, user, channellist[i]);
                 }
             }
         }
@@ -128,7 +142,7 @@ static int checkModeChar( std::string str, bool channel)
 
 int Server::mode( User & user )
 {
-    if (msg.midParams.size() < 1)
+    if (msg.midParams.size() < 2)
         return(errorMEss(ERR_NEEDMOREPARAMS, user));
     if (*(msg.midParams[0].begin()) == '#') // channels mode
     {
@@ -178,6 +192,12 @@ void    Server::setUserMode( User & user )
             case 'o': break;
         }
     }
+    std::string modes;
+    user.getFlags() & OPERATOR ? modes = "+o " : modes = "-o ";
+    user.getFlags() & INVISIBLE ? modes += "+i " : modes += "-i ";
+    user.getFlags() & SNOTICE ? modes += "+s " : modes += "-s ";
+    user.getFlags() & WALLOPS ? modes += "+w " : modes += "-w ";
+    replyMEss(RPL_UMODEIS, user, modes);
 }
 
 void    Server::setChannelMode(Channel * channel, User & user )
@@ -247,4 +267,15 @@ void    Server::setChannelMode(Channel * channel, User & user )
             case 'm': channel->flags |= MODERATE; break;
         } 
     }
+    std::string modes = channel->getName() + " ";
+    channel->flags & PRIVATE ? modes += "+p " : modes += "-p ";
+    channel->flags & SECRET ? modes += "+s " : modes += "-s ";
+    channel->flags & INVITE ? modes += "+i " : modes += "-i ";
+    channel->flags & TOPIC ? modes += "+t " : modes += "-t ";
+    channel->flags & NO_MESS ? modes += "+n " : modes += "-n ";
+    channel->flags & MODERATE ? modes += "+m " : modes += "-m ";
+    channel->flags & KEY ? modes += "+k" : modes += "-k ";
+    channel->flags & LIMITS ? modes += "+l" : modes += "-l ";
+    replyMEss(RPL_CHANNELMODEIS, user, modes);
+    showMEss(user, channel, 1);
 }
