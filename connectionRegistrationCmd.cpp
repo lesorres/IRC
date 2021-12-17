@@ -106,7 +106,7 @@ int Server::oper(User &user) {
 			else if (sha256(msg.midParams[1]) != (*it).second)
 				return errorMEss(ERR_PASSWDMISMATCH, user);
 		}
-		else
+		if (it == inf.oper.end() && msg.midParams[0] == (*it).first)
 			return errorMEss(ERR_NOOPERHOST, user);
 	}
 	return 0;
