@@ -43,17 +43,18 @@ void Server::run( void )
 void Server::connectUsers( void )
 {
     int new_client_fd;
+    struct sockaddr_in clientaddr;
+    int addrlen = sizeof(clientaddr);
 
-    if ((new_client_fd = accept(srvFd, (struct sockaddr*)&address, (socklen_t*)&addrlen)) > 0) 
+    if ((new_client_fd = accept(srvFd, (struct sockaddr*)&clientaddr, (socklen_t*)&addrlen)) > 0) 
     {
         struct pollfd nw;
 
         nw.fd = new_client_fd;
         nw.events = POLLIN;
         nw.revents = 0;
-        userData.push_back(new User(srvFd));
+        userData.push_back(new User(srvFd, nw.fd, clientaddr));
         userFds.push_back(nw);
-        userData[userData.size() - 1]->setFd(new_client_fd);
         std::cout << "New client on " << new_client_fd << " socket." << "\n";
     }
 }
@@ -188,11 +189,15 @@ void Server::initCommandMap( void )
 	servInfo.push_back("Server start time - " + inf.srvStartTime);
 }
 
-int Server::killUser(User & user ){
+int Server::killUser( User & user ){
     close(user.getFd());
     std::vector<std::string> temp = user.getChannelList();
     for (size_t i = 0; i < temp.size(); ++i)
+    {
         channels[temp[i]]->disconnectUser(&user);
+        if (!channels[temp[i]]->getCountUsers())
+            closeChannel(channels[temp[i]]);
+    }
     eraseUser(userData, &user);
     std::vector<struct pollfd>::iterator it = userFds.begin();
     for ( ; it != userFds.end(); ++it) {
@@ -202,6 +207,12 @@ int Server::killUser(User & user ){
         }
     }
     return 1;
+}
+
+void		Server::closeChannel( Channel * channel )
+{
+    channels.erase(channel->getName());
+    delete channel;
 }
 
 User& 		Server::getUserByNick( std::string nick )
@@ -251,7 +262,6 @@ Server::Server( std::string const & _port, std::string const & _pass)
         exit(EXIT_FAILURE);
     }
     srvPass = _pass;
-    addrlen = sizeof(address);
     std::cout << "Done!\n";
 }
 
