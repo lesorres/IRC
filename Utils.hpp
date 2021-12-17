@@ -42,6 +42,7 @@
 
 
 		// replies
+#define RPL_UMODEIS 221 		//"<user mode string>"
 #define RPL_ADMINME 256 		//" :Admin name - "													// 256
 #define RPL_ADMINLOC1 257		//"Location - Kazan, Republic of Tatarstan, Russian Federation\n" 	// 257
 #define RPL_ADMINEMAIL 259		//":Admin email - "												// 259
@@ -57,12 +58,15 @@
 #define RPL_WHOISCHANNELS 319
 #define RPL_LISTSTART 321		//"Channel :Users  Name\n"											// 321
 #define RPL_LIST 322			//"<channel> <# visible> :<topic>"										// 322
+#define	RPL_CHANNELMODEIS 324	//"<channel> <mode> <mode params>"
 #define RPL_NOTOPIC 331			//":No topic is set\n" 												// 331 
 #define RPL_TOPIC 332			//"<channel> :<topic>\n"			 									// 332  
 #define RPL_VERSION 351			//" :RFC 1459  | May 1993\n"											// 351
-#define RPL_WHOREPLY 352
+#define RPL_WHOREPLY 352		// ??
 #define RPL_NAMREPLY 353		//"<channel> :[[@|+]<nick> [[@|+]<nick> [...]]]" 					// 353
-#define RPL_ENDOFNAMES 366		//":End of /NAMES list\n" 											// 366 
+#define RPL_ENDOFNAMES 366		//"<channel> :End of /NAMES list\n" 											// 366 
+#define RPL_BANLIST 367			//"<channel> <banid>"                  
+#define RPL_ENDOFBANLIST 368	//"<channel> :End of channel ban list"
 #define RPL_INFO 371			//":"																	// 371
 #define RPL_MOTD 372			//":- "																	// 372
 #define RPL_ENDOFINFO 374		//":End of /INFO list\n"											// 374
