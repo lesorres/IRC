@@ -102,7 +102,11 @@ class Server {
 		int			kill( User & user );
 		int			restart( User & user );
 		int			rehash( User & user );
-		
+		int			invite( User & user );
+		int			kick( User & user );
+		int			motd( User & user );
+
+		// server utils
 		void		setChannelMode( Channel * channel, User & user );
 		void		setUserMode( User & user );
 		void		closeChannel( Channel * channel );
@@ -111,12 +115,14 @@ class Server {
     	int			connection( User & user );
 		bool		notRegistr( User & user );
 		bool 		validNick( User & user );
-    	int			motd( User & user );
+		bool		isChannel( std::string name );
 		int			errorMEss( int err, User &user, const std::string &str = "" );
 		int			replyMEss( int reply, User &user, const std::string &str = "" );
 		void		showMEss( User const & from, Channel const * channel, int andfrom = 0 );
+		void 		showMEss( User const & from, User const & to, int andfrom = 0 );
 		std::string checkTime();
 
+		//trash
 		void		printUserVector( std::vector<User*> users );
 
 		Server( Server const & src );

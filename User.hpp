@@ -25,9 +25,11 @@ class User {
         std::string                 hostname;
         std::string                 servername;
         std::string                 quitMess;
+        std::string                 awayMess;
         std::string                 killComment;
         std::vector<std::string>    channels;
         std::vector<std::string>    opchannels;
+        std::vector<std::string>    votechannels;
         std::string                 activeChannel;
 
         struct sockaddr_in          sockaddr;
@@ -54,6 +56,7 @@ class User {
         std::string const & getHost( void ) const;
         std::string const & getServer( void ) const;
         std::string const & getQuitMess( void ) const;
+        std::string const & getAwayMess( void ) const;
         std::string const & getKillComment( void ) const;
         int const & getFd( void ) const;
         int const & getRegistred( void ) const;
@@ -68,6 +71,7 @@ class User {
         void setHost( std::string const & host );
         void setServer( std::string const & server );
         void setQuitMess( std::string const & mess );
+        void setAwayMess( std::string const & mess );
         void setRegistred( int const & registred );
         void setFlags( char const & flags );
         void unsetFlags( char const & flag );

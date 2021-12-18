@@ -25,6 +25,7 @@ class Channel
         std::string             topic;
         std::vector<User*>      users;
         std::vector<User*>      operators;
+        std::vector<User*>      invited;
         std::vector<std::string> banmascs;
         std::string             password;
         unsigned int            countUsers;
@@ -39,7 +40,10 @@ class Channel
         void addUser( User * user );
         void opUser( User * user );
         void deopUser( User * user );
-        int  isOperator( User * user );
+        bool isOperator( User * user );
+        void invUser( User * user );
+        void deinvUser( User * user );
+        bool isInvited( User * user );
         void disconnectUser( User * user );
         void addBanMask( std::string & masc );
         void deleteBanMasc( std::string masc );
@@ -48,6 +52,7 @@ class Channel
         std::string getTopic( void ) const;
         std::string getPass( void ) const;
         unsigned int getCountUsers( void ) const;
+        unsigned int getCountVisible( void ) const;
         unsigned int getUserLimit( void ) const;
         std::vector<std::string> getBanMasc( void ) const;
         std::vector<User*> const & getUserList( void ) const;

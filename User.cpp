@@ -60,6 +60,7 @@ std::string const & User::getReal( void ) const { return(realname); }
 std::string const & User::getHost( void ) const { return(hostname); }
 std::string const & User::getServer( void ) const { return(servername); }
 std::string const & User::getQuitMess( void ) const { return(quitMess); }
+std::string const & User::getAwayMess( void ) const { return(awayMess); }
 std::string const & User::getKillComment( void ) const { return(killComment); }
 int const & User::getFd( void ) const { return(fd); }
 int const & User::getRegistred( void ) const { return(registred); }
@@ -75,6 +76,7 @@ void User::setReal( std::string const & real ) { realname = real; }
 void User::setHost( std::string const & host ) { hostname = host; }
 void User::setServer( std::string const & server ) { servername = server; }
 void User::setQuitMess( std::string const & mess ) { quitMess = mess; }
+void User::setAwayMess( std::string const & mess ) { awayMess = mess; }
 void User::setRegistred( int const & status ) { registred = status; }
 void User::setFlags( char const & flag ) { flags |= flag; }
 void User::setKillComment( char const & comment ) { killComment = comment; }
@@ -92,6 +94,8 @@ void User::leaveChannel(std::string & name)
     if (name == activeChannel)
         activeChannel = "";
     eraseString(channels, name);
+    eraseString(opchannels, name);
+    eraseString(votechannels, name);
 }
 
 void User::checkConnection( std::string const & mess )

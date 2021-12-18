@@ -129,8 +129,8 @@ void Server::execute(std::string const &com, User &user)
 
 void Server::executeCommand( size_t const id )
 {
-    // if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
-    parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
+    if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
+    // parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
 
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
@@ -164,8 +164,8 @@ void Server::initCommandMap( void )
     commands.insert(std::make_pair("JOIN", &Server::join));
     commands.insert(std::make_pair("MODE", &Server::mode));
     commands.insert(std::make_pair("TOPIC", &Server::topic));
-    // commands.insert(make_pair("INVITE", &Server::invite));
-    // commands.insert(make_pair("KICK", &Server::kick));
+    commands.insert(std::make_pair("INVITE", &Server::invite));
+    commands.insert(std::make_pair("KICK", &Server::kick));
     commands.insert(std::make_pair("PART", &Server::part));
     commands.insert(std::make_pair("NAMES", &Server::names));
     commands.insert(std::make_pair("LIST", &Server::list));
@@ -215,13 +215,24 @@ void		Server::closeChannel( Channel * channel )
     delete channel;
 }
 
+bool		Server::isChannel( std::string name )
+{
+    try {
+        channels.at(name);
+        return (true);
+    }
+    catch(const std::exception& e) {
+        return (false);
+    }
+}
+
 User& 		Server::getUserByNick( std::string nick )
 {
     std::vector<User*>::iterator it = userData.begin();
     for (; it != userData.end(); it++)
         if ((*it)->getNick() == nick)
-            break ;
-    return(*(*it));
+            return(*(*it));
+    throw std::range_error("No such nick");
 }
 
 void	Server::printUserVector(std::vector<User*> users)
@@ -247,7 +258,6 @@ Server::Server( std::string const & _port, std::string const & _pass)
 	inf.serverName = "IRC.1";
     inf.srvVersion = "v1.0.0";
     initCommandMap();
-    // (this->*(command.at("PASS")))("DATA", *bob);
     try
     {
         if (_port.find_first_not_of("0123456789") != std::string::npos)
