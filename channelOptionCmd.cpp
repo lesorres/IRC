@@ -5,15 +5,49 @@
 
 int Server::list( User & user )
 {
+
+    std::string list;
     if (msg.midParams.empty())
     {
-        std::string list;
-        for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); it++)
+        std::map<std::string, Channel*>::iterator it = channels.begin();
+        replyMEss(RPL_LISTSTART, user);
+        for ( ; it != channels.end(); it++)
         {
-            list += it->first + " ";
+            if (!(it->second->flags & (PRIVATE|SECRET)) || contains(user.getChannelList(), it->first))
+            {
+                list = it->first + " " + itos(it->second->getCountVisible()) + " :" + it->second->getTopic();
+                replyMEss(RPL_LIST, user, list);
+            }
+            else if (it->second->flags & PRIVATE)
+            {
+                list = it->first + " Prv";
+                replyMEss(RPL_LIST, user, list);
+            }
         }
-        list+= "\n";
-        send(user.getFd(), list.c_str(), list.size(), 0);
+        replyMEss(RPL_LISTEND, user);
+    }
+    else
+    {
+        std::vector<std::string> channellist = split(msg.midParams[0], ",");
+        replyMEss(RPL_LISTSTART, user);
+        for (size_t i = 0; i < channellist.size(); i++)
+        {
+            try {
+                Channel * current = channels.at(channellist[i]);
+                if (!(current->flags & (PRIVATE|SECRET)) || contains(user.getChannelList(), channellist[i]))
+                {
+                    list = channellist[i] + " " + itos(current->getCountVisible()) + " :" + current->getTopic();
+                    replyMEss(RPL_LIST, user, list);
+                }
+                else if (current->flags & PRIVATE)
+                {
+                    list = channellist[i] + " Prv";
+                    replyMEss(RPL_LIST, user, list);
+                }
+            }
+            catch (std::exception & e) { ; }
+        }
+        replyMEss(RPL_LISTEND, user);
     }
     return (0);
 }
@@ -47,11 +81,9 @@ int Server::names( User & user )
         }
         list = "* :";
         for ( ; it != userData.end(); it++)
-        {
             if ((*it)->getChannelList().empty())
                 if (user.getFlags() & OPERATOR || !((*it)->getFlags() & INVISIBLE))
                     list += (*it)->getNick() + " ";
-        }
         replyMEss(RPL_NAMREPLY, user, list);
         replyMEss(RPL_ENDOFNAMES, user, "*");
     }
@@ -94,34 +126,30 @@ int Server::names( User & user )
 int Server::topic( User & user )
 {
     if (msg.midParams.size() < 1)
-        errorMEss(ERR_NEEDMOREPARAMS, user);
+        return (errorMEss(ERR_NEEDMOREPARAMS, user));
+    if (!contains(user.getChannelList(), msg.midParams[0]))
+        return (errorMEss(ERR_NOTONCHANNEL, user, msg.midParams[0]));
+    Channel * current = channels.at(msg.midParams[0]);
+    if (msg.midParams.size() == 1 && msg.trailing.empty())
+    {
+        if (current->getTopic().empty())
+            replyMEss(331, user, msg.midParams[0]);
+        else
+            replyMEss(332, user, msg.midParams[0] + " :" + current->getTopic());
+    }
     else
     {
-        if (contains(user.getChannelList(), msg.midParams[0]))
-        {
-            Channel * current = channels.at(msg.midParams[0]);
-            if (msg.midParams.size() == 1 && msg.trailing.empty())
-            {
-                if (current->getTopic().empty())
-                    replyMEss(331, user, msg.midParams[0]);
-                else
-                    replyMEss(332, user, msg.midParams[0] + " :" + current->getTopic());
-            }
-            else
-            {
-                if (current->flags & TOPIC)
-                    if (!current->isOperator(&user))
-                        return(errorMEss(ERR_CHANOPRIVSNEEDED, user, msg.midParams[0]));
-                std::string top;
-                for (size_t i = 1; i < msg.midParams.size(); i++)
-                    top += msg.midParams[i] + " ";
-                top += msg.trailing;
-                current->setTopic(top);
-            }
-        }
+        if (current->flags & TOPIC)
+            if (!current->isOperator(&user))
+                return(errorMEss(ERR_CHANOPRIVSNEEDED, user, msg.midParams[0]));
+        std::string top;
+        if (msg.trailing.empty())
+            top = msg.midParams[1];
         else
-            errorMEss(ERR_NOTONCHANNEL, user, msg.midParams[0]); 
-    }
+            top = msg.trailing;
+        current->setTopic(top);
+        showMEss(user, current, 1);
+    }        
     return (0);
 }
 
@@ -189,15 +217,15 @@ void    Server::setUserMode( User & user )
             case 'i': user.setFlags(INVISIBLE); break;
             case 'w': user.setFlags(WALLOPS); break;
             case 's': user.setFlags(SNOTICE); break;
-            case 'o': break;
+            case 'o': return ;
         }
     }
-    std::string modes;
-    user.getFlags() & OPERATOR ? modes = "+o " : modes = "-o ";
-    user.getFlags() & INVISIBLE ? modes += "+i " : modes += "-i ";
-    user.getFlags() & SNOTICE ? modes += "+s " : modes += "-s ";
-    user.getFlags() & WALLOPS ? modes += "+w " : modes += "-w ";
-    replyMEss(RPL_UMODEIS, user, modes);
+    std::string modes = "[+";
+    if (user.getFlags() & OPERATOR) modes += "o";
+    if (user.getFlags() & INVISIBLE) modes += "i";
+    if (user.getFlags() & SNOTICE) modes += "s";
+    if (user.getFlags() & WALLOPS) modes += "w";
+    replyMEss(RPL_UMODEIS, user, modes + "]");
 }
 
 void    Server::setChannelMode(Channel * channel, User & user )
@@ -267,15 +295,15 @@ void    Server::setChannelMode(Channel * channel, User & user )
             case 'm': channel->flags |= MODERATE; break;
         } 
     }
-    std::string modes = channel->getName() + " ";
-    channel->flags & PRIVATE ? modes += "+p " : modes += "-p ";
-    channel->flags & SECRET ? modes += "+s " : modes += "-s ";
-    channel->flags & INVITE ? modes += "+i " : modes += "-i ";
-    channel->flags & TOPIC ? modes += "+t " : modes += "-t ";
-    channel->flags & NO_MESS ? modes += "+n " : modes += "-n ";
-    channel->flags & MODERATE ? modes += "+m " : modes += "-m ";
-    channel->flags & KEY ? modes += "+k" : modes += "-k ";
-    channel->flags & LIMITS ? modes += "+l" : modes += "-l ";
-    replyMEss(RPL_CHANNELMODEIS, user, modes);
+    std::string modes = channel->getName() + " [+";
+    if (channel->flags & NO_MESS) modes += "n";
+    if (channel->flags & PRIVATE) modes += "p";
+    if (channel->flags & SECRET) modes += "s";
+    if (channel->flags & INVITE) modes += "i";
+    if (channel->flags & TOPIC) modes += "t";
+    if (channel->flags & MODERATE) modes += "m";
+    if (channel->flags & KEY) modes += "k";
+    if (channel->flags & LIMITS) modes += "l";
+    replyMEss(RPL_CHANNELMODEIS, user, modes + "]");
     showMEss(user, channel, 1);
 }

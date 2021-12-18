@@ -68,8 +68,8 @@ int Server::join( User & user )
 
 int Server::part( User & user )
 {
-    if (msg.midParams.size() > 1 || msg.midParams.empty())
-        return(errorMEss(ERR_NEEDMOREPARAMS, user)); // ERR_NEEDMOREPARAMS
+    if (msg.midParams.empty())
+        return(errorMEss(ERR_NEEDMOREPARAMS, user));
     std::vector<std::string> channellist = split(msg.midParams[0], ",");
     for (size_t i = 0; i < channellist.size(); i++)
     {
@@ -80,7 +80,6 @@ int Server::part( User & user )
                 Channel * current = channels.at(channellist[i]);
                 user.leaveChannel(channellist[i]);
                 current->disconnectUser(&user);
-                std::cout << user.getNick() << " leave channel " << channellist[i] << "\n";
                 if (!current->getCountUsers())
                     closeChannel(current);
             }
@@ -91,4 +90,59 @@ int Server::part( User & user )
             errorMEss(ERR_NOSUCHCHANNEL, user, channellist[i]);
     }
     return (0);
-} 
+}
+
+int	Server::invite( User & user )
+{
+    if (msg.midParams.size() < 2)
+        return(errorMEss(ERR_NEEDMOREPARAMS, user));
+    try { 
+        User & to = getUserByNick(msg.midParams[0]);
+        if (!contains(user.getChannelList(), msg.midParams[1]))
+            return (errorMEss(ERR_NOTONCHANNEL, user, msg.midParams[1]));
+        Channel * current = channels[msg.midParams[1]];
+        if (current->flags & INVITE && !contains(user.getOpChannelList(), msg.midParams[1]))
+            return (errorMEss(ERR_CHANOPRIVSNEEDED, user, msg.midParams[1]));
+        if (contains(to.getChannelList(), msg.midParams[1]))
+            return (errorMEss(ERR_USERONCHANNEL, user, msg.midParams[0] + " " + msg.midParams[1]));
+        current->invUser(&to);
+        replyMEss(RPL_INVITING, user, msg.midParams[1] + " " + msg.midParams[0]);
+        showMEss(user, current);
+        showMEss(user, to);
+        if (to.getFlags() & AWAY)
+            replyMEss(RPL_AWAY, user, msg.midParams[0] + " " + to.getAwayMess());
+    }
+    catch (std::exception & e) { return(errorMEss(ERR_NOSUCHNICK, user, msg.midParams[0])); }
+    return (0);
+}
+
+int Server::kick( User & user )
+{
+    if (msg.midParams.size() < 2)
+        return(errorMEss(ERR_NEEDMOREPARAMS, user));
+    std::vector<std::string> channellist = split(msg.midParams[0], ",");
+    std::vector<std::string> userlist = split(msg.midParams[1], ",");
+    for (size_t i = 0; i < channellist.size(); i++)
+    {
+        try {
+            Channel * current = channels.at(channellist[i]);
+            User * rebel;
+            if (!contains(user.getChannelList(), channellist[i]))
+                errorMEss(ERR_NOTONCHANNEL, user, channellist[i]);
+            else if (!current->isOperator(&user))
+                errorMEss(ERR_CHANOPRIVSNEEDED, user, channellist[i]);
+            else
+                for (size_t j = 0; j < userlist.size(); j++)
+                    try 
+                    {
+                        rebel = &getUserByNick(userlist[j]);
+                        rebel->leaveChannel(channellist[i]);
+                        current->disconnectUser(rebel);
+                        showMEss(user, current, 1);
+                    }
+                    catch (std::exception & e) { ; }
+        }
+        catch (std::exception & e) { errorMEss (ERR_NOSUCHCHANNEL, user, channellist[i]); }
+    }
+    return (0);
+}

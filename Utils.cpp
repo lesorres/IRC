@@ -1,6 +1,13 @@
 #include "Server.hpp"
 #include <algorithm>
 
+std::string	itos( int const & num )
+{
+	std::stringstream ss;
+	ss << num;
+	return(ss.str());
+}
+
 bool    contains( std::vector<std::string> vect, std::string str )
 {
     if (find(vect.begin(), vect.end(), str) != vect.end())
@@ -18,26 +25,30 @@ bool    contains( std::vector<User*> vect, User * user )
 
 void eraseString( std::vector<std::string> & vect, std::string name )
 {
-    std::vector<std::string>::iterator it = vect.begin();
-    while (*it != name)
-    {
-        if (it == vect.end())
-            return ;
-        it++;
-    }
-    vect.erase(it);
+	if (vect.empty())
+		return ;
+	std::vector<std::string>::iterator it = vect.begin();
+	while (*it != name)
+	{
+		it++;
+		if (it == vect.end())
+			return ;
+	}
+	vect.erase(it);
 }
 
 void eraseUser( std::vector<User*> & vect, User * user )
 {
-    std::vector<User*>::iterator it = vect.begin();
-    while ((*it)->getNick() != user->getNick())
-    {
-        if (it == vect.end())
-            return ;
-        it++;
-    }
-    vect.erase(it);
+	if (vect.empty())
+		return ;
+	std::vector<User*>::iterator it = vect.begin();
+	while ((*it)->getNick() != user->getNick())
+	{
+		it++;
+		if (it == vect.end())
+			return ;
+	}
+	vect.erase(it);
 }
 
 std::vector<std::string> split(std::string str, std::string delimiter)

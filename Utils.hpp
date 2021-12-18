@@ -25,6 +25,7 @@
 #define ERR_NICKNAMEINUSE 433 			//":Nickname is already in use\n"	
 #define ERR_NICKCOLLISION 436 			//"<nick> :Nickname collision KILL\n"
 #define ERR_NOTONCHANNEL 442			//":You're not on that channel\n"	
+#define ERR_USERONCHANNEL 443   		//"<user> <channel> :is already on channel"
 #define ERR_NOTREGISTERED 451			//":You have not registered\n"		
 #define ERR_NEEDMOREPARAMS 461			//":Not enough parameters\n"		
 #define ERR_ALREADYREGISTRED 462		//":You may not reregister\n"	
@@ -46,7 +47,7 @@
 #define RPL_ADMINME 256 		//" :Admin name - "													// 256
 #define RPL_ADMINLOC1 257		//"Location - Kazan, Republic of Tatarstan, Russian Federation\n" 	// 257
 #define RPL_ADMINEMAIL 259		//":Admin email - "												// 259
-#define RPL_AWAY 301			
+#define RPL_AWAY 301			//"<nick> :<away message>"
 #define RPL_USERHOST 302		//":" [<reply>{<space><reply>}] <reply> ::= <nick>['*'] '=' <'+'|'-'><hostname>"
 #define RPL_ISON 303			//":"													// 303
 #define RPL_WHOISUSER 311		//"<nick> <user> <host> * :<real name>"								// 311
@@ -58,9 +59,11 @@
 #define RPL_WHOISCHANNELS 319
 #define RPL_LISTSTART 321		//"Channel :Users  Name\n"											// 321
 #define RPL_LIST 322			//"<channel> <# visible> :<topic>"										// 322
+#define RPL_LISTEND 323         //":End of /LIST"
 #define	RPL_CHANNELMODEIS 324	//"<channel> <mode> <mode params>"
 #define RPL_NOTOPIC 331			//":No topic is set\n" 												// 331 
 #define RPL_TOPIC 332			//"<channel> :<topic>\n"			 									// 332  
+#define RPL_INVITING 341 		//"<channel> <nick>"
 #define RPL_VERSION 351			//" :RFC 1459  | May 1993\n"											// 351
 #define RPL_WHOREPLY 352		// ??
 #define RPL_NAMREPLY 353		//"<channel> :[[@|+]<nick> [[@|+]<nick> [...]]]" 					// 353
@@ -74,7 +77,7 @@
 #define RPL_ENDOFMOTD 376		//":End of /MOTD command\n"											// 376
 #define RPL_YOUREOPER 381		//":You are now an IRC operator\n"									// 381
 #define RPL_REHASHING 382		//":Rehashing"														// 382
-#define RPL_TIME 391			//" :Local time - "														// 391
+#define RPL_TIME 391			//" :Local time - "														// 391       
 
 
 #if __APPLE__
@@ -85,6 +88,7 @@
 
 
 std::vector<std::string> split(std::string str, std::string delimiter);
+std::string	itos( int const & num );
 bool    isAlphaStr(std::string str);
 bool	isDigitStr(std::string str);
 bool    contains( std::vector<std::string> vect, std::string str );
