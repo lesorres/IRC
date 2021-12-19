@@ -68,6 +68,7 @@ class Server {
 		void 		disconnectClient( size_t const id );
 		int  		readRequest( size_t const id );
 		void 		executeCommand( size_t const id );
+		void 		checkUserConnection( void );
 
 		// parser
 		int			parseMsg(size_t id);
@@ -105,6 +106,8 @@ class Server {
 		int			invite( User & user );
 		int			kick( User & user );
 		int			motd( User & user );
+		int			ping( User & user );
+		int			pong( User & user );
 
 		// server utils
 		void		setChannelMode( Channel * channel, User & user );

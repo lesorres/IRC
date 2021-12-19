@@ -37,6 +37,7 @@ void Server::run( void )
     {
         connectUsers();
         clientRequest();
+        checkUserConnection();
     }
 }
 
@@ -87,6 +88,12 @@ void Server::clientRequest( void )
             }
         }
     }
+}
+
+void Server::checkUserConnection() {
+    // for (int i = 0; i < userData.size(); ++i) {
+    //     if ()
+    // }
 }
 
 int  Server::readRequest( size_t const id )
@@ -169,8 +176,8 @@ void Server::initCommandMap( void )
     commands.insert(std::make_pair("PART", &Server::part));
     commands.insert(std::make_pair("NAMES", &Server::names));
     commands.insert(std::make_pair("LIST", &Server::list));
-    // commands.insert(make_pair("PING", &Server::ping));
-    // commands.insert(make_pair("PONG", &Server::pong));
+    commands.insert(std::make_pair("PING", &Server::ping));
+    commands.insert(std::make_pair("PONG", &Server::pong));
     commands.insert(std::make_pair("ISON", &Server::ison));
     commands.insert(std::make_pair("USERHOST", &Server::userhost));
     commands.insert(std::make_pair("VERSION", &Server::version));

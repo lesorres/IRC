@@ -38,6 +38,8 @@ class User {
         int                         registred;
         char                        flags;
         bool                        breakconnect;
+        time_t                      userRegistTime;
+        time_t                      lastMessTime;
 
         User();
         User &operator=( User const & src );
@@ -50,24 +52,24 @@ class User {
         std::string const & getUser( void ) const;
         std::string const & getPass( void ) const;
         std::string const & getIp( void ) const;
-        struct sockaddr_in & getSockAddr( void );
-
         std::string const & getReal( void ) const;
         std::string const & getHost( void ) const;
         std::string const & getServer( void ) const;
         std::string const & getQuitMess( void ) const;
         std::string const & getAwayMess( void ) const;
         std::string const & getKillComment( void ) const;
+        struct sockaddr_in & getSockAddr( void );
         int const & getFd( void ) const;
         int const & getRegistred( void ) const;
         bool const & getBreakconnect( void ) const;
-        char const & getFlags( void ) const;	
+        char const & getFlags( void ) const;
+        time_t const & getTime( void ) const;
+
 
         void setNick( std::string const & nick );
         void setUser( std::string const & name );
         void setPass( std::string const & pass );
-
-        void setReal( std::string const & relaname );
+        void setReal( std::string const & real );
         void setHost( std::string const & host );
         void setServer( std::string const & server );
         void setQuitMess( std::string const & mess );
@@ -76,7 +78,9 @@ class User {
         void setFlags( char const & flags );
         void unsetFlags( char const & flag );
         void setKillComment( char const & flags );
+        void setTime( time_t const & time );
 
+        time_t timeChecker( );
         void checkConnection( std::string const & mess );
         bool empty();
 
