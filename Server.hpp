@@ -108,6 +108,7 @@ class Server {
 		int			motd( User & user );
 		int			ping( User & user );
 		int			pong( User & user );
+		int			away( User & user );
 
 		// server utils
 		void		setChannelMode( Channel * channel, User & user );

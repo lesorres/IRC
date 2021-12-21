@@ -163,7 +163,7 @@ void Server::initCommandMap( void )
     commands.insert(std::make_pair("OPER", &Server::oper));
     commands.insert(std::make_pair("QUIT", &Server::quit));
     // commands.insert(make_pair("PRIVMSG", &Server::privmsg));
-    // commands.insert(make_pair("AWAY", &Server::away));
+    commands.insert(std::make_pair("AWAY", &Server::away));
     // commands.insert(make_pair("NOTICE", &Server::notice));
     commands.insert(std::make_pair("WHO", &Server::who));
     commands.insert(std::make_pair("WHOIS", &Server::whois));

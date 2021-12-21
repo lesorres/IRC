@@ -34,3 +34,16 @@ int	Server::userhost( User & user) {
 	}
 	return 0;
 }
+
+int Server::away( User & user ) {
+	if (msg.trailing.size() > 0 && !(user.getFlags() & AWAY)) {
+		user.setAwayMess(msg.trailing);
+		user.setFlags(AWAY);
+		return replyMEss (306, user);
+	}
+	else if (user.getFlags() & AWAY) {
+		user.unsetFlags(AWAY);
+		return replyMEss(305, user);
+	}
+	return 1;
+}

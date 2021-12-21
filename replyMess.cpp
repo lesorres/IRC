@@ -37,6 +37,12 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 	case RPL_ISON:
 		mess += ":" + str + "\n";
 		break ;
+	case RPL_UNAWAY:
+		mess += ":You are no longer marked as being away\n";
+		break ;
+	case RPL_NOWAWAY:
+		mess += ":You have been marked as being away\n";
+		break ;
 	case RPL_WHOISUSER:
 		mess += str;
 		break ;
