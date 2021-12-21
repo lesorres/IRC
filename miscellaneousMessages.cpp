@@ -18,8 +18,7 @@ int Server::ping( User & user) {
 	if (msg.midParams.size() != 1)
 		return errorMEss(ERR_NOORIGIN, user);
 	std::string str = ":" + inf.serverName + " PONG :" + msg.midParams[0] + "\n";
-	send(user.getFd(), str.c_str() , str.size(), 0);
-	return 0;
+	return replyMEss(RPL_PING, user, str);
 }
 
 int Server::pong( User & user) {
@@ -46,7 +45,7 @@ int	Server::rehash( User & user ) {
 		if (!(user.getFlags() & OPERATOR))
 			return errorMEss(ERR_NOPRIVILEGES, user);
 		parseConf();
-		replyMEss(RPL_REHASHING, user);
+		replyMEss(RPL_REHASHING, user, " :Rehashing\n");
 	}
 	return 0;
 }

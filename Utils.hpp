@@ -75,7 +75,8 @@
 #define RPL_ENDOFMOTD 376		//":End of /MOTD command\n"			
 #define RPL_YOUREOPER 381		//":You are now an IRC operator\n"	
 #define RPL_REHASHING 382		//":Rehashing"						
-#define RPL_TIME 391			//" :Local time - "						       
+#define RPL_TIME 391			//" :Local time - "
+#define RPL_PING 700			       
 
 
 #if __APPLE__

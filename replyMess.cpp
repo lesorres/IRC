@@ -116,11 +116,13 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += ":You are now an IRC operator\n";
 		break;
 	case RPL_REHASHING:
-		mess += CONF_NAME;
-		mess += " :Rehashing\n";
+		mess += CONF_NAME + str;
 		break ;
 	case RPL_TIME:
 		mess += inf.serverName + " :Local time - " + str;
+		break ;
+	case RPL_PING:
+		mess += str;
 	}
 	send(user.getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 	return 0;
