@@ -56,6 +56,8 @@ class Server {
 		std::vector<std::string>	servInfo;
 		t_msg 						msg;
 		t_servInf					inf;
+		time_t						inactveTime;
+		time_t						responseTime;
 
 		int					srvFd;
 		int					srvPort;

@@ -59,7 +59,6 @@ int Server::user(User &user){
 }
 
 int Server::nick(User &user) {
-	std::cout << validNick(user) << std::endl;
 	if (msg.midParams.size() == 1) {
 		for (int i = 0; i < userData.size(); ++i) {
 			if (userData[i]->getNick() == msg.midParams[0])
@@ -132,8 +131,7 @@ int Server::motd(User &user) {
 
 int Server::connection(User &user) {
 	if (user.getFlags() & REGISTRED){
-		user.setTime(user.timeChecker());
-		std::cout << user.getTime() << "\n";
+		user.setTime();
 		return motd(user);
 	}
 	return -1;
