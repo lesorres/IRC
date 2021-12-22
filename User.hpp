@@ -13,6 +13,7 @@
 #define INVISIBLE   0b00001000
 #define WALLOPS     0b00010000
 #define SNOTICE     0b00100000
+#define PING        0b01000000
 
 class User {
     private:
@@ -40,6 +41,7 @@ class User {
         bool                        breakconnect;
         time_t                      userRegistTime;
         time_t                      lastMessTime;
+        time_t                      pingTime;
 
         User();
         User &operator=( User const & src );
@@ -60,10 +62,11 @@ class User {
         std::string const & getKillComment( void ) const;
         struct sockaddr_in & getSockAddr( void );
         int const & getFd( void ) const;
-        int const & getRegistred( void ) const;
         bool const & getBreakconnect( void ) const;
         char const & getFlags( void ) const;
-        time_t const & getTime( void ) const;
+        time_t const & getRegistTime( void ) const;
+        time_t const & getLastMessTime( void ) const;
+        time_t const & getPingTime( void ) const;
 
 
         void setNick( std::string const & nick );
@@ -74,13 +77,14 @@ class User {
         void setServer( std::string const & server );
         void setQuitMess( std::string const & mess );
         void setAwayMess( std::string const & mess );
-        void setRegistred( int const & registred );
         void setFlags( char const & flags );
         void unsetFlags( char const & flag );
         void setKillComment( char const & flags );
-        void setTime( time_t const & time );
+        void setTime();
+        void setLastMessTime();
+        void setPingTime();
 
-        time_t timeChecker( );
+        time_t timeChecker();
         void checkConnection( std::string const & mess );
         bool empty();
 

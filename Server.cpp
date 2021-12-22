@@ -91,9 +91,19 @@ void Server::clientRequest( void )
 }
 
 void Server::checkUserConnection() {
-    // for (int i = 0; i < userData.size(); ++i) {
-    //     if ()
-    // }
+    for (int i = 0; i < userData.size(); ++i) {
+        if (userData[i]->getFlags() & REGISTRED) {
+            if ((userData[i]->timeChecker() - userData[i]->getLastMessTime()) > inactveTime) {
+                std::string mess = ":" + inf.serverName + " PING :" + inf.serverName + "\n";
+                send(userData[i]->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+                userData[i]->setLastMessTime();
+                userData[i]->setPingTime();
+                userData[i]->setFlags(PING);
+            }
+            if ((userData[i]->getFlags() & PING) && (userData[i]->timeChecker() - userData[i]->getPingTime()) > responseTime)
+                killUser(*userData[i]);
+        }
+    }
 }
 
 int  Server::readRequest( size_t const id )
@@ -142,7 +152,7 @@ void Server::executeCommand( size_t const id )
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
     execute(msg.cmd, *userData[id]); // <---- Command HERE
-	
+	userData[id]->setLastMessTime();
 	cleanMsgStruct();
 
     //////
@@ -264,6 +274,8 @@ Server::Server( std::string const & _port, std::string const & _pass)
     inf.srvStartTime = checkTime();
 	inf.serverName = "IRC.1";
     inf.srvVersion = "v1.0.0";
+    inactveTime = 120;
+    responseTime = 60;
     initCommandMap();
     try
     {
@@ -284,5 +296,10 @@ Server::Server( std::string const & _port, std::string const & _pass)
 
 Server::~Server()
 {
+    // userData.clear();
+    // userFds.clear();
+    // history.clear();
+    // servInfo.clear();
+    // channels.clear();
     std::cout << "Destroyed.\n";
 }

@@ -16,7 +16,7 @@ User::User(int serverSocket, int mySocket, struct sockaddr_in address) {
     srvFd = serverSocket;
     fd = mySocket;
     sockaddr = address;
-    userRegistTime = timeChecker();
+    userRegistTime = 0;
     lastMessTime = 0;
     char ip[INET_ADDRSTRLEN];
     inet_ntop( AF_INET, &sockaddr.sin_addr, ip, INET_ADDRSTRLEN );
@@ -61,10 +61,11 @@ std::string const & User::getQuitMess( void ) const { return quitMess ; }
 std::string const & User::getAwayMess( void ) const { return awayMess ; }
 std::string const & User::getKillComment( void ) const { return killComment ; }
 int const & User::getFd( void ) const { return fd ; }
-int const & User::getRegistred( void ) const { return registred ; }
 bool const & User::getBreakconnect( void ) const { return breakconnect ; }
 char const & User::getFlags( void ) const { return flags; }
-time_t const & User::getTime( void ) const { return userRegistTime; }
+time_t const & User::getRegistTime( void ) const { return userRegistTime; }
+time_t const & User::getLastMessTime( void ) const { return lastMessTime; }
+time_t const & User::getPingTime( void ) const { return pingTime; }
 struct sockaddr_in & User::getSockAddr( void ) { return sockaddr ; }
 
 void User::setNick( std::string const & nick ) { nickname = nick; }
@@ -75,11 +76,12 @@ void User::setHost( std::string const & host ) { hostname = host; }
 void User::setServer( std::string const & server ) { servername = server; }
 void User::setQuitMess( std::string const & mess ) { quitMess = mess; }
 void User::setAwayMess( std::string const & mess ) { awayMess = mess; }
-void User::setRegistred( int const & status ) { registred = status; }
 void User::setFlags( char const & flag ) { flags |= flag; }
 void User::setKillComment( char const & comment ) { killComment = comment; }
 void User::unsetFlags( char const & flag ) { flags &= ~flag; }
-void User::setTime( time_t const & time ) { userRegistTime = time; };
+void User::setTime() { userRegistTime = timeChecker(); };
+void User::setLastMessTime() { lastMessTime = timeChecker(); };
+void User::setPingTime() { pingTime = timeChecker(); };
 
 void User::imOper( std::string const & name ) { opchannels.push_back(name); }
 void User::imNotOper( std::string const & name ) { eraseString(opchannels, name); }
@@ -121,6 +123,5 @@ bool User::empty() {
 
 time_t User::timeChecker( ) { 
     time_t result = time(0);
-    std::cout << userRegistTime << "\n";
     return (intmax_t)result;
 }

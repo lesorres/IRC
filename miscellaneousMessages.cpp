@@ -26,7 +26,7 @@ int Server::pong( User & user) {
 		return errorMEss(ERR_NOORIGIN, user);
 	if (msg.midParams[0] != inf.serverName)
 		return errorMEss(ERR_NOSUCHSERVER, user);
-	
+	user.unsetFlags(PING);
 	return 0;
 }
 
@@ -35,7 +35,10 @@ int	Server::restart( User & user ) {
 	if (msg.paramN == 0) {
 		if (!(user.getFlags() & OPERATOR))
 			return errorMEss(ERR_NOPRIVILEGES, user);
-		// ---
+		// delete this;
+		close(srvFd);
+		create();
+		run();
 	}
 	return 0;
 }
