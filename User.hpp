@@ -14,6 +14,7 @@
 #define WALLOPS     0b00010000
 #define SNOTICE     0b00100000
 #define PING        0b01000000
+#define KILL        0b10000000
 
 class User {
     private:
