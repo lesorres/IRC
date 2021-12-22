@@ -100,8 +100,10 @@ void Server::checkUserConnection() {
                 userData[i]->setPingTime();
                 userData[i]->setFlags(PING);
             }
-            if ((userData[i]->getFlags() & PING) && (userData[i]->timeChecker() - userData[i]->getPingTime()) > responseTime)
+            if ((userData[i]->getFlags() & PING) && (userData[i]->timeChecker() - userData[i]->getPingTime()) > responseTime) {
+                userData[i]->setFlags(KILL);
                 killUser(*userData[i]);
+            }
         }
     }
 }
@@ -131,12 +133,11 @@ int  Server::readRequest( size_t const id )
 
 void Server::execute(std::string const &com, User &user) 
 {
-    try
-    {
+    try    {
         (this->*(commands.at(com)))( user );
+	    user.setLastMessTime();
     }
-    catch(const std::exception& e)
-    {
+    catch(const std::exception& e)    {
         if (user.getActiveChannel().empty())
             errorMEss(0, user);
         else
@@ -152,7 +153,6 @@ void Server::executeCommand( size_t const id )
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
     execute(msg.cmd, *userData[id]); // <---- Command HERE
-	userData[id]->setLastMessTime();
 	cleanMsgStruct();
 
     //////
@@ -165,8 +165,7 @@ void Server::executeCommand( size_t const id )
         executeCommand(id);
 }
 
-void Server::initCommandMap( void )
-{
+void Server::initCommandMap( void ) {
     commands.insert(std::make_pair("PASS", &Server::pass));
     commands.insert(std::make_pair("NICK", &Server::nick));
     commands.insert(std::make_pair("USER", &Server::user));
@@ -206,7 +205,10 @@ void Server::initCommandMap( void )
 	servInfo.push_back("Server start time - " + inf.srvStartTime);
 }
 
-int Server::killUser( User & user ){
+int Server::killUser( User & user ) {
+    if (user.getFlags() & KILL)
+        user.setQuitMess("Client exited!\n");
+    send(user.getFd(), user.getQuitMess().c_str(), user.getQuitMess().size(), 0);
     close(user.getFd());
     std::vector<std::string> temp = user.getChannelList();
     for (size_t i = 0; i < temp.size(); ++i)
@@ -226,14 +228,12 @@ int Server::killUser( User & user ){
     return 1;
 }
 
-void		Server::closeChannel( Channel * channel )
-{
+void		Server::closeChannel( Channel * channel ) {
     channels.erase(channel->getName());
     delete channel;
 }
 
-bool		Server::isChannel( std::string name )
-{
+bool		Server::isChannel( std::string name ) {
     try {
         channels.at(name);
         return (true);
@@ -243,8 +243,7 @@ bool		Server::isChannel( std::string name )
     }
 }
 
-User& 		Server::getUserByNick( std::string nick )
-{
+User& 		Server::getUserByNick( std::string nick ) {
     std::vector<User*>::iterator it = userData.begin();
     for (; it != userData.end(); it++)
         if ((*it)->getNick() == nick)
@@ -252,8 +251,7 @@ User& 		Server::getUserByNick( std::string nick )
     throw std::range_error("No such nick");
 }
 
-void	Server::printUserVector(std::vector<User*> users)
-{
+void	Server::printUserVector(std::vector<User*> users) {
 	std::vector<User *>::iterator itBegin = users.begin();
 	std::vector<User *>::iterator itEnd = users.end();
 
@@ -267,8 +265,7 @@ void	Server::printUserVector(std::vector<User*> users)
 	}
 }
 
-Server::Server( std::string const & _port, std::string const & _pass)
-{
+Server::Server( std::string const & _port, std::string const & _pass) {
 	parseConf();
 	msg.paramN = 0;
     inf.srvStartTime = checkTime();
@@ -294,12 +291,6 @@ Server::Server( std::string const & _port, std::string const & _pass)
     std::cout << "Done!\n";
 }
 
-Server::~Server()
-{
-    // userData.clear();
-    // userFds.clear();
-    // history.clear();
-    // servInfo.clear();
-    // channels.clear();
+Server::~Server() {
     std::cout << "Destroyed.\n";
 }
