@@ -98,6 +98,22 @@ bool isDigitStr(std::string str)
 	return(0);
 }
 
+bool isNumStr(std::string str)
+{
+	std::string::iterator beginIt;
+	std::string::iterator endIt;
+
+	beginIt = str.begin();
+	endIt = str.end();
+
+	for ( ; beginIt != endIt; ++beginIt)
+	{
+		if (!(std::isdigit(*beginIt) || *beginIt == '-'))
+			return (1);
+	}
+	return(0);
+}
+
 int checkWildcard(const char *str, const char *mask)
 {
 	const char *strIt = str;

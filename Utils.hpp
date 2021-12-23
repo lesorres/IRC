@@ -17,7 +17,8 @@
 // errors
 #define ERR_NOSUCHNICK 401				//"<nickname> :No such nick/channel"
 #define ERR_NOSUCHSERVER 402 			//" :No such server\n"		
-#define ERR_NOSUCHCHANNEL 403 			//":No such channel\n"		
+#define ERR_NOSUCHCHANNEL 403 			//":No such channel\n"
+#define ERR_WASNOSUCHNICK 406
 #define ERR_NOORIGIN 409				//":No origin specified"
 #define ERR_NOMOTD 422 					//":MOTD File is missing"			
 #define ERR_NONICKNAMEGIVEN 431			//":No nickname given\n"	
@@ -52,7 +53,8 @@
 #define RPL_NOWAWAY 306			//":You have been marked as being away"
 #define RPL_WHOISUSER 311		//"<nick> <user> <host> * :<real name>"
 #define RPL_WHOISSERVER 312		//"<nick> <server> :<server info>" 
-#define RPL_WHOISOPERATOR 313	//" :is an IRC operator\n"		
+#define RPL_WHOISOPERATOR 313	//" :is an IRC operator\n"
+#define RPL_WHOWASUSER 314
 #define RPL_ENDOFWHO 315
 #define RPL_WHOISIDLE 317		//" <integer> :seconds idle\n"
 #define RPL_ENDOFWHOIS 318		//" :End of /WHOIS list\n"	
@@ -70,6 +72,7 @@
 #define RPL_ENDOFNAMES 366		//"<channel> :End of /NAMES list\n" 
 #define RPL_BANLIST 367			//"<channel> <banid>"                  
 #define RPL_ENDOFBANLIST 368	//"<channel> :End of channel ban list"
+#define RPL_ENDOFWHOWAS 369
 #define RPL_INFO 371			//":"									
 #define RPL_MOTD 372			//":- "									
 #define RPL_ENDOFINFO 374		//":End of /INFO list\n"			
@@ -90,12 +93,13 @@
 
 std::vector<std::string> split(std::string str, std::string delimiter);
 std::string	itos( int const & num );
-bool    isAlphaStr(std::string str);
+bool	isAlphaStr(std::string str);
 bool	isDigitStr(std::string str);
-bool    contains( std::vector<std::string> vect, std::string str );
-bool    contains( std::vector<User*> vect, User * user );
+bool	isNumStr(std::string str);
+bool	contains( std::vector<std::string> vect, std::string str );
+bool	contains( std::vector<User*> vect, User * user );
 void	eraseString( std::vector<std::string> & vect, std::string name );
-void    eraseUser( std::vector<User*> & vect, User * user );
+void	eraseUser( std::vector<User*> & vect, User * user );
 int		checkWildcard(const char *str, const char *mask);
 
 #endif 
