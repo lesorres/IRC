@@ -11,7 +11,10 @@ int Server::errorMEss(int err, User &user, const std::string &str) {
 		messg += msg.midParams[0] + " :No such server\n";
 		break ;
 	case ERR_NOSUCHCHANNEL:
-		messg += str + " " + ":No such channel\n";
+		messg += str + " :No such channel\n";
+		break;
+	case ERR_WASNOSUCHNICK:
+		messg += str + " :There was no such nickname\n";
 		break;
 	case ERR_NOORIGIN:
 		messg += " :No origin specified\n";

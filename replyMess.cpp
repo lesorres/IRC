@@ -52,11 +52,14 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 	case RPL_WHOISOPERATOR:
 		mess += str + " :is an IRC operator\n";
 		break ;
+	case RPL_WHOWASUSER:
+		mess += str + "\n";
+		break ;
 	case RPL_ENDOFWHO:
-		mess += msg.midParams[0] + " :End of /WHO list\n";
+		mess += str + " :End of /WHO list\n";
 		break ;
 	case RPL_WHOISIDLE:
-		// mess += user.getNick() + " <integer> :seconds idle\n";
+		mess += str + " :seconds idle\n";
 		break ;
 	case RPL_ENDOFWHOIS:
 		mess += str + " :End of /WHOIS list\n";
@@ -102,6 +105,9 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 		break ;
 	case RPL_ENDOFBANLIST:
 		mess += str + " :End of channel ban list\n";
+		break ;
+	case RPL_ENDOFWHOWAS:
+		mess += str + " :End of WHOWAS\n";
 		break ;
 	case RPL_INFO:
 		mess += ":" + str;
