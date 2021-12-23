@@ -221,31 +221,29 @@ int Server::whowas( User & user)
 		return (errorMEss(1000, user, "invalid number of parameters is given"));
 	if (msg.midParams.size() == 2 && !(isNumStr(msg.midParams[1])))
 		count = atoi(msg.midParams[1].c_str());
-	else
+	else if (msg.midParams.size() == 2 && isNumStr(msg.midParams[1]))
 		return (errorMEss(1000, user, "second parameters is invalid"));
-	// if ((msg.midParams.size() == 2 && count < 0) || msg.midParams.size() == 1)
-	// {
-		while (userRBeginIt != userREndIt)
+
+	while (userRBeginIt != userREndIt)
+	{
+		std::cout << "here\n";
+		if (msg.midParams.size() == 2 && count > 0 && i == count)
+			break;
+		if (msg.midParams[0] == (*userRBeginIt)->getNick())
 		{
-			if (msg.midParams.size() == 2 && count > 0 && i == count)
-				break;
-			if (msg.midParams[0] == (*userRBeginIt)->getNick())
-			{
-				message = (*userRBeginIt)->getNick() + " " + (*userRBeginIt)->getUser() \
-				+ " " + (*userRBeginIt)->getHost() + " * :" + (*userRBeginIt)->getReal();
-				replyMEss(RPL_WHOWASUSER, user, message);
-				nickAbsenceFlag = 1;
-			}
-			userRBeginIt--;
-			i++;
+			message = (*userRBeginIt)->getNick() + " " + (*userRBeginIt)->getUser() \
+			+ " " + (*userRBeginIt)->getHost() + " * :" + (*userRBeginIt)->getReal();
+			replyMEss(RPL_WHOWASUSER, user, message);
+			nickAbsenceFlag = 1;
 		}
-		if (nickAbsenceFlag == 0)
-			errorMEss(ERR_WASNOSUCHNICK, user, msg.midParams[0]);
-		replyMEss(RPL_ENDOFWHOWAS, user, msg.midParams[0]);
-	// }
-	// else
-	// {
-		
-	// }
+		userRBeginIt++;
+		i++;
+		std::cout << "here2\n";
+	}
+
+	if (nickAbsenceFlag == 0)
+		errorMEss(ERR_WASNOSUCHNICK, user, msg.midParams[0]);
+	replyMEss(RPL_ENDOFWHOWAS, user, msg.midParams[0]);
+
 	return 0;
 }
