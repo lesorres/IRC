@@ -171,7 +171,7 @@ void Server::initCommandMap( void ) {
     commands.insert(std::make_pair("USER", &Server::user));
     commands.insert(std::make_pair("OPER", &Server::oper));
     commands.insert(std::make_pair("QUIT", &Server::quit));
-    // commands.insert(make_pair("PRIVMSG", &Server::privmsg));
+    commands.insert(std::make_pair("PRIVMSG", &Server::privmsg));
     commands.insert(std::make_pair("AWAY", &Server::away));
     // commands.insert(make_pair("NOTICE", &Server::notice));
     commands.insert(std::make_pair("WHO", &Server::who));
@@ -206,9 +206,10 @@ void Server::initCommandMap( void ) {
 }
 
 int Server::killUser( User & user ) {
-    if (user.getFlags() & KILL)
+    // if (user.getFlags() & KILL)
         user.setQuitMess("Client exited!\n");
-    send(user.getFd(), user.getQuitMess().c_str(), user.getQuitMess().size(), 0);
+    std::string str = ":" + user.getNick() + "!" + user.getUser() + " :" + user.getQuitMess(); // нужно будет поменять вывод
+    send(user.getFd(), str.c_str(), str.size(), 0);
     close(user.getFd());
     std::vector<std::string> temp = user.getChannelList();
     for (size_t i = 0; i < temp.size(); ++i)
