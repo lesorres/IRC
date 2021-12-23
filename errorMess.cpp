@@ -19,6 +19,9 @@ int Server::errorMEss(int err, User &user, const std::string &str) {
 	case ERR_NOORIGIN:
 		messg += " :No origin specified\n";
 		break;
+	case ERR_NORECIPIENT:
+		messg += ":No recipient given " + str + "\n";
+		break;
 	case ERR_NOMOTD:
 		messg += ":MOTD File is missing\n";
 		break ;
