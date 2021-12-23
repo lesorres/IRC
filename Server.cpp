@@ -176,7 +176,7 @@ void Server::initCommandMap( void ) {
     // commands.insert(make_pair("NOTICE", &Server::notice));
     commands.insert(std::make_pair("WHO", &Server::who));
     commands.insert(std::make_pair("WHOIS", &Server::whois));
-    // commands.insert(make_pair("WHOWAS", &Server::whowas));
+    commands.insert(std::make_pair("WHOWAS", &Server::whowas));
     commands.insert(std::make_pair("JOIN", &Server::join));
     commands.insert(std::make_pair("MODE", &Server::mode));
     commands.insert(std::make_pair("TOPIC", &Server::topic));
