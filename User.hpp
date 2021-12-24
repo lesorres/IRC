@@ -32,7 +32,6 @@ class User {
         std::vector<std::string>    channels;
         std::vector<std::string>    opchannels;
         std::vector<std::string>    votechannels;
-        std::string                 activeChannel;
 
         struct sockaddr_in          sockaddr;
         int                         fd;
@@ -94,8 +93,6 @@ class User {
         void imOper( std::string const & channelname );
         void imNotOper( std::string const & channelname );
         void leaveChannel( std::string & name );
-        void setActiveChannel( std::string &name );
-        std::string getActiveChannel( void ) const;
         std::vector<std::string> getChannelList( void ) const;
 		std::vector<std::string> getOpChannelList( void ) const;
 

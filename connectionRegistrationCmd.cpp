@@ -24,8 +24,8 @@ int Server::pass(User &user) {
 				user.setPass(msg.midParams[0]);
 			else
 				user.setPass(msg.trailing);
-			if (user.getPass() != srvPass)
-				return killUser(user);
+			// if (user.getPass() != srvPass)
+			// 	return killUser(user);
 			if (!user.getNick().empty() && !user.getUser().empty())
 				user.setFlags(REGISTRED);
 			return connection(user);

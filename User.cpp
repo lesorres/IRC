@@ -9,7 +9,6 @@ User::User(int serverSocket, int mySocket, struct sockaddr_in address) {
     hostname = "";
     quitMess = "";
     servername = "";
-    activeChannel = "";
     flags = 0;
     registred = 0;
     breakconnect = false;
@@ -21,7 +20,6 @@ User::User(int serverSocket, int mySocket, struct sockaddr_in address) {
     char ip[INET_ADDRSTRLEN];
     inet_ntop( AF_INET, &sockaddr.sin_addr, ip, INET_ADDRSTRLEN );
     ipv4 = ip;
-    std::cout << "ip=" << ipv4 << "\n";
 }
 
 User::User( User const & src ) {
@@ -39,7 +37,6 @@ User &User::operator=( User const & src ) {
 	servername = src.servername;
 	quitMess = src.quitMess;
 	channels = src.channels;
-	activeChannel = src.activeChannel;
 	fd = src.fd;
 	srvFd = src.srvFd;
 	registred = src.registred;
@@ -88,12 +85,8 @@ void User::imNotOper( std::string const & name ) { eraseString(opchannels, name)
 void User::addChannel(std::string & name) { channels.push_back(name); }
 std::vector<std::string> User::getChannelList( void ) const { return channels ; }
 std::vector<std::string> User::getOpChannelList( void ) const { return opchannels ; }
-void User::setActiveChannel( std::string &name ) { activeChannel = name; }
-std::string User::getActiveChannel( void ) const { return activeChannel ; }
 
 void User::leaveChannel(std::string & name) {
-    if (name == activeChannel)
-        activeChannel = "";
     eraseString(channels, name);
     eraseString(opchannels, name);
     eraseString(votechannels, name);
@@ -114,8 +107,7 @@ bool User::empty() {
     + realname.empty() \
     + hostname.empty() \
     + servername.empty() \
-    + channels.empty() \
-    + activeChannel.empty();
+    + channels.empty();
     if (i == 8)
         return (1);
     return (0);

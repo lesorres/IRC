@@ -179,14 +179,14 @@ int Server::mode( User & user )
         try {
             Channel * current = channels.at(msg.midParams[0]);
             if (!contains(user.getChannelList(), msg.midParams[0]))
-                errorMEss(ERR_NOTONCHANNEL, user, msg.midParams[0]);
+                return(errorMEss(ERR_NOTONCHANNEL, user, msg.midParams[0]));
             else if (!current->isOperator(&user))
-                errorMEss(ERR_CHANOPRIVSNEEDED, user, msg.midParams[0]);
+                return(errorMEss(ERR_CHANOPRIVSNEEDED, user, msg.midParams[0]));
             else
                 setChannelMode(current, user);
         }
         catch (std::exception & e) {
-            errorMEss(ERR_NOSUCHCHANNEL, user, msg.midParams[0]);
+            return(errorMEss(ERR_NOSUCHCHANNEL, user, msg.midParams[0]));
         }
     }  
     else // user mode
@@ -235,20 +235,25 @@ void    Server::setChannelMode(Channel * channel, User & user )
         switch (flag) {
             case 'o':
                 if (msg.midParams.size() < 3) {
-                    errorMEss(461, user); break; }
+                    errorMEss(461, user); return; }
                 else if (contains(channel->getUserList(), &getUserByNick(msg.midParams[2]))) {
                     channel->deopUser(&getUserByNick(msg.midParams[2]));
                     getUserByNick(msg.midParams[2]).imNotOper(channel->getName());
                     break ; }
                 else {
-                    errorMEss(502, user); break; }
+                    errorMEss(502, user); return; }
             case 'v':
                 break;
-            case 'b': 
+            case 'b': {
                 if (msg.midParams.size() < 3) {
-                    errorMEss(461, user); break; }
+                    errorMEss(461, user); return; }
                 channel->deleteBanMasc(msg.midParams[2]);
-                break;
+                std::vector<std::string> mascs = channel->getBanMasc();
+                if (!mascs.empty())
+                    for (size_t i = 0; i < mascs.size(); i++)
+                        replyMEss(RPL_BANLIST, user, msg.midParams[0] + " " + mascs[i]);
+                replyMEss(RPL_ENDOFBANLIST, user, msg.midParams[0]);
+                break; }
             case 'k': channel->flags &= ~KEY; break;
             case 'l': channel->flags &= ~LIMITS; break;
             case 'p': channel->flags &= ~PRIVATE; break;
@@ -263,28 +268,38 @@ void    Server::setChannelMode(Channel * channel, User & user )
         switch (flag){
             case 'o':
                 if (msg.midParams.size() < 3) {
-                    errorMEss(461, user); break; }
+                    errorMEss(461, user); return; }
                 else if (contains(channel->getUserList(), &getUserByNick(msg.midParams[2]))) {
                     channel->opUser(&getUserByNick(msg.midParams[2]));
                     getUserByNick(msg.midParams[2]).imOper(channel->getName());
                     break ; }
                 else {
-                    errorMEss(502, user); break; }
+                    errorMEss(502, user); return; }
             case 'v':
                 break;
-            case 'b': 
-                if (msg.midParams.size() < 3) {
-                    errorMEss(461, user); break; }
+            case 'b': {
+                if (msg.midParams.size() == 2) {
+                    std::vector<std::string> mascs = channel->getBanMasc();
+                    if (!mascs.empty())
+                        for (size_t i = 0; i < mascs.size(); i++)
+                            replyMEss(RPL_BANLIST, user, msg.midParams[0] + " " + mascs[i]);
+                    replyMEss(RPL_ENDOFBANLIST, user, msg.midParams[0]);
+                    return; }
                 channel->addBanMask(msg.midParams[2]);
-                break;
+                std::vector<std::string> mascs = channel->getBanMasc();
+                if (!mascs.empty())
+                    for (size_t i = 0; i < mascs.size(); i++)
+                        replyMEss(RPL_BANLIST, user, msg.midParams[0] + " " + mascs[i]);
+                replyMEss(RPL_ENDOFBANLIST, user, msg.midParams[0]);
+                break; }
             case 'k': channel->flags |= KEY;
                 if (msg.midParams.size() < 3) {
-                    errorMEss(461, user); break; }
+                    errorMEss(461, user); return; }
                 channel->setPass(msg.midParams[2]);
                 break;
             case 'l': channel->flags |= LIMITS;
                 if (msg.midParams.size() < 3) {
-                    errorMEss(461, user); break; }
+                    errorMEss(461, user); return; }
                 channel->setUserLimit(stoi(msg.midParams[2]));
                 break;
             case 'p': channel->flags |= PRIVATE; break;
@@ -303,7 +318,7 @@ void    Server::setChannelMode(Channel * channel, User & user )
     if (channel->flags & TOPIC) modes += "t";
     if (channel->flags & MODERATE) modes += "m";
     if (channel->flags & KEY) modes += "k";
-    if (channel->flags & LIMITS) modes += "l";
+    if (channel->flags & LIMITS) modes += "l(" + itos(channel->getUserLimit()) + ")";
     replyMEss(RPL_CHANNELMODEIS, user, modes + "]");
     showMEss(user, channel, 1);
 }

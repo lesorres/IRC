@@ -101,7 +101,7 @@ int Server::replyMEss(int reply, User &user, const std::string &str) {
 		mess += str + " :End of /NAMES list\n";
 		break ;
 	case RPL_BANLIST:
-		mess += str + " <banid>\n";
+		mess += str + "\n";
 		break ;
 	case RPL_ENDOFBANLIST:
 		mess += str + " :End of channel ban list\n";
