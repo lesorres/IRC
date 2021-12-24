@@ -12,22 +12,27 @@ int Server::join( User & user )
     {
         if (*(channellist[i].begin()) != '#')
             return(errorMEss(ERR_NOSUCHCHANNEL, user, channellist[i]));
-        try
+        if (user.getChannelList().size() >= maxChannels)
+            return(errorMEss(ERR_TOOMANYCHANNELS, user, channellist[i]));
+        try // join to channel
         {
             Channel * current = channels.at(channellist[i]);
+            if (current->flags & INVITE && !current->isInvited(&user))
+                return(errorMEss(ERR_INVITEONLYCHAN, user, channellist[i]));
+            if (current->flags & KEY && (channelpass.size() < i || current->getPass() != channelpass[i]))
+                return(errorMEss(ERR_BADCHANNELKEY, user, channellist[i]));
+            if (current->isBanned(&user))
+                return(errorMEss(ERR_BANNEDFROMCHAN, user, channellist[i]));
+            if (current->flags & LIMITS && current->getCountUsers() >= current->getUserLimit())
+                return(errorMEss(ERR_CHANNELISFULL, user, channellist[i]));
             if (contains(user.getChannelList(), channellist[i]))
-            {
-                if (i == 0 && user.getActiveChannel() != channellist[i])
-                    user.setActiveChannel(channellist[i]);
-                std::cout << user.getNick() << " alreday on " << channellist[i] << "\n";
-            }
+                return 1;
             else
             {
                 current->addUser(&user);
                 user.addChannel(channellist[i]);
-                if (i == 0 && user.getActiveChannel() != channellist[i])
-                    user.setActiveChannel(channellist[i]);
-                std::cout << user.getNick() << " connect to channel " << channellist[i] << "\n";
+                if (current->isInvited(&user))
+                    current->deinvUser(&user);
                 showMEss(user, current, 1);
                 if (current->getTopic().empty())
                     replyMEss(RPL_NOTOPIC, user, channellist[i]);
@@ -46,7 +51,7 @@ int Server::join( User & user )
                 replyMEss(RPL_ENDOFNAMES, user, channellist[i]);
             }
         }
-        catch (std::exception & e)
+        catch (std::exception & e) // create new channel
         {
             if (i < channelpass.size())
                 channels[channellist[i]] = new Channel(&user, channellist[i],  channelpass[i]);
@@ -54,9 +59,6 @@ int Server::join( User & user )
                 channels[channellist[i]] = new Channel(&user, channellist[i]);
             user.addChannel(channellist[i]);
             user.imOper(channellist[i]);
-            if (user.getActiveChannel() != channellist[i])
-                user.setActiveChannel(channellist[i]);
-            std::cout << user.getNick() << " created new channel " << channellist[i] << "\n";
             showMEss(user, channels[channellist[i]], 1);
             replyMEss(RPL_NOTOPIC, user, channellist[i]);
             replyMEss(RPL_NAMREPLY, user, channellist[i] + " :@" + user.getNick());
@@ -82,12 +84,13 @@ int Server::part( User & user )
                 current->disconnectUser(&user);
                 if (!current->getCountUsers())
                     closeChannel(current);
+                showMEss(user, user);
             }
             else
-                errorMEss(ERR_NOTONCHANNEL, user, channellist[i]);
+                return(errorMEss(ERR_NOTONCHANNEL, user, channellist[i]));
         }
         else
-            errorMEss(ERR_NOSUCHCHANNEL, user, channellist[i]);
+            return(errorMEss(ERR_NOSUCHCHANNEL, user, channellist[i]));
     }
     return (0);
 }

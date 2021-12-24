@@ -137,11 +137,8 @@ void Server::execute(std::string const &com, User &user)
         (this->*(commands.at(com)))( user );
 	    user.setLastMessTime();
     }
-    catch(const std::exception& e)    {
-        if (user.getActiveChannel().empty())
-            errorMEss(0, user);
-        else
-            showMEss(user, channels.at(user.getActiveChannel()));
+    catch(const std::exception& e) {
+        errorMEss(0, user);
     }
 }
 
@@ -274,6 +271,7 @@ Server::Server( std::string const & _port, std::string const & _pass) {
     inf.srvVersion = "v1.0.0";
     inactveTime = 120;
     responseTime = 60;
+    maxChannels = 5;
     initCommandMap();
     try
     {

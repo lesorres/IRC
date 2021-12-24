@@ -38,6 +38,7 @@ class Channel
 
         unsigned int            flags;
         void addUser( User * user );
+        bool isBanned( User * user );
         void opUser( User * user );
         void deopUser( User * user );
         bool isOperator( User * user );

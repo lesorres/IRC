@@ -22,6 +22,7 @@
                 						//  с режимом +n, либо (b) не является чанопом (или режима
                 						//  +v) на канале, который имеет режим +m, и пытается
                 						//  отослать PRIVMSG-сообщение  на этот канал.
+#define ERR_TOOMANYCHANNELS 405			//"<channel name> :You have joined too many channels"
 #define ERR_WASNOSUCHNICK 406
 #define ERR_TOOMANYTARGETS 407			//"<target> :Duplicate recipients. No message delivered"
 										// Возвращается клиенту, который пытается отослать
@@ -49,13 +50,19 @@
 #define ERR_ALREADYREGISTRED 462		//":You may not reregister\n"	
 #define ERR_PASSWDMISMATCH 464			//":Password incorrect\n"			
 #define ERR_KEYSET 467					//":Channel key already set\n"				
-#define ERR_UNKNOWNMODE 472				//":is unknown mode char to me\n"		
+#define ERR_CHANNELISFULL 471 			//"<channel> :Cannot join channel (+l)"
+#define ERR_UNKNOWNMODE 472				//"<char> :is unknown mode char to me"
+#define ERR_INVITEONLYCHAN 473			//"<channel> :Cannot join channel (+i)"
+#define ERR_BANNEDFROMCHAN 474 			//"<channel> :Cannot join channel (+b)"
+#define ERR_BADCHANNELKEY 475			//"<channel> :Cannot join channel (+k)"	
 #define ERR_NOPRIVILEGES 481			//":Permission Denied- You're not an IRC operator"
 #define ERR_CHANOPRIVSNEEDED 482		//":You're not channel operator\n"
 #define ERR_CANTKILLSERVER 483			//":You cant kill a server!"
 #define ERR_NOOPERHOST 491				//":No O-lines for your host\n"			
 #define ERR_UMODEUNKNOWNFLAG 501      	// ":Unknown MODE flag"
 #define ERR_USERSDONTMATCH 502			//":Cant change mode for other users\n"
+
+
 
 
 		// replies

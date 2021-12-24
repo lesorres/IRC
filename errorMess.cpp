@@ -52,8 +52,23 @@ int Server::errorMEss(int err, User &user, const std::string &str) {
 	case ERR_PASSWDMISMATCH:
 		messg += ":Password incorrect\n";
 		break ;
+	case ERR_TOOMANYCHANNELS:
+		messg += str + " :You have joined too many channels\n";
+		break ;
 	case ERR_KEYSET:
-		messg += str + " " + ":Channel key already set\n";
+		messg += str + " :Channel key already set\n";
+		break ;
+	case ERR_CHANNELISFULL:
+		messg += str + " :Cannot join channel (+l)\n";
+		break ;
+	case ERR_INVITEONLYCHAN:
+		messg += str + " :Cannot join channel (+i)\n";
+		break ;
+	case ERR_BANNEDFROMCHAN:
+		messg += str + " :Cannot join channel (+b)\n";
+		break ;
+	case ERR_BADCHANNELKEY:
+		messg += str + " :Cannot join channel (+k)\n";
 		break ;
 	case ERR_UNKNOWNMODE:
 		messg += str + " :is unknown mode char to me\n";

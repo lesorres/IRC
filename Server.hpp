@@ -59,9 +59,9 @@ class Server {
 		time_t						inactveTime;
 		time_t						responseTime;
 
+		int					maxChannels;
 		int					srvFd;
 		int					srvPort;
-		
 		std::string			srvPass;
 		struct sockaddr_in	address;
 		
