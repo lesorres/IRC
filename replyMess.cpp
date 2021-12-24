@@ -13,111 +13,129 @@
                 //  RPL_ENDOFMOTD (после).
 
 int Server::replyMEss(int reply, User &user, const std::string &str) {
-	std::stringstream ss;
-	ss << reply;
-	std::string mess = ":" + inf.serverName + " " + ss.str() + " " + user.getNick() + " ";
+	std::string mess = ":" + inf.serverName + " " + itos(reply) + " " + user.getNick() + " ";
 	switch (reply)
 	{
-	case 221:
-		mess += ":MODE " + str + "\n";
+	case RPL_UMODEIS:
+		mess += str + "\n";
 		break ;
-	case 256:
+	case RPL_ADMINME:
 		mess += inf.serverName + " :Admin name - " + inf.adminName + "\n";
 		break ;
-	case 257:
+	case RPL_ADMINLOC1:
 		mess += "Location - Kazan, Republic of Tatarstan, Russian Federation\n";
 		break ;
-	case 259:
+	case RPL_ADMINEMAIL:
 		mess += ":Admin email - " + inf.adminEmail + "\n";
 		break ;
-	case 301:
+	case RPL_AWAY:
 		mess += str + "\n";
 		break ;
-	case 302:
+	case RPL_USERHOST:
 		mess += ":" + str + "\n";
 		break ;
-	case 303:
+	case RPL_ISON:
 		mess += ":" + str + "\n";
 		break ;
-	case 311:
+	case RPL_UNAWAY:
+		mess += ":You are no longer marked as being away\n";
+		break ;
+	case RPL_NOWAWAY:
+		mess += ":You have been marked as being away\n";
+		break ;
+	case RPL_WHOISUSER:
 		mess += str;
 		break ;
-	case 312:
+	case RPL_WHOISSERVER:
 		// mess += user.getNick() + " " + user.getServer() + ":";
 		break ;
-	case 313:
+	case RPL_WHOISOPERATOR:
 		mess += str + " :is an IRC operator\n";
 		break ;
-	case 315:
-		mess += msg.midParams[0] + " :End of /WHO list\n";
+	case RPL_WHOWASUSER:
+		mess += str + "\n";
 		break ;
-	case 317:
-		// mess += user.getNick() + " <integer> :seconds idle\n";
+	case RPL_ENDOFWHO:
+		mess += str + " :End of /WHO list\n";
 		break ;
-	case 318:
+	case RPL_WHOISIDLE:
+		mess += str + " :seconds idle\n";
+		break ;
+	case RPL_ENDOFWHOIS:
 		mess += str + " :End of /WHOIS list\n";
 		break ;
-	case 319:
+	case RPL_WHOISCHANNELS:
 		mess += str + "\n";
 		break ;
-	case 321:
-		mess = "Channel :Users  Name\n";
+	case RPL_LISTSTART:
+		mess += "Channel :Users Name\n";
 		break ;
-	case 322:
-		mess = "<channel> <# visible> :<topic>";
-		break ;
-	case 324:
+	case RPL_LIST:
 		mess += str + "\n";
 		break ;
-	case 331:
+	case RPL_LISTEND:
+		mess += ":End of /LIST\n";
+		break ;
+	case RPL_CHANNELMODEIS:
+		mess += str + "\n";
+		break ;
+	case RPL_NOTOPIC:
 		mess += str + " :No topic is set\n" ;
 		break ;
-	case 332:
+	case RPL_TOPIC:
 		mess += str + "\n";
 		break ;
-	case 351:
+	case RPL_INVITING:
+		mess += str + "\n";
+		break ;
+	case RPL_VERSION:
 		mess += inf.srvVersion + ".1 " + inf.serverName + " :RFC 1459  | May 1993\n";
 		break ;
-	case 352:
+	case RPL_WHOREPLY:
 		mess += str;
 		break ;
-	case 353:
+	case RPL_NAMREPLY:
 		mess += str + "\n";
 		break ;
-	case 366:
+	case RPL_ENDOFNAMES:
 		mess += str + " :End of /NAMES list\n";
 		break ;
-	case 367:
+	case RPL_BANLIST:
 		mess += str + " <banid>\n";
 		break ;
-	case 368:
+	case RPL_ENDOFBANLIST:
 		mess += str + " :End of channel ban list\n";
 		break ;
-	case 371:
+	case RPL_ENDOFWHOWAS:
+		mess += str + " :End of WHOWAS\n";
+		break ;
+	case RPL_INFO:
 		mess += ":" + str;
 		break ;
-	case 372:
+	case RPL_MOTD:
 		mess += ":- " + str + "\n";
 		break ;
-	case 374:
+	case RPL_ENDOFINFO:
 		mess += ":End of /INFO list\n";
 		break ;
-	case 375:
+	case RPL_MOTDSTART:
 		mess += ":- " + inf.serverName + " Message of the day - \n";
 		break ;
-	case 376:
+	case RPL_ENDOFMOTD:
 		mess += ":End of /MOTD command\n"	;
 		break ;
-	case 381:
+	case RPL_YOUREOPER:
 		mess += ":You are now an IRC operator\n";
 		break;
-	case 382:
-		mess += CONF_NAME;
-		mess += ":Rehashing\n";
+	case RPL_REHASHING:
+		mess += CONF_NAME + str;
 		break ;
-	case 391:
+	case RPL_TIME:
 		mess += inf.serverName + " :Local time - " + str;
+		break ;
+	case RPL_PING:
+		mess += str;
 	}
-	send(user.getFd(), mess.c_str(), mess.size(), 0);
+	send(user.getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 	return 0;
 }

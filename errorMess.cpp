@@ -2,77 +2,87 @@
 
 int Server::errorMEss(int err, User &user, const std::string &str) {
 	std::string messg;
+	messg = ":" + inf.serverName + " " + itos(err) + " " + user.getNick() + " ";
 	switch (err) {
-	case 401:
-		messg = str + " :No such nick/channel";
+	case ERR_NOSUCHNICK:
+		messg += str + " :No such nick/channel\n";
 		break ;
-	case 402:
-		messg = msg.midParams[0] + " :No such server\n";
+	case ERR_NOSUCHSERVER:
+		messg += msg.midParams[0] + " :No such server\n";
 		break ;
-	case 403:
-		messg = str + " " + ":No such channel\n";
+	case ERR_NOSUCHCHANNEL:
+		messg += str + " :No such channel\n";
 		break;
-	case 422:
-		messg = ":MOTD File is missing\n";
-		break ;
-	case 431:
-		messg = ":No nickname given\n";
-		break ;
-	case 432:
-		messg = user.getNick() + " :Erroneus nickname\n";
-		break ;
-	case 433:
-		messg = user.getNick() + " :Nickname is already in use\n";
-		break ;
-	case 436:
-		messg = user.getNick() +  " :Nickname collision KILL\n";
-		break ;
-	case 442:
-		messg = str + " :You're not on that channel\n";
+	case ERR_WASNOSUCHNICK:
+		messg += str + " :There was no such nickname\n";
 		break;
-	case 451:
-		messg = ":You have not registered\n";
+	case ERR_NOORIGIN:
+		messg += " :No origin specified\n";
+		break;
+	case ERR_NOMOTD:
+		messg += ":MOTD File is missing\n";
 		break ;
-	case 461:
-		messg = msg.cmd + " :Not enough parameters\n";
+	case ERR_NONICKNAMEGIVEN:
+		messg += ":No nickname given\n";
 		break ;
-	case 462:
-		messg = ":You may not reregister\n";
+	case ERR_ERRONEUSNICKNAME:
+		messg += user.getNick() + " :Erroneus nickname\n";
 		break ;
-	case 464:
-		messg = ":Password incorrect\n";
+	case ERR_NICKNAMEINUSE:
+		messg += user.getNick() + " :Nickname is already in use\n";
 		break ;
-	case 467:
-		messg = str + " " + ":Channel key already set\n";
+	case ERR_NICKCOLLISION:
+		messg += user.getNick() +  " :Nickname collision KILL\n";
 		break ;
-	case 472:
-		messg = str + " :is unknown mode char to me\n";
+	case ERR_NOTONCHANNEL:
+		messg += str + " :You're not on that channel\n";
+		break;
+	case ERR_USERONCHANNEL:
+		messg += str + " :is already on channel\n";
+		break;
+	case ERR_NOTREGISTERED:
+		messg += ":You have not registered\n";
 		break ;
-	case 481:
-		messg = " :Permission Denied- You're not an IRC operator";
+	case ERR_NEEDMOREPARAMS:
+		messg += msg.cmd + " :Not enough parameters\n";
 		break ;
-	case 482:
-		messg = str + " :You're not channel operator\n";
+	case ERR_ALREADYREGISTRED:
+		messg += ":You may not reregister\n";
 		break ;
-	case 483:
-		messg = ":You cant kill a server!";
+	case ERR_PASSWDMISMATCH:
+		messg += ":Password incorrect\n";
 		break ;
-	case 491:
-		messg = ":No O-lines for your host\n";
+	case ERR_KEYSET:
+		messg += str + " " + ":Channel key already set\n";
 		break ;
-	case 501:
-		messg = ":Unknown MODE flag\n";
+	case ERR_UNKNOWNMODE:
+		messg += str + " :is unknown mode char to me\n";
 		break ;
-	case 502:
-		messg = ":Cant change mode for other users\n";
+	case ERR_NOPRIVILEGES:
+		messg += " :Permission Denied- You're not an IRC operator\n";
+		break ;
+	case ERR_CHANOPRIVSNEEDED:
+		messg += str + " :You're not channel operator\n";
+		break ;
+	case ERR_CANTKILLSERVER:
+		messg += ":You cant kill a server!\n";
+		break ;
+	case ERR_NOOPERHOST:
+		messg += ":No O-lines for your host\n";
+		break ;
+	case ERR_UMODEUNKNOWNFLAG:
+		messg += ":Unknown MODE flag\n";
+		break ;
+	case ERR_USERSDONTMATCH:
+		messg += ":Cant change mode for other users\n";
 		break ;
 	case 1000:
-		messg = str + "\n";
+		messg += str + "\n";
 		break ;
 	default:
-		messg = "something wrong\n";
+		messg += "something wrong\n";
 	}
-	send(user.getFd(), messg.c_str(), messg.size(), 0);
+	send(user.getFd(), messg.c_str(), messg.size(), IRC_NOSIGNAL);
 	std::cout << "\e[31mSend error to " << user.getNick() << "< socket " << user.getFd() << " >:\e[0m " << messg;
 	return 1;
 }

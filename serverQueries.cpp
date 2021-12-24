@@ -9,8 +9,9 @@ int	Server::version( User & user )	{
 }
 
 std::string Server::checkTime()	{
-    std::time_t result = std::time(nullptr);
+    std::time_t result = std::time(0);
     char buffer[32];
+    std::strncpy(buffer, std::ctime(&result), 26);
 	std::string str(buffer);
 	return str;
 }

@@ -56,6 +56,8 @@ class Server {
 		std::vector<std::string>	servInfo;
 		t_msg 						msg;
 		t_servInf					inf;
+		time_t						inactveTime;
+		time_t						responseTime;
 
 		int					srvFd;
 		int					srvPort;
@@ -68,6 +70,7 @@ class Server {
 		void 		disconnectClient( size_t const id );
 		int  		readRequest( size_t const id );
 		void 		executeCommand( size_t const id );
+		void 		checkUserConnection( void );
 
 		// parser
 		int			parseMsg(size_t id);
@@ -100,7 +103,17 @@ class Server {
 		int			ison( User & user );
 		int			userhost( User & user );
 		int			kill( User & user );
-		
+		int			restart( User & user );
+		int			rehash( User & user );
+		int			invite( User & user );
+		int			kick( User & user );
+		int			motd( User & user );
+		int			ping( User & user );
+		int			pong( User & user );
+		int			away( User & user );
+		int			privmsg( User & user );
+
+		// server utils
 		void		setChannelMode( Channel * channel, User & user );
 		void		setUserMode( User & user );
 		void		closeChannel( Channel * channel );
@@ -109,12 +122,14 @@ class Server {
     	int			connection( User & user );
 		bool		notRegistr( User & user );
 		bool 		validNick( User & user );
-    	int			motd( User & user );
+		bool		isChannel( std::string name );
 		int			errorMEss( int err, User &user, const std::string &str = "" );
 		int			replyMEss( int reply, User &user, const std::string &str = "" );
 		void		showMEss( User const & from, Channel const * channel, int andfrom = 0 );
+		void 		showMEss( User const & from, User const & to, int andfrom = 0 );
 		std::string checkTime();
 
+		//trash
 		void		printUserVector( std::vector<User*> users );
 
 		Server( Server const & src );
