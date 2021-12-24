@@ -2,71 +2,93 @@
 
 int Server::errorMEss(int err, User &user, const std::string &str) {
 	std::string messg;
-	std::stringstream ss;
-	ss << err;
-	messg = ":" + inf.serverName + " " + ss.str() + " " + user.getNick() + " ";
+	messg = ":" + inf.serverName + " " + itos(err) + " " + user.getNick() + " ";
 	switch (err) {
-	case 401:
+	case ERR_NOSUCHNICK:
 		messg += str + " :No such nick/channel\n";
 		break ;
-	case 402:
+	case ERR_NOSUCHSERVER:
 		messg += msg.midParams[0] + " :No such server\n";
 		break ;
-	case 403:
-		messg += str + " " + ":No such channel\n";
+	case ERR_NOSUCHCHANNEL:
+		messg += str + " :No such channel\n";
 		break;
-	case 422:
+	case ERR_WASNOSUCHNICK:
+		messg += str + " :There was no such nickname\n";
+		break;
+	case ERR_NOORIGIN:
+		messg += " :No origin specified\n";
+		break;
+	case ERR_NOMOTD:
 		messg += ":MOTD File is missing\n";
 		break ;
-	case 431:
+	case ERR_NONICKNAMEGIVEN:
 		messg += ":No nickname given\n";
 		break ;
-	case 432:
+	case ERR_ERRONEUSNICKNAME:
 		messg += user.getNick() + " :Erroneus nickname\n";
 		break ;
-	case 433:
+	case ERR_NICKNAMEINUSE:
 		messg += user.getNick() + " :Nickname is already in use\n";
 		break ;
-	case 436:
+	case ERR_NICKCOLLISION:
 		messg += user.getNick() +  " :Nickname collision KILL\n";
 		break ;
-	case 442:
+	case ERR_NOTONCHANNEL:
 		messg += str + " :You're not on that channel\n";
 		break;
-	case 451:
+	case ERR_USERONCHANNEL:
+		messg += str + " :is already on channel\n";
+		break;
+	case ERR_NOTREGISTERED:
 		messg += ":You have not registered\n";
 		break ;
-	case 461:
+	case ERR_NEEDMOREPARAMS:
 		messg += msg.cmd + " :Not enough parameters\n";
 		break ;
-	case 462:
+	case ERR_ALREADYREGISTRED:
 		messg += ":You may not reregister\n";
 		break ;
-	case 464:
+	case ERR_PASSWDMISMATCH:
 		messg += ":Password incorrect\n";
 		break ;
-	case 467:
-		messg += str + " " + ":Channel key already set\n";
+	case ERR_TOOMANYCHANNELS:
+		messg += str + " :You have joined too many channels\n";
 		break ;
-	case 472:
+	case ERR_KEYSET:
+		messg += str + " :Channel key already set\n";
+		break ;
+	case ERR_CHANNELISFULL:
+		messg += str + " :Cannot join channel (+l)\n";
+		break ;
+	case ERR_INVITEONLYCHAN:
+		messg += str + " :Cannot join channel (+i)\n";
+		break ;
+	case ERR_BANNEDFROMCHAN:
+		messg += str + " :Cannot join channel (+b)\n";
+		break ;
+	case ERR_BADCHANNELKEY:
+		messg += str + " :Cannot join channel (+k)\n";
+		break ;
+	case ERR_UNKNOWNMODE:
 		messg += str + " :is unknown mode char to me\n";
 		break ;
-	case 481:
+	case ERR_NOPRIVILEGES:
 		messg += " :Permission Denied- You're not an IRC operator\n";
 		break ;
-	case 482:
+	case ERR_CHANOPRIVSNEEDED:
 		messg += str + " :You're not channel operator\n";
 		break ;
-	case 483:
+	case ERR_CANTKILLSERVER:
 		messg += ":You cant kill a server!\n";
 		break ;
-	case 491:
+	case ERR_NOOPERHOST:
 		messg += ":No O-lines for your host\n";
 		break ;
-	case 501:
+	case ERR_UMODEUNKNOWNFLAG:
 		messg += ":Unknown MODE flag\n";
 		break ;
-	case 502:
+	case ERR_USERSDONTMATCH:
 		messg += ":Cant change mode for other users\n";
 		break ;
 	case 1000:
@@ -75,7 +97,7 @@ int Server::errorMEss(int err, User &user, const std::string &str) {
 	default:
 		messg += "something wrong\n";
 	}
-	send(user.getFd(), messg.c_str(), messg.size(), 0);
+	send(user.getFd(), messg.c_str(), messg.size(), IRC_NOSIGNAL);
 	std::cout << "\e[31mSend error to " << user.getNick() << "< socket " << user.getFd() << " >:\e[0m " << messg;
 	return 1;
 }

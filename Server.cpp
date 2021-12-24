@@ -37,6 +37,7 @@ void Server::run( void )
     {
         connectUsers();
         clientRequest();
+        checkUserConnection();
     }
 }
 
@@ -89,6 +90,24 @@ void Server::clientRequest( void )
     }
 }
 
+void Server::checkUserConnection() {
+    for (int i = 0; i < userData.size(); ++i) {
+        if (userData[i]->getFlags() & REGISTRED) {
+            if ((userData[i]->timeChecker() - userData[i]->getLastMessTime()) > inactveTime) {
+                std::string mess = ":" + inf.serverName + " PING :" + inf.serverName + "\n";
+                send(userData[i]->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+                userData[i]->setLastMessTime();
+                userData[i]->setPingTime();
+                userData[i]->setFlags(PING);
+            }
+            if ((userData[i]->getFlags() & PING) && (userData[i]->timeChecker() - userData[i]->getPingTime()) > responseTime) {
+                userData[i]->setFlags(KILL);
+                killUser(*userData[i]);
+            }
+        }
+    }
+}
+
 int  Server::readRequest( size_t const id )
 {
     char buf[BUF_SIZE + 1];
@@ -114,28 +133,23 @@ int  Server::readRequest( size_t const id )
 
 void Server::execute(std::string const &com, User &user) 
 {
-    try
-    {
+    try    {
         (this->*(commands.at(com)))( user );
+	    user.setLastMessTime();
     }
-    catch(const std::exception& e)
-    {
-        if (user.getActiveChannel().empty())
-            errorMEss(0, user);
-        else
-            showMEss(user, channels.at(user.getActiveChannel()));
+    catch(const std::exception& e) {
+        errorMEss(0, user);
     }
 }
 
 void Server::executeCommand( size_t const id )
 {
-    // if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
-    parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
+    if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
+    // parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
 
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
     execute(msg.cmd, *userData[id]); // <---- Command HERE
-	
 	cleanMsgStruct();
 
     //////
@@ -148,29 +162,28 @@ void Server::executeCommand( size_t const id )
         executeCommand(id);
 }
 
-void Server::initCommandMap( void )
-{
+void Server::initCommandMap( void ) {
     commands.insert(std::make_pair("PASS", &Server::pass));
     commands.insert(std::make_pair("NICK", &Server::nick));
     commands.insert(std::make_pair("USER", &Server::user));
     commands.insert(std::make_pair("OPER", &Server::oper));
     commands.insert(std::make_pair("QUIT", &Server::quit));
-    // commands.insert(make_pair("PRIVMSG", &Server::privmsg));
-    // commands.insert(make_pair("AWAY", &Server::away));
+    commands.insert(std::make_pair("PRIVMSG", &Server::privmsg));
+    commands.insert(std::make_pair("AWAY", &Server::away));
     // commands.insert(make_pair("NOTICE", &Server::notice));
     commands.insert(std::make_pair("WHO", &Server::who));
     commands.insert(std::make_pair("WHOIS", &Server::whois));
-    // commands.insert(make_pair("WHOWAS", &Server::whowas));
+    commands.insert(std::make_pair("WHOWAS", &Server::whowas));
     commands.insert(std::make_pair("JOIN", &Server::join));
     commands.insert(std::make_pair("MODE", &Server::mode));
     commands.insert(std::make_pair("TOPIC", &Server::topic));
-    // commands.insert(make_pair("INVITE", &Server::invite));
-    // commands.insert(make_pair("KICK", &Server::kick));
+    commands.insert(std::make_pair("INVITE", &Server::invite));
+    commands.insert(std::make_pair("KICK", &Server::kick));
     commands.insert(std::make_pair("PART", &Server::part));
     commands.insert(std::make_pair("NAMES", &Server::names));
     commands.insert(std::make_pair("LIST", &Server::list));
-    // commands.insert(make_pair("PING", &Server::ping));
-    // commands.insert(make_pair("PONG", &Server::pong));
+    commands.insert(std::make_pair("PING", &Server::ping));
+    commands.insert(std::make_pair("PONG", &Server::pong));
     commands.insert(std::make_pair("ISON", &Server::ison));
     commands.insert(std::make_pair("USERHOST", &Server::userhost));
     commands.insert(std::make_pair("VERSION", &Server::version));
@@ -189,7 +202,11 @@ void Server::initCommandMap( void )
 	servInfo.push_back("Server start time - " + inf.srvStartTime);
 }
 
-int Server::killUser( User & user ){
+int Server::killUser( User & user ) {
+    // if (user.getFlags() & KILL)
+        user.setQuitMess("Client exited!\n");
+    std::string str = ":" + user.getNick() + "!" + user.getUser() + " :" + user.getQuitMess(); // нужно будет поменять вывод
+    send(user.getFd(), str.c_str(), str.size(), 0);
     close(user.getFd());
     std::vector<std::string> temp = user.getChannelList();
     for (size_t i = 0; i < temp.size(); ++i)
@@ -209,23 +226,30 @@ int Server::killUser( User & user ){
     return 1;
 }
 
-void		Server::closeChannel( Channel * channel )
-{
+void		Server::closeChannel( Channel * channel ) {
     channels.erase(channel->getName());
     delete channel;
 }
 
-User& 		Server::getUserByNick( std::string nick )
-{
+bool		Server::isChannel( std::string name ) {
+    try {
+        channels.at(name);
+        return (true);
+    }
+    catch(const std::exception& e) {
+        return (false);
+    }
+}
+
+User& 		Server::getUserByNick( std::string nick ) {
     std::vector<User*>::iterator it = userData.begin();
     for (; it != userData.end(); it++)
         if ((*it)->getNick() == nick)
-            break ;
-    return(*(*it));
+            return(*(*it));
+    throw std::range_error("No such nick");
 }
 
-void	Server::printUserVector(std::vector<User*> users)
-{
+void	Server::printUserVector(std::vector<User*> users) {
 	std::vector<User *>::iterator itBegin = users.begin();
 	std::vector<User *>::iterator itEnd = users.end();
 
@@ -239,15 +263,16 @@ void	Server::printUserVector(std::vector<User*> users)
 	}
 }
 
-Server::Server( std::string const & _port, std::string const & _pass)
-{
+Server::Server( std::string const & _port, std::string const & _pass) {
 	parseConf();
 	msg.paramN = 0;
     inf.srvStartTime = checkTime();
 	inf.serverName = "IRC.1";
     inf.srvVersion = "v1.0.0";
+    inactveTime = 120;
+    responseTime = 60;
+    maxChannels = 5;
     initCommandMap();
-    // (this->*(command.at("PASS")))("DATA", *bob);
     try
     {
         if (_port.find_first_not_of("0123456789") != std::string::npos)
@@ -265,7 +290,6 @@ Server::Server( std::string const & _port, std::string const & _pass)
     std::cout << "Done!\n";
 }
 
-Server::~Server()
-{
+Server::~Server() {
     std::cout << "Destroyed.\n";
 }

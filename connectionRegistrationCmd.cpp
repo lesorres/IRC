@@ -1,8 +1,5 @@
 #include "Server.hpp"
 
-#define DISCONNECT		1				// если количество параметров, необходимых для регистрации пользователя
-										// не соответствует требуемому (!= 3), пользователь не должен подключаться
-
 bool Server::validNick(User &user) {
 	std::string str = msg.midParams[0];
 	std::string::iterator it = str.begin();
@@ -27,8 +24,8 @@ int Server::pass(User &user) {
 				user.setPass(msg.midParams[0]);
 			else
 				user.setPass(msg.trailing);
-			if (user.getPass() != srvPass)
-				return killUser(user);
+			// if (user.getPass() != srvPass)
+			// 	return killUser(user);
 			if (!user.getNick().empty() && !user.getUser().empty())
 				user.setFlags(REGISTRED);
 			return connection(user);
@@ -62,7 +59,6 @@ int Server::user(User &user){
 }
 
 int Server::nick(User &user) {
-	std::cout << validNick(user) << std::endl;
 	if (msg.midParams.size() == 1) {
 		for (int i = 0; i < userData.size(); ++i) {
 			if (userData[i]->getNick() == msg.midParams[0])
@@ -71,7 +67,7 @@ int Server::nick(User &user) {
 		if (user.getNick() == msg.midParams[0]) {
 			return errorMEss(ERR_NICKNAMEINUSE, user);
 		}
-		else if (msg.midParams[0].size() > 9 || validNick(user) == false){
+		else if (msg.midParams[0].size() > 9 || validNick(user) == false) {
 			return errorMEss(ERR_ERRONEUSNICKNAME, user);
 		}
 		else {
@@ -134,8 +130,10 @@ int Server::motd(User &user) {
 }
 
 int Server::connection(User &user) {
-	if (user.getFlags() & REGISTRED)
+	if (user.getFlags() & REGISTRED){
+		user.setTime();
 		return motd(user);
+	}
 	return -1;
 }
 
