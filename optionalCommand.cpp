@@ -49,5 +49,5 @@ int Server::away( User & user ) {
 }
 
 int Server::privmsg( User & user) {
-	
+	return 0;
 }
