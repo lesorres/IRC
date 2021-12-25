@@ -1,25 +1,21 @@
 #include "Server.hpp"
 
-void Server::create( void )
-{
+void Server::create( void ) {
     struct protoent	*pe;
 
     pe = getprotobyname("tcp");
-    if ((srvFd = socket(AF_INET, SOCK_STREAM, pe->p_proto)) == 0)
-    {
+    if ((srvFd = socket(AF_INET, SOCK_STREAM, pe->p_proto)) == 0) {
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(srvPort);
-    if (bind(srvFd, (struct sockaddr*)&address, sizeof(address)) < 0)
-    {
+    if (bind(srvFd, (struct sockaddr*)&address, sizeof(address)) < 0) {
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    if (listen(srvFd, 5) < 0)
-    {
+    if (listen(srvFd, 5) < 0) {
         perror("listen");
         exit(EXIT_FAILURE);
     }
@@ -31,24 +27,20 @@ void Server::create( void )
     */
 }
 
-void Server::run( void )
-{
-    while(true)
-    {
+void Server::run( void ) {
+    while(true) {
         connectUsers();
         clientRequest();
         checkUserConnection();
     }
 }
 
-void Server::connectUsers( void )
-{
+void Server::connectUsers( void ) {
     int new_client_fd;
     struct sockaddr_in clientaddr;
     int addrlen = sizeof(clientaddr);
 
-    if ((new_client_fd = accept(srvFd, (struct sockaddr*)&clientaddr, (socklen_t*)&addrlen)) > 0) 
-    {
+    if ((new_client_fd = accept(srvFd, (struct sockaddr*)&clientaddr, (socklen_t*)&addrlen)) > 0) {
         struct pollfd nw;
 
         nw.fd = new_client_fd;
@@ -60,8 +52,7 @@ void Server::connectUsers( void )
     }
 }
 
-void Server::disconnectClient( size_t const id )
-{
+void Server::disconnectClient( size_t const id ) {
     if (userData[id]->getNick().empty())
         std::cout << "Socket " << userFds[id].fd << " gone away.\n";
     else
@@ -71,15 +62,11 @@ void Server::disconnectClient( size_t const id )
     userData.erase(userData.begin() + id);
 }
 
-void Server::clientRequest( void )
-{
+void Server::clientRequest( void ) {
     int ret = poll(userFds.data(), userFds.size(), 0);
-    if (ret != 0)
-    {
-        for (size_t id = 0; id < userFds.size(); id++)
-        {
-            if (userFds[id].revents & POLLIN)
-            {
+    if (ret != 0)    {
+        for (size_t id = 0; id < userFds.size(); id++) {
+            if (userFds[id].revents & POLLIN) {
                 if (readRequest(id) <= 0)
                     disconnectClient(id);
                 else if (!userData[id]->getBreakconnect())
@@ -116,8 +103,7 @@ int  Server::readRequest( size_t const id )
     std::string text;
     if (userData[id]->messages.size() > 0)
 		text = userData[id]->messages.front();
-    while ((rd = recv(userFds[id].fd, buf, BUF_SIZE, 0)) > 0)
-    {
+    while ((rd = recv(userFds[id].fd, buf, BUF_SIZE, 0)) > 0) {
         buf[rd] = 0;
         bytesRead += rd;
         text += buf;
@@ -131,8 +117,7 @@ int  Server::readRequest( size_t const id )
     return (bytesRead);
 }
 
-void Server::execute(std::string const &com, User &user) 
-{
+void Server::execute(std::string const &com, User &user) {
     try    {
         (this->*(commands.at(com)))( user );
 	    user.setLastMessTime();
@@ -142,8 +127,7 @@ void Server::execute(std::string const &com, User &user)
     }
 }
 
-void Server::executeCommand( size_t const id )
-{
+void Server::executeCommand( size_t const id ) {
     if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
     // parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
 
@@ -203,14 +187,11 @@ void Server::initCommandMap( void ) {
 }
 
 int Server::killUser( User & user ) {
-    // if (user.getFlags() & KILL)
-        user.setQuitMess("Client exited!\n");
-    std::string str = ":" + user.getNick() + "!" + user.getUser() + " :" + user.getQuitMess(); // нужно будет поменять вывод
+    std::string str = ":" + user.getNick() + "!" + user.getUser() + "@" + user.getIp() + " Client exited!\n"; // нужно будет поменять вывод
     send(user.getFd(), str.c_str(), str.size(), 0);
     close(user.getFd());
     std::vector<std::string> temp = user.getChannelList();
-    for (size_t i = 0; i < temp.size(); ++i)
-    {
+    for (size_t i = 0; i < temp.size(); ++i) {
         channels[temp[i]]->disconnectUser(&user);
         if (!channels[temp[i]]->getCountUsers())
             closeChannel(channels[temp[i]]);
@@ -273,16 +254,14 @@ Server::Server( std::string const & _port, std::string const & _pass) {
     responseTime = 60;
     maxChannels = 5;
     initCommandMap();
-    try
-    {
+    try  {
         if (_port.find_first_not_of("0123456789") != std::string::npos)
             throw std::invalid_argument("Port must contain only numbers");
         srvPort = atoi(_port.c_str());
         if (srvPort < 1000 || srvPort > 65555) // надо взять правильный рендж портов...
             throw std::invalid_argument("Port out of range");
     }
-    catch ( std::exception & e)
-    {
+    catch ( std::exception & e) {
         std::cerr << e.what() << "\n";
         exit(EXIT_FAILURE);
     }
