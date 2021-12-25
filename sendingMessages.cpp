@@ -6,15 +6,20 @@
 // +401 ERR_NOSUCHNICK
 // 301 RPL_AWAY
 
+static int checkMask(std::string str)
+{
+
+}
+
 int Server::privmsg( User & user )
 {
-	std::string message;
+	std::string mess = msg.trailing;
 	std::vector<std::string>::iterator paramIt = msg.midParams.begin();
 	std::vector<std::string>::iterator endPramIt = msg.midParams.end();
 	std::vector<User *>::iterator userIt = userData.begin();
 	std::vector<User *>::iterator endUserIt = userData.end();
 	std::map<std::string, Channel *>::iterator chnIt = channels.begin();
-	std::map<std::string, Channel *>::iterator endChnt = channels.end();
+	std::map<std::string, Channel *>::iterator endChnIt = channels.end();
 	std::vector<User *>::iterator chnUsersIt;
 	std::vector<User *>::iterator endChnUsersIt;
 
@@ -29,15 +34,18 @@ int Server::privmsg( User & user )
 		//for channels:
 		if ((*paramIt)[0] == '#' && (*paramIt).find('.') == std::string::npos)
 		{
-			while (chnIt != endChnt)
+			while (chnIt != endChnIt)
 			{
-				chnUsersIt = chnIt->second->getUserList().begin();
-				endChnUsersIt = chnIt->second->getUserList();
-				while (/* condition */)
+				if ((*paramIt) == chnIt->first)
 				{
-					/* code */
+					// !!!!! добавить проверки на различные флаги для ERR_CANNOTSENDTOCHAN
+					chnUsersIt = chnIt->second->getUserList().begin();
+					endChnUsersIt = chnIt->second->getUserList().end();
+					while (chnUsersIt != endChnUsersIt)
+					{
+						send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+					}
 				}
-				
 				chnIt++;
 			}
 			if (absenceFlag == 0)
@@ -50,13 +58,13 @@ int Server::privmsg( User & user )
 			while (userIt != endUserIt)
 			{
 				if ((*userIt)->getNick() == *paramIt)
-				{
-
-				}
-				else if ((*userIt)->getNick() == *paramIt)
-				{
-
-				}
+					send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+				else if ((*userIt)->getUser() == *paramIt)
+					send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+				// else if(checkMask && )
+				// 	send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+				// else if(checkMask && )
+				// 	send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 				userIt++;
 			}
 			if (absenceFlag == 0)

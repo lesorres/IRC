@@ -99,7 +99,7 @@ bool  Channel::isOperator( User * user )
 void Channel::setPass( std::string & pass ) { password = pass; }
 void Channel::setUserLimit( unsigned int limit ) { userLimit = limit; }
 void Channel::setTopic( std::string & _topic ) { topic = _topic; }
-std::vector<User*> const & Channel::getUserList( void ) const { return (users); }
+std::vector<User*> Channel::getUserList( void ) const { return (users); }
 std::vector<std::string> Channel::getBanMasc( void ) const { return (banmascs); }
 std::string Channel::getName( void ) const { return (name); }
 std::string Channel::getPass( void ) const { return(password); }
