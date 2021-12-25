@@ -6,9 +6,32 @@
 // +401 ERR_NOSUCHNICK
 // 301 RPL_AWAY
 
+
 static int checkMask(std::string str)
 {
+	std::string::iterator strIt;
+	std::string::iterator strEndIt;
+	if(str[0] != '#' && str[0] != '$')
+		return(1);
+	strIt = str.begin() + str.rfind(".");
+	strEndIt = str.end();
+	while (strIt != strEndIt)
+	{
+		if (*strIt == '*')
+			return (1);
+		strIt++;
+	}
+	return (0);
+}
 
+void Server::sendPrivMsg(User &fromUser, User &toUser, const std::string &str)
+{
+	std::string mess;
+	std::cout << fromUser.getNick() + "\n";
+	std::cout << toUser.getNick() + "\n";
+	mess = ":" + fromUser.getNick() + "!" + fromUser.getUser() + "@" + fromUser.getHost()
+			+ " PRIVMSG " + toUser.getNick() + " :" + str + "\n";
+	send(toUser.getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 }
 
 int Server::privmsg( User & user )
@@ -27,7 +50,6 @@ int Server::privmsg( User & user )
 
 	if (msg.midParams.size() < 1)
 		return (errorMEss(ERR_NORECIPIENT, user, "PRIVMSG"));
-
 	while (paramIt != endPramIt)
 	{
 		absenceFlag = 0;
@@ -43,7 +65,12 @@ int Server::privmsg( User & user )
 					endChnUsersIt = chnIt->second->getUserList().end();
 					while (chnUsersIt != endChnUsersIt)
 					{
-						send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+						std::cout << "here\n";
+						std::cout << (**chnUsersIt).getNick() << "\n";
+						// sendPrivMsg(user, **chnUsersIt, mess);
+						// send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+						chnUsersIt++;
+						std::cout << "here2\n";
 					}
 				}
 				chnIt++;
@@ -58,13 +85,29 @@ int Server::privmsg( User & user )
 			while (userIt != endUserIt)
 			{
 				if ((*userIt)->getNick() == *paramIt)
-					send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+				{
+					absenceFlag = 1;
+					sendPrivMsg(user, **userIt, mess);
+					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+				}
 				else if ((*userIt)->getUser() == *paramIt)
-					send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
-				// else if(checkMask && )
-				// 	send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
-				// else if(checkMask && )
-				// 	send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+				{
+					absenceFlag = 1;
+					sendPrivMsg(user, **userIt, mess);
+					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+				}
+				else if(checkMask(*paramIt) && (*paramIt)[0] == '#' && checkWildcard((*userIt)->getHost().c_str(), (*paramIt).c_str()))
+				{
+					absenceFlag = 1;
+					sendPrivMsg(user, **userIt, mess);
+					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+				}
+				else if(checkMask(*paramIt) && (*paramIt)[0] == '$' && checkWildcard((*userIt)->getServer().c_str(), (*paramIt).c_str()))
+				{
+					absenceFlag = 1;
+					sendPrivMsg(user, **userIt, mess);
+					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+				}
 				userIt++;
 			}
 			if (absenceFlag == 0)

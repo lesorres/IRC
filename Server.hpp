@@ -128,6 +128,7 @@ class Server {
 		void		showMEss( User const & from, Channel const * channel, int andfrom = 0 );
 		void 		showMEss( User const & from, User const & to, int andfrom = 0 );
 		std::string checkTime();
+		void		sendPrivMsg(User &fromUser, User &toUser, const std::string &str);
 
 		//trash
 		void		printUserVector( std::vector<User*> users );
