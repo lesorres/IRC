@@ -32,10 +32,10 @@ int Server::pong( User & user) {
 
 
 int	Server::restart( User & user ) {
+	std::cout << "restarting\n";
 	if (msg.paramN == 0) {
 		if (!(user.getFlags() & OPERATOR))
 			return errorMEss(ERR_NOPRIVILEGES, user);
-		// delete this;
 		close(srvFd);
 		create();
 		run();

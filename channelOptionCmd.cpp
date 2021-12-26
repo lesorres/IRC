@@ -148,7 +148,7 @@ int Server::topic( User & user )
         else
             top = msg.trailing;
         current->setTopic(top);
-        showMEss(user, current, 1);
+        showMEss(user, current, true);
     }        
     return (0);
 }

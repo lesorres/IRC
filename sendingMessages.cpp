@@ -24,16 +24,6 @@ static int checkMask(std::string str)
 	return (0);
 }
 
-void Server::sendPrivMsg(User &fromUser, User &toUser, const std::string &str)
-{
-	std::string mess;
-	std::cout << fromUser.getNick() + "\n";
-	std::cout << toUser.getNick() + "\n";
-	mess = ":" + fromUser.getNick() + "!" + fromUser.getUser() + "@" + fromUser.getHost()
-			+ " PRIVMSG " + toUser.getNick() + " :" + str + "\n";
-	send(toUser.getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
-}
-
 int Server::privmsg( User & user )
 {
 	std::string mess = msg.trailing;
@@ -67,7 +57,7 @@ int Server::privmsg( User & user )
 					{
 						std::cout << "here\n";
 						std::cout << (**chnUsersIt).getNick() << "\n";
-						// sendPrivMsg(user, **chnUsersIt, mess);
+						// showMEss(user, **chnUsersIt);
 						// send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 						chnUsersIt++;
 						std::cout << "here2\n";
@@ -87,25 +77,25 @@ int Server::privmsg( User & user )
 				if ((*userIt)->getNick() == *paramIt)
 				{
 					absenceFlag = 1;
-					sendPrivMsg(user, **userIt, mess);
+					showMEss(user, **userIt);
 					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 				}
 				else if ((*userIt)->getUser() == *paramIt)
 				{
 					absenceFlag = 1;
-					sendPrivMsg(user, **userIt, mess);
+					showMEss(user, **userIt);
 					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 				}
 				else if(checkMask(*paramIt) && (*paramIt)[0] == '#' && checkWildcard((*userIt)->getHost().c_str(), (*paramIt).c_str()))
 				{
 					absenceFlag = 1;
-					sendPrivMsg(user, **userIt, mess);
+					showMEss(user, **userIt);
 					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 				}
 				else if(checkMask(*paramIt) && (*paramIt)[0] == '$' && checkWildcard((*userIt)->getServer().c_str(), (*paramIt).c_str()))
 				{
 					absenceFlag = 1;
-					sendPrivMsg(user, **userIt, mess);
+					showMEss(user, **userIt);
 					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 				}
 				userIt++;

@@ -8,6 +8,11 @@ void Server::create( void ) {
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
+    int enable = 1;
+    if (setsockopt(srvFd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
+        perror("setsockopt(SO_REUSEADDR) failed");
+        exit(EXIT_FAILURE);
+    }
     srvPoll.fd = srvFd;
     srvPoll.events = POLLIN;
     srvPoll.revents = 0;
@@ -61,23 +66,13 @@ void Server::connectUsers( void ) {
     }
 }
 
-void Server::disconnectClient( size_t const id ) {
-    if (userData[id]->getNick().empty())
-        std::cout << "Socket " << userFds[id].fd << " gone away.\n";
-    else
-        std::cout << userData[id]->getNick() << " gone away.\n";
-    close(userFds[id].fd);
-    userFds.erase(userFds.begin() + id);
-    userData.erase(userData.begin() + id);
-}
-
 void Server::clientRequest( void ) {
     int ret = poll(userFds.data(), userFds.size(), 0);
     if (ret != 0)    {
         for (size_t id = 0; id < userFds.size(); id++) {
             if (userFds[id].revents & POLLIN) {
                 if (readRequest(id) <= 0)
-                    disconnectClient(id);
+                    killUser(*userData[id]);
                 else if (!userData[id]->getBreakconnect())
                     executeCommand(id);
                 userFds[id].revents = 0;
@@ -140,14 +135,11 @@ void Server::executeCommand( size_t const id ) {
 	
     cleanMsgStruct();
 
-    // if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
-    parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
+    if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
+    // parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
 
-    // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
-    // userData[id]->messages[0].erase(0, 5);
-    execute(msg.cmd, *userData[id]); // <---- Command HERE
+    execute(msg.cmd, *userData[id]);
 
-    //////
     if (msg.cmd != "QUIT")
     {
         if (userData[id]->getNick().empty())
@@ -204,10 +196,16 @@ int Server::killUser( User & user ) {
     std::string str = ":" + user.getNick() + "!" + user.getUser() + "@" + user.getIp() + " Client exited!\n"; // нужно будет поменять вывод
     send(user.getFd(), str.c_str(), str.size(), 0);
     close(user.getFd());
+    if (user.getNick().empty())
+        std::cout << CYAN << "Socket " << user.getFd() << " gone away.\n" << RESET;
+    else
+        std::cout << CYAN << user.getNick() << " gone away.\n" << RESET;
     std::vector<std::string> temp = user.getChannelList();
     for (size_t i = 0; i < temp.size(); i++) {
         channels[temp[i]]->disconnectUser(&user);
         user.leaveChannel(temp[i]);
+        std::string tmp = "PART " + temp[i];
+        showMEss(user, channels[temp[i]], tmp);
         if (!channels[temp[i]]->getCountUsers())
             closeChannel(channels[temp[i]]);
     }
@@ -220,7 +218,7 @@ int Server::killUser( User & user ) {
         }
     }
     delete &user;
-    std::cout << "User killed succes\n";
+    std::cout << GREEN << "User killed succes\n" << RESET;
     return (0);
 }
 
