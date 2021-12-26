@@ -60,6 +60,7 @@ class Server {
 		time_t						responseTime;
 
 		int					maxChannels;
+		struct pollfd		srvPoll;
 		int					srvFd;
 		int					srvPort;
 		std::string			srvPass;

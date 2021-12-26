@@ -12,6 +12,8 @@ void Channel::disconnectUser( User * user )
     eraseUser(users, user);
     eraseUser(operators, user);
     eraseUser(invited, user);
+    if (operators.empty())
+        operators.push_back(users[0]);
     countUsers--;
 }
 
