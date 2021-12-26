@@ -8,6 +8,9 @@ void Server::create( void ) {
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
+    srvPoll.fd = srvFd;
+    srvPoll.events = POLLIN;
+    srvPoll.revents = 0;
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(srvPort);
@@ -40,15 +43,21 @@ void Server::connectUsers( void ) {
     struct sockaddr_in clientaddr;
     int addrlen = sizeof(clientaddr);
 
-    if ((new_client_fd = accept(srvFd, (struct sockaddr*)&clientaddr, (socklen_t*)&addrlen)) > 0) {
-        struct pollfd nw;
+    int ret = poll(&srvPoll, 1, 0);
+    if (ret != 0) {
+        if (srvPoll.revents & POLLIN) {
+            if ((new_client_fd = accept(srvFd, (struct sockaddr*)&clientaddr, (socklen_t*)&addrlen)) > 0) {
+                struct pollfd nw;
 
-        nw.fd = new_client_fd;
-        nw.events = POLLIN;
-        nw.revents = 0;
-        userData.push_back(new User(srvFd, nw.fd, clientaddr));
-        userFds.push_back(nw);
-        std::cout << "New client on " << new_client_fd << " socket." << "\n";
+                nw.fd = new_client_fd;
+                nw.events = POLLIN;
+                nw.revents = 0;
+                userData.push_back(new User(srvFd, nw.fd, clientaddr));
+                userFds.push_back(nw);
+                std::cout << "New client on " << new_client_fd << " socket." << "\n";
+            }
+            srvPoll.revents = 0;
+        }
     }
 }
 
@@ -128,22 +137,27 @@ void Server::execute(std::string const &com, User &user) {
 }
 
 void Server::executeCommand( size_t const id ) {
-    if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
-    // parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
+	
+    cleanMsgStruct();
+
+    // if (!parseMsg(id) && notRegistr(*userData[id]) == false) // autorization
+    parseMsg(id) && notRegistr(*userData[id]) == false; // not autorize
 
     // cmd.msg.cmd = userData[id]->messages[0].substr(0, 4);
     // userData[id]->messages[0].erase(0, 5);
     execute(msg.cmd, *userData[id]); // <---- Command HERE
-	cleanMsgStruct();
 
     //////
-    if (userData[id]->getNick().empty())
-        std::cout << "< socket " << userFds[id].fd << " >: " << userData[id]->messages[0] << "\n";
-    else
-        std::cout << "< " << userData[id]->getNick() << " >: " << userData[id]->messages[0] << "\n";
-    userData[id]->messages.erase(userData[id]->messages.begin());
-    if (!userData[id]->messages.empty())
-        executeCommand(id);
+    if (msg.cmd != "QUIT")
+    {
+        if (userData[id]->getNick().empty())
+            std::cout << "< socket " << userFds[id].fd << " >: " << userData[id]->messages[0] << "\n";
+        else
+            std::cout << "< " << userData[id]->getNick() << " >: " << userData[id]->messages[0] << "\n";
+        userData[id]->messages.erase(userData[id]->messages.begin());
+        if (!userData[id]->messages.empty())
+            executeCommand(id);
+    }
 }
 
 void Server::initCommandMap( void ) {
@@ -191,20 +205,23 @@ int Server::killUser( User & user ) {
     send(user.getFd(), str.c_str(), str.size(), 0);
     close(user.getFd());
     std::vector<std::string> temp = user.getChannelList();
-    for (size_t i = 0; i < temp.size(); ++i) {
+    for (size_t i = 0; i < temp.size(); i++) {
         channels[temp[i]]->disconnectUser(&user);
+        user.leaveChannel(temp[i]);
         if (!channels[temp[i]]->getCountUsers())
             closeChannel(channels[temp[i]]);
     }
     eraseUser(userData, &user);
     std::vector<struct pollfd>::iterator it = userFds.begin();
-    for ( ; it != userFds.end(); ++it) {
+    for ( ; it != userFds.end(); it++) {
         if (user.getFd() == (*it).fd) {
             userFds.erase(it);
             break ;
         }
     }
-    return 1;
+    delete &user;
+    std::cout << "User killed succes\n";
+    return (0);
 }
 
 void		Server::closeChannel( Channel * channel ) {
