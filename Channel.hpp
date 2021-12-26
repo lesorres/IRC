@@ -57,6 +57,7 @@ class Channel
         unsigned int getUserLimit( void ) const;
         std::vector<std::string> getBanMasc( void ) const;
         std::vector<User*> getUserList( void ) const;
+		std::vector<User*> getOperList( void ) const;
         void setUserLimit( unsigned int limit );
         void setTopic( std::string & topic );
         void setPass( std::string & pass );
