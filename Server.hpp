@@ -24,6 +24,7 @@
 
 #define BUF_SIZE 1024
 #define CONF_NAME "IRCconf.json"
+#define RESTART 0b1
 
 typedef struct s_msg
 {
@@ -79,6 +80,7 @@ class Server {
 		void		cleanMsgStruct();
 		void		processWildcard();
 		void		printStuct();
+		int			parseConf();
 
 		// commands
 		void		initCommandMap( void );
@@ -126,8 +128,9 @@ class Server {
 		bool		isChannel( std::string name );
 		int			errorMEss( int err, User &user, const std::string &str = "" );
 		int			replyMEss( int reply, User &user, const std::string &str = "" );
-		void		showMEss( User const & from, Channel const * channel, int andfrom = 0 );
-		void 		showMEss( User const & from, User const & to, int andfrom = 0 );
+		void		showMEss( User const & from, Channel const * channel, bool andfrom = 0 );
+		void 		showMEss( User const & from, User const & to, bool andfrom = 0 );
+		void 		showMEss( User const & from, Channel const * channel, std::string & str, bool andfrom = 0 );
 		std::string checkTime();
 		void		sendPrivMsg(User &fromUser, User &toUser, const std::string &str);
 
@@ -144,7 +147,6 @@ class Server {
 
 		void	create( void );
 		void	run( void );
-		int		parseConf();
 
 };
 

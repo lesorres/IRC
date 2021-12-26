@@ -54,6 +54,11 @@ std::string const & User::getIp( void ) const { return ipv4; }
 std::string const & User::getReal( void ) const { return realname ; }
 std::string const & User::getHost( void ) const { return hostname ; }
 std::string const & User::getServer( void ) const { return servername ; }
+std::string const User::getPrefix( void ) const
+{
+    std::string prefix = ":" + nickname + "!" + username + "@" + ipv4;
+    return (prefix);
+}
 std::string const & User::getQuitMess( void ) const { return quitMess ; }
 std::string const & User::getAwayMess( void ) const { return awayMess ; }
 std::string const & User::getKillComment( void ) const { return killComment ; }

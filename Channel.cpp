@@ -13,7 +13,10 @@ void Channel::disconnectUser( User * user )
     eraseUser(operators, user);
     eraseUser(invited, user);
     if (operators.empty())
+    {
         operators.push_back(users[0]);
+        channelMessage(user, "MODE " + name + " +o " + users[0]->getNick());
+    }
     countUsers--;
 }
 
@@ -91,11 +94,19 @@ bool Channel::isInvited( User * user )
 
 void Channel::opUser( User * user ) { operators.push_back(user); }
 void Channel::deopUser( User * user ) { eraseUser(operators, user); }
-bool  Channel::isOperator( User * user )
+bool Channel::isOperator( User * user )
 {
     if (contains(operators, user))
         return (true);
     return (false);
+}
+
+void Channel::channelMessage( User * from, std::string const & str, bool andfrom )
+{
+    std::string mess = from->getPrefix() + " " + str + "\n";
+    for(unsigned int i = 0; i < users.size(); i++)
+        if (from->getNick() != users[i]->getNick() || andfrom)
+            send(users[i]->getFd(), mess.c_str(), mess.size(), 0);
 }
 
 void Channel::setPass( std::string & pass ) { password = pass; }

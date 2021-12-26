@@ -48,7 +48,7 @@ class Channel
         void disconnectUser( User * user );
         void addBanMask( std::string & masc );
         void deleteBanMasc( std::string masc );
-
+        void channelMessage( User * from, std::string const & str, bool andfrom = false );
         std::string getName( void ) const;
         std::string getTopic( void ) const;
         std::string getPass( void ) const;
