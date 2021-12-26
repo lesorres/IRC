@@ -33,9 +33,8 @@ int Server::privmsg( User & user )
 	std::vector<User *>::iterator endUserIt = userData.end();
 	std::map<std::string, Channel *>::iterator chnIt = channels.begin();
 	std::map<std::string, Channel *>::iterator endChnIt = channels.end();
-	std::vector<User *>::iterator chnUsersIt;
-	std::vector<User *>::iterator endChnUsersIt;
 
+	std::vector<User *> chnUsers;
 	bool absenceFlag;
 
 	if (msg.midParams.size() < 1)
@@ -48,20 +47,16 @@ int Server::privmsg( User & user )
 		{
 			while (chnIt != endChnIt)
 			{
+				std::cout << "here\n";
 				if ((*paramIt) == chnIt->first)
 				{
 					// !!!!! добавить проверки на различные флаги для ERR_CANNOTSENDTOCHAN
-					chnUsersIt = chnIt->second->getUserList().begin();
-					endChnUsersIt = chnIt->second->getUserList().end();
-					while (chnUsersIt != endChnUsersIt)
+					chnUsers = chnIt->second->getUserList();
+					for (size_t i = 0; i < chnUsers.size(); i++)
 					{
-						std::cout << "here\n";
-						std::cout << (**chnUsersIt).getNick() << "\n";
-						// showMEss(user, **chnUsersIt);
-						// send((*chnUsersIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
-						chnUsersIt++;
-						std::cout << "here2\n";
+						showMEss(user, *(chnUsers[i]));
 					}
+					absenceFlag = 1;
 				}
 				chnIt++;
 			}
