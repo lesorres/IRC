@@ -57,6 +57,7 @@ class User {
         std::string const & getReal( void ) const;
         std::string const & getHost( void ) const;
         std::string const & getServer( void ) const;
+        std::string const getPrefix( void ) const;
         std::string const & getQuitMess( void ) const;
         std::string const & getAwayMess( void ) const;
         std::string const & getKillComment( void ) const;

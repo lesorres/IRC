@@ -48,7 +48,7 @@ class Channel
         void disconnectUser( User * user );
         void addBanMask( std::string & masc );
         void deleteBanMasc( std::string masc );
-
+        void channelMessage( User * from, std::string const & str, bool andfrom = false );
         std::string getName( void ) const;
         std::string getTopic( void ) const;
         std::string getPass( void ) const;
@@ -56,7 +56,8 @@ class Channel
         unsigned int getCountVisible( void ) const;
         unsigned int getUserLimit( void ) const;
         std::vector<std::string> getBanMasc( void ) const;
-        std::vector<User*> const & getUserList( void ) const;
+        std::vector<User*> getUserList( void ) const;
+		std::vector<User*> getOperList( void ) const;
         void setUserLimit( unsigned int limit );
         void setTopic( std::string & topic );
         void setPass( std::string & pass );

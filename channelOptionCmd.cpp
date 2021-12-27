@@ -18,7 +18,7 @@ int Server::list( User & user )
                 list = it->first + " " + itos(it->second->getCountVisible()) + " :" + it->second->getTopic();
                 replyMEss(RPL_LIST, user, list);
             }
-            else if (it->second->flags & PRIVATE)
+            else if (it->second->flags & PRIVATE && !(it->second->flags & SECRET))
             {
                 list = it->first + " Prv";
                 replyMEss(RPL_LIST, user, list);
@@ -39,7 +39,7 @@ int Server::list( User & user )
                     list = channellist[i] + " " + itos(current->getCountVisible()) + " :" + current->getTopic();
                     replyMEss(RPL_LIST, user, list);
                 }
-                else if (current->flags & PRIVATE)
+                else if (current->flags & PRIVATE && !(current->flags & SECRET))
                 {
                     list = channellist[i] + " Prv";
                     replyMEss(RPL_LIST, user, list);
@@ -148,7 +148,7 @@ int Server::topic( User & user )
         else
             top = msg.trailing;
         current->setTopic(top);
-        showMEss(user, current, 1);
+        showMEss(user, current, true);
     }        
     return (0);
 }

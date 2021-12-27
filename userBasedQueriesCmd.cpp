@@ -30,7 +30,16 @@ int Server::who( User & user)
 {
 	std::vector<User *>::iterator userIt;
 	std::vector<User *>::iterator endIt;
-	std::string message;
+	std::map<std::string, Channel *>::iterator chnIt = channels.begin();
+	std::map<std::string, Channel *>::iterator endChnIt = channels.end();
+	std::vector<User *>::iterator chnUsersIt;
+	std::vector<User *>::iterator endChnUsersIt;
+	
+	std::vector<User *> chnUsers;
+	std::string message = "";
+	std::string opSymbol = "";
+	std::string ircOpSymbol = "";
+	std::string channel = "*";
 
 	userIt = userData.begin();
 	endIt = userData.end();
@@ -40,7 +49,6 @@ int Server::who( User & user)
 	else if (msg.midParams.size() == 2 && msg.midParams[1] != "o")
 		return (errorMEss(1000, user, \
 		"second parameters of command is invalid, please put \"o\" as a second parameter if you want to see the list of operators only"));
-
 	//rfc1459 4.5.1
 	// "In the absence of the <name> parameter, all visible are listed.
 	// The same result can be achieved by using a <name> of "0" or any
@@ -56,14 +64,18 @@ int Server::who( User & user)
 			// common channel with the requesting client) are listed.
 			if (!((*userIt)->getFlags() & INVISIBLE) && !commonChannel(user, **userIt))
 			{
-				if ((*userIt)->getChannelList().empty())
-					message = "* " + (*userIt)->getUser() \
-							+ " " + (*userIt)->getHost() + " " + (*userIt)->getServer() + " " \
-							+ (*userIt)->getNick() + "\n";
-				else
-					message = *((*userIt)->getChannelList().end() - 1) + " " + (*userIt)->getUser() \
-							+ " " + (*userIt)->getHost() + " " + (*userIt)->getServer() + " " \
-							+ (*userIt)->getNick() + "\n";
+				ircOpSymbol = "";
+				opSymbol = "";
+				channel = "*";
+				if (!(*userIt)->getChannelList().empty()) //checks if user participate in any channel
+					channel = *((*userIt)->getChannelList().end() - 1);
+				if ((*userIt)->getFlags() & OPERATOR) //checks if user is IRC operator
+					ircOpSymbol = "*";
+				if (!(*userIt)->getChannelList().empty() && channels[channel]->isOperator((*userIt))) //checks if user is operator of current channel
+					opSymbol = "@";
+				message = channel + (*userIt)->getUser() + " " + (*userIt)->getHost() + " " \
+						+ (*userIt)->getServer() + " " + (*userIt)->getNick() + " H" \
+						+ ircOpSymbol + opSymbol + "\n";
 				if (((msg.midParams.size() == 2 && msg.midParams[1] == "o") \
 					|| (msg.midParams.size() == 1 && msg.midParams[0] == "o")) \
 					&& !(*userIt)->getOpChannelList().empty())
@@ -85,63 +97,69 @@ int Server::who( User & user)
 		//with a WHO message, a RPL_ENDOFWHO must be sent after processing
 		// each list item with <name> being the item.
 	}
-	else if (msg.midParams.size() == 1)
-	{
-		//The <name> passed to WHO is matched against users' host, server, real
-		//name and nickname if the channel <name> cannot be found.
-		while (userIt != endIt)
-		{
-			if ((*userIt)->getChannelList().empty())
-			{
-				message = "* " + (*userIt)->getUser() \
-						+ " " + (*userIt)->getHost() + " " + (*userIt)->getServer() + " " \
-						+ (*userIt)->getNick() + "\n";
-			}
-			else
-				message = *((*userIt)->getChannelList().end() - 1) + " " + (*userIt)->getUser() \
-						+ " " + (*userIt)->getHost() + " " + (*userIt)->getServer() + " " \
-						+ (*userIt)->getNick() + "\n";
-			if (checkWildcard((*userIt)->getUser().c_str(), msg.midParams[0].c_str()))
-				replyMEss(RPL_WHOREPLY, user, message);
-			else if (checkWildcard((*userIt)->getHost().c_str(), msg.midParams[0].c_str()))
-				replyMEss(RPL_WHOREPLY, user, message);
-			else if (checkWildcard((*userIt)->getServer().c_str(), msg.midParams[0].c_str()))
-				replyMEss(RPL_WHOREPLY, user, message);
-			else if (checkWildcard((*userIt)->getReal().c_str(), msg.midParams[0].c_str()))
-				replyMEss(RPL_WHOREPLY, user, message);
-			else if (checkWildcard((*userIt)->getNick().c_str(), msg.midParams[0].c_str()))
-				replyMEss(RPL_WHOREPLY, user, message);
-			userIt++;
-		}
-		replyMEss(RPL_ENDOFWHO, user, msg.midParams[0]);
-		std::cout << "here\n";
-	}
 	else
 	{
-		while (userIt != endIt)
+		if (!channels.empty() && msg.midParams[0][0] == '#')
 		{
-			if (!(*userIt)->getOpChannelList().empty()) //ёто условие можно перенести в предыдущее условие и объедиинить два цикла
+			while (chnIt != endChnIt)
 			{
-				if ((*userIt)->getChannelList().empty())
-					message = "* " + (*userIt)->getUser() \
-							+ " " + (*userIt)->getHost() + " " + (*userIt)->getServer() + " " \
-							+ (*userIt)->getNick() + "\n";
-				else
-					message = *((*userIt)->getChannelList().end() - 1) + (*userIt)->getUser() \
-							+ " " + (*userIt)->getHost() + " " + (*userIt)->getServer() + " " \
-							+ (*userIt)->getNick() + "\n";
-				if (checkWildcard((*userIt)->getUser().c_str(), msg.midParams[0].c_str()))
-					replyMEss(RPL_WHOREPLY, user, message);
-				else if (checkWildcard((*userIt)->getHost().c_str(), msg.midParams[0].c_str()))
-					replyMEss(RPL_WHOREPLY, user, message);
-				else if (checkWildcard((*userIt)->getServer().c_str(), msg.midParams[0].c_str()))
-					replyMEss(RPL_WHOREPLY, user, message);
-				else if (checkWildcard((*userIt)->getReal().c_str(), msg.midParams[0].c_str()))
-					replyMEss(RPL_WHOREPLY, user, message);
-				else if (checkWildcard((*userIt)->getNick().c_str(), msg.midParams[0].c_str()))
-					replyMEss(RPL_WHOREPLY, user, message);
+				if (chnIt->first == msg.midParams[0])
+				{
+					if (msg.midParams.size() == 1)
+						chnUsers = chnIt->second->getUserList();
+					else if (msg.midParams.size() == 2 && msg.midParams[1] == "o")
+						chnUsers = chnIt->second->getOperList();
+					for (size_t i = 0; i < chnUsers.size(); i++)
+					{
+						ircOpSymbol = "";
+						opSymbol = "";
+						if (chnUsers[i]->getFlags() & OPERATOR) //checks if user is IRC operator
+							ircOpSymbol = "*";
+						if (chnIt->second->isOperator(chnUsers[i])) //checks if user is operator of current channel
+							opSymbol = "@";
+						message = *(chnUsers[i]->getChannelList().end() - 1) + " " + chnUsers[i]->getUser() + " " \
+						+ chnUsers[i]->getHost() + " " + chnUsers[i]->getServer() + " " + chnUsers[i]->getNick() \
+						+ " H" + ircOpSymbol + opSymbol + "\n";
+						replyMEss(RPL_WHOREPLY, user, message);
+					}
+				}
+				chnIt++;
 			}
-			userIt++;
+		}
+		//The <name> passed to WHO is matched against users' host, server, real
+		//name and nickname if the channel <name> cannot be found.
+		else if (msg.midParams[0][0] != '#')
+		{
+			while (userIt != endIt)
+			{
+				if (msg.midParams.size() == 1 \
+				|| (!(*userIt)->getOpChannelList().empty() && msg.midParams.size() == 2))
+				{
+					ircOpSymbol = "";
+					opSymbol = "";
+					channel = "*";
+					if (!(*userIt)->getChannelList().empty()) //checks if user participate in any channel
+						channel = *((*userIt)->getChannelList().end() - 1);
+					if ((*userIt)->getFlags() & OPERATOR) //checks if user is IRC operator
+						ircOpSymbol = "*";
+					if (!(*userIt)->getChannelList().empty() && channels[channel]->isOperator((*userIt))) //checks if user is operator of current channel
+						opSymbol = "@";
+					message = channel + (*userIt)->getUser() + " " + (*userIt)->getHost() + " " \
+							+ (*userIt)->getServer() + " " + (*userIt)->getNick() + " H" \
+							+ ircOpSymbol + opSymbol + "\n";
+					if (checkWildcard((*userIt)->getUser().c_str(), msg.midParams[0].c_str()))
+						replyMEss(RPL_WHOREPLY, user, message);
+					else if (checkWildcard((*userIt)->getHost().c_str(), msg.midParams[0].c_str()))
+						replyMEss(RPL_WHOREPLY, user, message);
+					else if (checkWildcard((*userIt)->getServer().c_str(), msg.midParams[0].c_str()))
+						replyMEss(RPL_WHOREPLY, user, message);
+					else if (checkWildcard((*userIt)->getReal().c_str(), msg.midParams[0].c_str()))
+						replyMEss(RPL_WHOREPLY, user, message);
+					else if (checkWildcard((*userIt)->getNick().c_str(), msg.midParams[0].c_str()))
+						replyMEss(RPL_WHOREPLY, user, message);
+				}
+				userIt++;
+			}
 		}
 		replyMEss(RPL_ENDOFWHO, user, msg.midParams[0]);
 	}
@@ -226,7 +244,6 @@ int Server::whowas( User & user)
 
 	while (userRBeginIt != userREndIt)
 	{
-		std::cout << "here\n";
 		if (msg.midParams.size() == 2 && count > 0 && i == count)
 			break;
 		if (msg.midParams[0] == (*userRBeginIt)->getNick())
@@ -238,7 +255,6 @@ int Server::whowas( User & user)
 		}
 		userRBeginIt++;
 		i++;
-		std::cout << "here2\n";
 	}
 
 	if (nickAbsenceFlag == 0)

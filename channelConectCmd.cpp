@@ -33,12 +33,12 @@ int Server::join( User & user )
                 user.addChannel(channellist[i]);
                 if (current->isInvited(&user))
                     current->deinvUser(&user);
-                showMEss(user, current, 1);
+                showMEss(user, current, true);
                 if (current->getTopic().empty())
                     replyMEss(RPL_NOTOPIC, user, channellist[i]);
                 else
                     replyMEss(RPL_TOPIC, user, channellist[i] + " :" + current->getTopic());
-                std::string list = channellist[i] + " :";
+                std::string list = channellist[i] + " = :";
                 std::vector<User *> users = current->getUserList();
                 for (size_t i = 0; i < users.size(); i++)
                 {
@@ -59,9 +59,9 @@ int Server::join( User & user )
                 channels[channellist[i]] = new Channel(&user, channellist[i]);
             user.addChannel(channellist[i]);
             user.imOper(channellist[i]);
-            showMEss(user, channels[channellist[i]], 1);
+            showMEss(user, channels[channellist[i]], true);
             replyMEss(RPL_NOTOPIC, user, channellist[i]);
-            replyMEss(RPL_NAMREPLY, user, channellist[i] + " :@" + user.getNick());
+            replyMEss(RPL_NAMREPLY, user, channellist[i] + " = :@" + user.getNick());
             replyMEss(RPL_ENDOFNAMES, user, channellist[i]);
         }
     }
@@ -84,7 +84,7 @@ int Server::part( User & user )
                 current->disconnectUser(&user);
                 if (!current->getCountUsers())
                     closeChannel(current);
-                showMEss(user, user);
+                showMEss(user, current);
             }
             else
                 return(errorMEss(ERR_NOTONCHANNEL, user, channellist[i]));
