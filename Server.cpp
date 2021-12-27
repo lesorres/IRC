@@ -259,6 +259,16 @@ void	Server::printUserVector(std::vector<User*> users) {
 	}
 }
 
+void Server::awayRpl(User &user, User &awayUser)
+{
+	std::string message;
+	if (awayUser.getFlags() & AWAY)
+	{
+		message = awayUser.getNick() + " " + awayUser.getAwayMess();
+		replyMEss(RPL_AWAY, user, message);
+	}
+}
+
 Server::Server( std::string const & _port, std::string const & _pass) {
 	parseConf();
 	msg.paramN = 0;

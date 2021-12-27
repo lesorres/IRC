@@ -125,5 +125,6 @@ bool	contains( std::vector<User*> vect, User * user );
 void	eraseString( std::vector<std::string> & vect, std::string name );
 void	eraseUser( std::vector<User*> & vect, User * user );
 int		checkWildcard(const char *str, const char *mask);
+bool	onlyWildcard(std::string str);
 
 #endif 

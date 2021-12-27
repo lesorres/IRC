@@ -133,6 +133,7 @@ class Server {
 		void 		showMEss( User const & from, Channel const * channel, std::string & str, bool andfrom = 0 );
 		std::string checkTime();
 		void		sendPrivMsg(User &fromUser, User &toUser, const std::string &str);
+		void		awayRpl(User &user, User &awayUser);
 
 		//trash
 		void		printUserVector( std::vector<User*> users );

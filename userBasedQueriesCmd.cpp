@@ -1,11 +1,6 @@
 #include "Server.hpp"
 #include "Utils.hpp"
 
-static bool onlyWildcard(std::string str)
-{
-	return (str.find_first_not_of(str[0]) == std::string::npos && str[0] == '*');
-}
-
 static bool commonChannel(User & user1, User & user2)
 {
 	std::vector<std::string>::iterator itV1 (user1.getChannelList().begin());
@@ -207,11 +202,7 @@ int Server::whois( User & user)
 				}
 				else 
 					replyMEss(RPL_WHOISCHANNELS, user, (*userIt)->getNick() + " :");
-				if ((*userIt)->getFlags() & AWAY)
-				{
-					message = (*userIt)->getNick() + " " + (*userIt)->getAwayMess();
-					replyMEss(RPL_AWAY, user, message);
-				}
+				awayRpl(user, **userIt);
 				replyMEss(RPL_ENDOFWHOIS, user, (*userIt)->getNick());
 			}
 			userIt++;
