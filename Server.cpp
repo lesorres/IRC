@@ -81,6 +81,24 @@ void Server::clientRequest( void ) {
     }
 }
 
+void Server::checkUserConnection() {
+    for (int i = 0; i < userData.size(); ++i) {
+        if (userData[i]->getFlags() & REGISTRED && !(userData[i]->getFlags() & AWAY)) {
+            if ((userData[i]->timeChecker() - userData[i]->getLastMessTime()) > inactveTime) {
+                std::string mess = ":" + inf.serverName + " PING :" + inf.serverName + "\n";
+                send(userData[i]->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+                userData[i]->setLastMessTime();
+                userData[i]->setPingTime();
+                userData[i]->setFlags(PING);
+            }
+            if ((userData[i]->getFlags() & PING) && (userData[i]->timeChecker() - userData[i]->getPingTime()) > responseTime) {
+                userData[i]->setFlags(KILL);
+                killUser(*userData[i]);
+            }
+        }
+    }
+}
+
 int  Server::readRequest( size_t const id )
 {
     char buf[BUF_SIZE + 1];
