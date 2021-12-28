@@ -121,6 +121,24 @@ int  Server::readRequest( size_t const id )
     return (bytesRead);
 }
 
+void Server::checkUserConnection() {
+    for (int i = 0; i < userData.size(); ++i) {
+        if (userData[i]->getFlags() & REGISTRED) {
+            if ((userData[i]->timeChecker() - userData[i]->getLastMessTime()) > inactveTime) {
+                std::string mess = ":" + inf.serverName + " PING :" + inf.serverName + "\n";
+                send(userData[i]->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+                userData[i]->setLastMessTime();
+                userData[i]->setPingTime();
+                userData[i]->setFlags(PING);
+            }
+            if ((userData[i]->getFlags() & PING) && (userData[i]->timeChecker() - userData[i]->getPingTime()) > responseTime) {
+                userData[i]->setFlags(KILL);
+                killUser(*userData[i]);
+            }
+        }
+    }
+}
+
 void Server::execute(std::string const &com, User &user) {
     try    {
         (this->*(commands.at(com)))( user );
@@ -260,15 +278,6 @@ void	Server::printUserVector(std::vector<User*> users) {
 }
 
 Server::Server( std::string const & _port, std::string const & _pass) {
-	parseConf();
-	msg.paramN = 0;
-    inf.srvStartTime = checkTime();
-	inf.serverName = "IRC.1";
-    inf.srvVersion = "v1.0.0";
-    inactveTime = 120;
-    responseTime = 60;
-    maxChannels = 5;
-    initCommandMap();
     try  {
         if (_port.find_first_not_of("0123456789") != std::string::npos)
             throw std::invalid_argument("Port must contain only numbers");
@@ -280,7 +289,16 @@ Server::Server( std::string const & _port, std::string const & _pass) {
         std::cerr << e.what() << "\n";
         exit(EXIT_FAILURE);
     }
+    parseConf();
     srvPass = _pass;
+	msg.paramN = 0;
+    inf.srvStartTime = checkTime();
+	inf.serverName = "IRC.1";
+    inf.srvVersion = "v1.0.0";
+    inactveTime = 120;
+    responseTime = 60;
+    maxChannels = 5;
+    initCommandMap();
     std::cout << "Done!\n";
 }
 

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <cctype>
+#include <algorithm>
 
 #define RESET "\e[0m"
 #define RED "\e[31m"
