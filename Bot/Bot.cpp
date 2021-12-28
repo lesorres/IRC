@@ -72,8 +72,7 @@ void Bot::reconnect( void )
 	run();
 }
 
-int Bot::handleRequest( void )
-{
+int Bot::handleRequest( void ) {
     int ret = poll(&srvPoll, 1, 0);
     if (ret != 0)    {
 		if (srvPoll.revents & POLLIN) {
@@ -87,8 +86,7 @@ int Bot::handleRequest( void )
 	return (0);
 }
 
-int Bot::readRequest( void )
-{
+int Bot::readRequest( void ) {
 	char buf[BUF_SIZE + 1];
 	int rd;
 	int bytesRead = 0;
@@ -108,8 +106,7 @@ int Bot::readRequest( void )
 	return (bytesRead);
 }
 
-Bot::Bot( std::string const & host, std::string const & port, std::string const & pass )
-{
+Bot::Bot( std::string const & host, std::string const & port, std::string const & pass ) {
 	try  {
         if (port.find_first_not_of("0123456789") != std::string::npos)
             throw std::invalid_argument("Port must contain only numbers");
