@@ -1,5 +1,4 @@
 #include "Server.hpp"
-#include <algorithm>
 
 std::string	itos( int const & num )
 {
