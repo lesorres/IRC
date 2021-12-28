@@ -22,9 +22,8 @@
 #include <cctype>
 #include <ctime>
 
-#define BUF_SIZE 1024
+#define BUF_SIZE 512
 #define CONF_NAME "IRCconf.json"
-#define RESTART 0b1
 
 typedef struct s_msg
 {
