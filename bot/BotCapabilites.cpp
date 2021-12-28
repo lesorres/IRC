@@ -29,7 +29,7 @@ void Bot::processReply( void )
 
 void Bot::processError( void )
 {
-
+	;
 }
 
 void Bot::replyRequset( void )
