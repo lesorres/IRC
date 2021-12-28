@@ -65,7 +65,7 @@ class Bot {
 		void	sendMessage( std::string const & cmd, std::string const & arg1 = "", std::string const & arg2 = "",\
 					   std::string const & arg3 = "", std::string const & arg4 = "", std::string const & arg5 = "");
 
-		// commands
+		// commands 
 		int command();
 		int help();
 		int passCmd();
