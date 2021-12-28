@@ -243,7 +243,13 @@ void    Server::setChannelMode(Channel * channel, User & user )
                 else {
                     errorMEss(502, user); return; }
             case 'v':
-                break;
+                if (msg.midParams.size() < 3) {
+                    errorMEss(461, user); return; }
+                else if (contains(channel->getUserList(), &getUserByNick(msg.midParams[2]))) {
+                    channel->devoteUser(&getUserByNick(msg.midParams[2]));
+                    break ; }
+                else {
+                    errorMEss(502, user); return; }
             case 'b': {
                 if (msg.midParams.size() < 3) {
                     errorMEss(461, user); return; }
@@ -276,7 +282,13 @@ void    Server::setChannelMode(Channel * channel, User & user )
                 else {
                     errorMEss(502, user); return; }
             case 'v':
-                break;
+                if (msg.midParams.size() < 3) {
+                    errorMEss(461, user); return; }
+                else if (contains(channel->getUserList(), &getUserByNick(msg.midParams[2]))) {
+                    channel->voteUser(&getUserByNick(msg.midParams[2]));
+                    break ; }
+                else {
+                    errorMEss(502, user); return; }
             case 'b': {
                 if (msg.midParams.size() == 2) {
                     std::vector<std::string> mascs = channel->getBanMasc();

@@ -94,7 +94,6 @@ std::vector<std::string> User::getOpChannelList( void ) const { return opchannel
 void User::leaveChannel(std::string & name) {
     eraseString(channels, name);
     eraseString(opchannels, name);
-    eraseString(votechannels, name);
 }
 
 void User::checkConnection( std::string const & mess ) {

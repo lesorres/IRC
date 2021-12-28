@@ -32,13 +32,20 @@ int Server::pong( User & user) {
 
 
 int	Server::restart( User & user ) {
-	std::cout << "restarting\n";
 	if (msg.paramN == 0) {
 		if (!(user.getFlags() & OPERATOR))
 			return errorMEss(ERR_NOPRIVILEGES, user);
-		close(srvFd);
-		create();
-		run();
+	std::cout << YELLOW << "Restarting...\n";
+	close(srvFd);
+	size_t count = userData.size();
+	for (size_t i = 0; i < count; i++)
+		killUser(*userData[0]);
+	userData.clear();
+	userFds.clear();
+	channels.clear();
+	create();
+	status = RESTART;
+	std::cout << "DONE!\n" << RESET;
 	}
 	return 0;
 }
