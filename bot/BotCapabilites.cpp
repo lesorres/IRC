@@ -96,12 +96,12 @@ void Bot::parseMessage( void )
 	}
 
     // Debug msg struct
-	std::cout << CYAN << "-----parse------\n" << "prefix=" << msg.prefix << "\n"\
-	 << "cmd=" << msg.cmd << "\nnumber=" << msg.number << "\n";
-	for (it = 0; it < msg.midParams.size(); it++ ) {
-		std::cout << "mid[" << it << "]=" << msg.midParams[it] << "\n";
-	}
-	std::cout << "trailing=" << msg.trailing << "\n-------end------\n" << RESET;
+	// std::cout << CYAN << "-----parse------\n" << "prefix=" << msg.prefix << "\n"\
+	//  << "cmd=" << msg.cmd << "\nnumber=" << msg.number << "\n";
+	// for (it = 0; it < msg.midParams.size(); it++ ) {
+	// 	std::cout << "mid[" << it << "]=" << msg.midParams[it] << "\n";
+	// }
+	// std::cout << "trailing=" << msg.trailing << "\n-------end------\n" << RESET;
 }
 
 void Bot::sendMessage( std::string const & cmd, std::string const & arg1, std::string const & arg2,\

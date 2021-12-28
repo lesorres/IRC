@@ -235,7 +235,7 @@ void Server::initCommandMap( void ) {
 }
 
 int Server::killUser( User & user ) {
-    std::string str = ":" + user.getNick() + "!" + user.getUser() + "@" + user.getIp() + " Client exited!\n"; // нужно будет поменять вывод
+    std::string str = ":" + user.getNick() + "!" + user.getUser() + "@" + user.getIp() + " Client exited!\n";
     send(user.getFd(), str.c_str(), str.size(), 0);
     close(user.getFd());
     if (user.getNick().empty())
@@ -259,7 +259,8 @@ int Server::killUser( User & user ) {
             break ;
         }
     }
-    delete &user;
+    if (user.getFlags() & REGISTRED)
+        delete &user;
     std::cout << GREEN << "User killed succes\n" << RESET;
     return (0);
 }
