@@ -28,6 +28,7 @@ void Server::create( void ) {
         exit(EXIT_FAILURE);
     }
     fcntl(srvFd, F_SETFL, O_NONBLOCK);
+    fcntl(fileno(stdin), F_SETFL, O_NONBLOCK);
     /* 
     / F_SETFL устанавливет флаг O_NONBLOCK для подаваемого дескриптора 
     / O_NONBLOCK устанавливает  режим  неблокирования, 
@@ -36,10 +37,51 @@ void Server::create( void ) {
 }
 
 void Server::run( void ) {
-    while(true) {
+    while(status & WORKING) {
         connectUsers();
-        clientRequest();
         checkUserConnection();
+        clientRequest();
+        consoleCommands();
+    }
+    if (status & RESTART) {
+        status = WORKING;
+        run();
+    }
+}
+
+void Server::consoleCommands( void )
+{
+    char buf[BUF_SIZE + 1];
+    int bytesRead = 0;
+    int rd;
+    std::string text;
+    while ((rd = read(fileno(stdin), buf, BUF_SIZE)) > 0)
+    {
+        buf[rd] = 0;
+        text += buf;
+        bytesRead += rd;
+        if (text.find("\n") != std::string::npos) {
+            text.erase(text.find("\n"), 1); 
+            break;
+        }
+    }
+    if (bytesRead > 0)
+    {
+        if (text == "STOP")
+        {
+            std::cout << YELLOW << "Shutdown server\n" << RESET;
+            close(srvFd);
+            size_t count = userData.size();
+            for (size_t i = 0; i < count; i++)
+                killUser(*userData[0]);
+            count = history.size();
+            for (size_t i = 0; i < count; i++)
+                killUser(*history[0]);
+            userData.clear();
+            userFds.clear();
+            channels.clear();
+            status = 0;
+        }
     }
 }
 
@@ -76,24 +118,6 @@ void Server::clientRequest( void ) {
                 else if (!userData[id]->getBreakconnect())
                     executeCommand(id);
                 userFds[id].revents = 0;
-            }
-        }
-    }
-}
-
-void Server::checkUserConnection() {
-    for (int i = 0; i < userData.size(); ++i) {
-        if (userData[i]->getFlags() & REGISTRED && !(userData[i]->getFlags() & AWAY)) {
-            if ((userData[i]->timeChecker() - userData[i]->getLastMessTime()) > inactveTime) {
-                std::string mess = ":" + inf.serverName + " PING :" + inf.serverName + "\n";
-                send(userData[i]->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
-                userData[i]->setLastMessTime();
-                userData[i]->setPingTime();
-                userData[i]->setFlags(PING);
-            }
-            if ((userData[i]->getFlags() & PING) && (userData[i]->timeChecker() - userData[i]->getPingTime()) > responseTime) {
-                userData[i]->setFlags(KILL);
-                killUser(*userData[i]);
             }
         }
     }
@@ -158,7 +182,7 @@ void Server::executeCommand( size_t const id ) {
 
     execute(msg.cmd, *userData[id]);
 
-    if (msg.cmd != "QUIT")
+    if (msg.cmd != "QUIT" && !(status & RESTART))
     {
         if (userData[id]->getNick().empty())
             std::cout << "< socket " << userFds[id].fd << " >: " << userData[id]->messages[0] << "\n";
@@ -292,6 +316,7 @@ Server::Server( std::string const & _port, std::string const & _pass) {
     parseConf();
     srvPass = _pass;
 	msg.paramN = 0;
+    status = WORKING;
     inf.srvStartTime = checkTime();
 	inf.serverName = "IRC.1";
     inf.srvVersion = "v1.0.0";

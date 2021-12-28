@@ -31,7 +31,6 @@ class User {
         std::string                 killComment;
         std::vector<std::string>    channels;
         std::vector<std::string>    opchannels;
-        std::vector<std::string>    votechannels;
 
         struct sockaddr_in          sockaddr;
         int                         fd;

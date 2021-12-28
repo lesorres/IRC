@@ -26,6 +26,7 @@ class Channel
         std::vector<User*>      users;
         std::vector<User*>      operators;
         std::vector<User*>      invited;
+        std::vector<User*>      voters;
         std::vector<std::string> banmascs;
         std::string             password;
         unsigned int            countUsers;
@@ -45,6 +46,9 @@ class Channel
         void invUser( User * user );
         void deinvUser( User * user );
         bool isInvited( User * user );
+        void voteUser( User * user );
+        void devoteUser( User * user );
+        bool isVoters( User * user );
         void disconnectUser( User * user );
         void addBanMask( std::string & masc );
         void deleteBanMasc( std::string masc );

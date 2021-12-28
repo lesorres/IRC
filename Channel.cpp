@@ -101,6 +101,15 @@ bool Channel::isOperator( User * user )
     return (false);
 }
 
+void Channel::voteUser( User * user ) { voters.push_back(user); }
+void Channel::devoteUser( User * user ) { eraseUser(voters, user); }
+bool Channel::isVoters( User * user )
+{
+    if (contains(voters, user))
+        return (true);
+    return (false);
+}
+
 void Channel::channelMessage( User * from, std::string const & str, bool andfrom )
 {
     std::string mess = from->getPrefix() + " " + str + "\n";
@@ -131,6 +140,8 @@ Channel::Channel(User * creater, std::string channelname, std::string pass)
     userLimit = 0;
     topic = "";
     flags = NO_MESS;
+    if (!pass.empty())
+        flags |= KEY;
 } 
 
 Channel::~Channel() {}

@@ -19,8 +19,12 @@ int Server::join( User & user )
             Channel * current = channels.at(channellist[i]);
             if (current->flags & INVITE && !current->isInvited(&user))
                 return(errorMEss(ERR_INVITEONLYCHAN, user, channellist[i]));
-            if (current->flags & KEY && (channelpass.size() < i || current->getPass() != channelpass[i]))
-                return(errorMEss(ERR_BADCHANNELKEY, user, channellist[i]));
+            if (current->flags & KEY) {
+                if (channelpass.size() <= i)
+                    return(errorMEss(ERR_BADCHANNELKEY, user, channellist[i]));
+                else if (current->getPass() != channelpass[i])
+                    return(errorMEss(ERR_BADCHANNELKEY, user, channellist[i]));
+            }
             if (current->isBanned(&user))
                 return(errorMEss(ERR_BANNEDFROMCHAN, user, channellist[i]));
             if (current->flags & LIMITS && current->getCountUsers() >= current->getUserLimit())
@@ -54,7 +58,7 @@ int Server::join( User & user )
         catch (std::exception & e) // create new channel
         {
             if (i < channelpass.size())
-                channels[channellist[i]] = new Channel(&user, channellist[i],  channelpass[i]);
+                channels[channellist[i]] = new Channel(&user, channellist[i], channelpass[i]);
             else
                 channels[channellist[i]] = new Channel(&user, channellist[i]);
             user.addChannel(channellist[i]);

@@ -11,7 +11,10 @@ void Bot::processCommand( void )
 		sendMessage("PONG", msg.prefix);
 	}
     else if (msg.cmd == "INVITE") {
-        sendMessage("JOIN", msg.midParams[1]);
+		if (msg.midParams.size() > 2)
+        	sendMessage("JOIN", msg.midParams[1], msg.midParams[2]);
+		else
+        	sendMessage("JOIN", msg.midParams[1]);
     }
 }
 

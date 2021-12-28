@@ -22,6 +22,8 @@
 #include <cctype>
 #include <ctime>
 
+#define WORKING 0b10
+#define RESTART 0b01
 #define BUF_SIZE 512
 #define CONF_NAME "IRCconf.json"
 
@@ -65,6 +67,7 @@ class Server {
 		int					srvPort;
 		std::string			srvPass;
 		struct sockaddr_in	address;
+		int					status;
 		
 		void 		connectUsers( void );
 		void 		clientRequest( void );
@@ -72,6 +75,7 @@ class Server {
 		int  		readRequest( size_t const id );
 		void 		executeCommand( size_t const id );
 		void 		checkUserConnection( void );
+		void 		consoleCommands( void );
 
 		// parser
 		int			parseMsg(size_t id);
