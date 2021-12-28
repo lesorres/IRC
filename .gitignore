@@ -4,6 +4,6 @@ bircd/
 a.out
 irc
 ircserv
-ircbot
+bot/ircbot
 *.o
 Server1.hpp
