@@ -20,25 +20,14 @@
 #define ERR_NOSUCHSERVER 402 			//" :No such server\n"		
 #define ERR_NOSUCHCHANNEL 403 			//":No such channel\n"
 #define ERR_CANNOTSENDTOCHAN 404		//"<channel name> :Cannot send to channel"  - Отсылается пользователю, который либо (a) не на канале,
-                						//  с режимом +n, либо (b) не является чанопом (или режима
-                						//  +v) на канале, который имеет режим +m, и пытается
-                						//  отослать PRIVMSG-сообщение  на этот канал.
 #define ERR_TOOMANYCHANNELS 405			//"<channel name> :You have joined too many channels"
 #define ERR_WASNOSUCHNICK 406
 #define ERR_TOOMANYTARGETS 407			//"<target> :Duplicate recipients. No message delivered"
-										// Возвращается клиенту, который пытается отослать
-                						//  PRIVMSG/NOTICE, используя формат отправки user@host и
-                						//  для user@host, который имеет особые случаи.
 #define ERR_NOORIGIN 409				//":No origin specified"
 #define ERR_NORECIPIENT 411				//":No recipient given (<command>)"
 #define ERR_NOTEXTTOSEND 412			//":No text to send"
 #define ERR_NOTOPLEVEL 413				//"<mask> :No toplevel domain specified"
 #define ERR_WILDTOPLEVEL 414			//"<mask> :Wildcard in toplevel domain"
-										//  - 412 - 414 возвращаются командой PRIVMSG, показывая, что
-                						//  сообщение не смогло пройти по некоторым причинам.
-                						//  ERR_NOTOPLEVEL и ERR_WILDTOPLEVEL ошибки, что
-                						//  возвращаются, когда неправильно используют
-                						//  "PRIVMSG $<server>" или "PRIVMSG #<host>".
 #define ERR_NOMOTD 422 					//":MOTD File is missing"			
 #define ERR_NONICKNAMEGIVEN 431			//":No nickname given\n"	
 #define ERR_ERRONEUSNICKNAME 432 		//":Erroneus nickname\n"
@@ -62,9 +51,6 @@
 #define ERR_NOOPERHOST 491				//":No O-lines for your host\n"			
 #define ERR_UMODEUNKNOWNFLAG 501      	// ":Unknown MODE flag"
 #define ERR_USERSDONTMATCH 502			//":Cant change mode for other users\n"
-
-
-
 
 		// replies
 #define RPL_UMODEIS 221 		//"<user mode string>"
