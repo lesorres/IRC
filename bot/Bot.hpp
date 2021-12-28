@@ -10,6 +10,7 @@
 #include <poll.h>
 #include <ctime>
 #include <vector>
+#include <map>
 #include <unistd.h>
 #include <stdlib.h>
 #include "Utils.hpp"
@@ -33,10 +34,12 @@ typedef struct s_msg
 
 class Bot {
 	private:
-
-		std::string			nick;
-		std::string			user;
-		std::vector<std::string> messages;
+		std::string 				cmds;
+		typedef int ( Bot:: *Type )( );
+	    std::map<std::string, Type>	commands;
+		std::string					nick;
+		std::string					user;
+		std::vector<std::string> 	messages;
 
 		std::string 		srvPass;
 		std::string 		srvHost;
@@ -62,15 +65,51 @@ class Bot {
 		void	sendMessage( std::string const & cmd, std::string const & arg1 = "", std::string const & arg2 = "",\
 					   std::string const & arg3 = "", std::string const & arg4 = "", std::string const & arg5 = "");
 
+		// commands
+		int command();
+		int help();
+		int passCmd();
+		int nickCmd();
+		int userCmd();
+		int operCmd();
+		int quitCmd();
+		int joinCmd();
+		int partCmd();
+		int modeCmd();
+		int topicCmd();
+		int namesCmd();
+		int listCmd();
+		int inviteCmd();
+		int kickCmd();
+		int versionCmd();
+		int timeCmd();
+		int adminCmd();
+		int infoCmd();
+		int privmsgCmd();
+		int noticeCmd();
+		int whoCmd();
+		int whoisCmd();
+		int whowasCmd();
+		int killCmd();
+		int pingCmd();
+		int pongCmd();
+		int awayCmd();
+		int rehashCmd();
+		int restartCmd();
+		int userhostCmd();
+		int isonCmd();
+
 		//trash
 		void 			spam( void );
 		time_t          pingTime;
 
 		Bot();
 	public:
-
-		void	create( void );
-		void	run( void );
+		void	initMap();
+		void	execute();
+		void	showInfo();
+		void	create();
+		void	run();
 
 		Bot( std::string const & host, std::string const & port, std::string const & pass );
 		~Bot();

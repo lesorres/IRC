@@ -121,6 +121,7 @@ Bot::Bot( std::string const & host, std::string const & port, std::string const 
         std::cerr << e.what() << "\n";
         exit(EXIT_FAILURE);
     }
+	initMap();
 	pingTime = 0;
 	srvPass = pass;
 	srvHost = host;
