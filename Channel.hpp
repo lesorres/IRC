@@ -65,6 +65,7 @@ class Channel
         void setUserLimit( unsigned int limit );
         void setTopic( std::string & topic );
         void setPass( std::string & pass );
+		int isInChannel(User &user);
 
         Channel(User * creater, std::string name, std::string pass = "");
         ~Channel();
