@@ -41,22 +41,11 @@ int Server::who( User & user)
 
 	if (msg.midParams.size() > 2)
 		return (errorMEss(1000, user, "invalid number of parameters is given"));
-	// else if (msg.midParams.size() == 2 && msg.midParams[1] != "o")
-	// 	return (errorMEss(1000, user, \
-	// 	"second parameters of command is invalid, please put \"o\" as a second parameter if you want to see the list of operators only"));
-	//rfc1459 4.5.1
-	// "In the absence of the <name> parameter, all visible are listed.
-	// The same result can be achieved by using a <name> of "0" or any
-	// wildcard which will end up matching every entry possible."
 	if (msg.midParams[0] == "0" || onlyWildcard(msg.midParams[0]) || msg.midParams.size() == 0 \
 	|| (msg.midParams.size() == 1 && msg.midParams[0] == "o"))
 	{
 		while (userIt != endIt)
 		{
-			//rfc1459 4.5.1
-			// In the absence of the <name> parameter, all visible
-			// (users who aren't invisible (user mode +i) and who don't have a
-			// common channel with the requesting client) are listed.
 			if (!((*userIt)->getFlags() & INVISIBLE) && !commonChannel(user, **userIt))
 			{
 				ircOpSymbol = "";
@@ -86,11 +75,6 @@ int Server::who( User & user)
 			}
 			userIt++;
 		}
-		//The RPL_WHOREPLY and RPL_ENDOFWHO pair are used to answer a WHO message.
-		// The RPL_WHOREPLY is only sent if there is an appropriate match to the WHO
-		//query.  If there is a list of parameters supplied
-		//with a WHO message, a RPL_ENDOFWHO must be sent after processing
-		// each list item with <name> being the item.
 	}
 	else
 	{
@@ -102,7 +86,7 @@ int Server::who( User & user)
 				{
 					if (msg.midParams.size() == 2 && msg.midParams[1] == "o")
 						chnUsers = chnIt->second->getOperList();
-					else // if (msg.midParams.size() == 1 || (msg.midParams.size() == 2 && msg.midParams[1] == chnIt->second->getPass()))
+					else
 						chnUsers = chnIt->second->getUserList();
 					for (size_t i = 0; i < chnUsers.size(); i++)
 					{
@@ -121,8 +105,6 @@ int Server::who( User & user)
 				chnIt++;
 			}
 		}
-		//The <name> passed to WHO is matched against users' host, server, real
-		//name and nickname if the channel <name> cannot be found.
 		else if (msg.midParams[0][0] != '#')
 		{
 			while (userIt != endIt)
@@ -163,7 +145,6 @@ int Server::who( User & user)
 
 int Server::whois( User & user)
 {
-	// [<server>] parameter of command is not checked
 	std::string message;
 	std::vector<User *>::iterator userIt = userData.begin();
 	std::vector<User *>::iterator endUserIt = userData.end();
@@ -197,7 +178,7 @@ int Server::whois( User & user)
 					endOpListIt = (*userIt)->getOpChannelList().end();
 					message = (*userIt)->getNick() + " :";
 					while (opListIt != endOpListIt)
-						message += "@" + *opListIt + " ";
+						message += "@" + *opListIt++ + " ";
 					replyMEss(RPL_WHOISCHANNELS, user, message);
 				}
 				else 
@@ -216,7 +197,6 @@ int Server::whois( User & user)
 
 int Server::whowas( User & user)
 {
-	// [<server>] parameter of command is not checked
 	int count;
 	int i = 0;
 	bool nickAbsenceFlag = 0;
