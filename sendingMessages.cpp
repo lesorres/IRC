@@ -77,7 +77,6 @@ int Server::privmsg( User & user )
 			}
 			if (absenceFlag == 0)
 				errorMEss(ERR_NOSUCHNICK, user, *paramIt);
-			paramIt++;
 		}
 		//for nicks, users, host masks: (server mask isn't checked)
 		else
@@ -112,8 +111,8 @@ int Server::privmsg( User & user )
 			}
 			if (absenceFlag == 0)
 				errorMEss(ERR_NOSUCHNICK, user, *paramIt);
-			paramIt++;
 		}
+		paramIt++;
 	}
 	return(0);
 }
