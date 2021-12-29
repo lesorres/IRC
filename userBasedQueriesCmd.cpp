@@ -100,7 +100,7 @@ int Server::who( User & user)
 			{
 				if (chnIt->first == msg.midParams[0])
 				{
-					if (msg.midParams.size() == 1)
+					if (msg.midParams.size() == 1 || (msg.midParams.size() == 2 && msg.midParams[1] == chnIt->second->getPass()))
 						chnUsers = chnIt->second->getUserList();
 					else if (msg.midParams.size() == 2 && msg.midParams[1] == "o")
 						chnUsers = chnIt->second->getOperList();
