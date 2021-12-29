@@ -4,23 +4,12 @@
 // + 404 ERR_CANNOTSENDTOCHAN
 // + 401 ERR_NOSUCHNICK
 // + 301 RPL_AWAY
-// 407 ERR_TOOMANYTARGETS
+// - 407 ERR_TOOMANYTARGETS
 
 // + 412 ERR_NOTEXTTOSEND
 // 413 ERR_NOTOPLEVEL
 // 414 ERR_WILDTOPLEVEL
 
-static int isInChannel(User &user, Channel &channel)
-{
-	std::vector<User *>::iterator beginIt = channel.getUserList().begin();
-	std::vector<User *>::iterator endIt = channel.getUserList().end();
-	while (beginIt != endIt)
-	{
-		if (*beginIt = &user)
-			return (1);
-	}
-	return (0);
-}
 static int checkMask(std::string str)
 {
 	std::string::iterator strIt;
@@ -64,12 +53,11 @@ int Server::privmsg( User & user )
 		{
 			while (chnIt != endChnIt)
 			{
-				std::cout << "here\n";
 				if ((*paramIt) == chnIt->first)
 				{
-					if ((chnIt->second->flags & NO_MESS && !isInChannel(user, *(chnIt->second))) \
-					|| (chnIt->second->flags & MODERATE && !chnIt->second->isOperator(&user) && \
-					!(chnIt->second->flags & V_FLAG)))
+					if ((chnIt->second->flags & NO_MESS && !chnIt->second->isInChannel(user)) \
+					|| (chnIt->second->flags & MODERATE && !chnIt->second->isOperator(&user) \
+					&& !chnIt->second->isVoters(&user)))
 					{
 						errorMEss(ERR_CANNOTSENDTOCHAN, user, chnIt->first);
 					}
@@ -91,7 +79,7 @@ int Server::privmsg( User & user )
 				errorMEss(ERR_NOSUCHNICK, user, *paramIt);
 			paramIt++;
 		}
-		//for nicks, users, host masks and server masks:
+		//for nicks, users, host masks: (server mask isn't checked)
 		else
 		{
 			while (userIt != endUserIt)
