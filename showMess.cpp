@@ -29,7 +29,7 @@ void Server::showMEss( User const & from, User const & to, bool andfrom )
         send(from.getFd(), mess.c_str(), mess.size(), 0);
 }
 
-void Server::showMEss( User const & from, Channel const * channel, std::string & str, bool andfrom )
+void Server::showMEss( User const & from, Channel const * channel, std::string str, bool andfrom )
 {
     std::string mess = from.getPrefix() + " " + str + "\n";
     std::vector<User *> users = channel->getUserList();

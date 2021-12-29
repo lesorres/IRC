@@ -64,12 +64,12 @@ int Server::privmsg( User & user )
 					else
 					{
 						// !!!!! добавить проверки на различные флаги для ERR_CANNOTSENDTOCHAN
-						chnUsers = chnIt->second->getUserList();
-						for (size_t i = 0; i < chnUsers.size(); i++)
-						{
-							awayRpl(user, *(chnUsers[i]));
-							showMEss(user, *(chnUsers[i]));
-						}
+						// chnUsers = chnIt->second->getUserList();
+						// for (size_t i = 0; i < chnUsers.size(); i++)
+						// {
+							// awayRpl(user, *(chnUsers[i]));
+							showMEss(user, chnIt->second);
+						// }
 						absenceFlag = 1;
 					}
 				}
