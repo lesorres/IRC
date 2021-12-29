@@ -41,9 +41,9 @@ int Server::who( User & user)
 
 	if (msg.midParams.size() > 2)
 		return (errorMEss(1000, user, "invalid number of parameters is given"));
-	else if (msg.midParams.size() == 2 && msg.midParams[1] != "o")
-		return (errorMEss(1000, user, \
-		"second parameters of command is invalid, please put \"o\" as a second parameter if you want to see the list of operators only"));
+	// else if (msg.midParams.size() == 2 && msg.midParams[1] != "o")
+	// 	return (errorMEss(1000, user, \
+	// 	"second parameters of command is invalid, please put \"o\" as a second parameter if you want to see the list of operators only"));
 	//rfc1459 4.5.1
 	// "In the absence of the <name> parameter, all visible are listed.
 	// The same result can be achieved by using a <name> of "0" or any
@@ -100,10 +100,10 @@ int Server::who( User & user)
 			{
 				if (chnIt->first == msg.midParams[0])
 				{
-					if (msg.midParams.size() == 1 || (msg.midParams.size() == 2 && msg.midParams[1] == chnIt->second->getPass()))
-						chnUsers = chnIt->second->getUserList();
-					else if (msg.midParams.size() == 2 && msg.midParams[1] == "o")
+					if (msg.midParams.size() == 2 && msg.midParams[1] == "o")
 						chnUsers = chnIt->second->getOperList();
+					else // if (msg.midParams.size() == 1 || (msg.midParams.size() == 2 && msg.midParams[1] == chnIt->second->getPass()))
+						chnUsers = chnIt->second->getUserList();
 					for (size_t i = 0; i < chnUsers.size(); i++)
 					{
 						ircOpSymbol = "";
