@@ -13,6 +13,9 @@ int Server::errorMEss(int err, User &user, const std::string &str) {
 	case ERR_NOSUCHCHANNEL:
 		messg += str + " :No such channel\n";
 		break;
+	case ERR_CANNOTSENDTOCHAN:
+		messg += str + " :Cannot send to channel\n";
+		break;
 	case ERR_WASNOSUCHNICK:
 		messg += str + " :There was no such nickname\n";
 		break;
@@ -21,6 +24,9 @@ int Server::errorMEss(int err, User &user, const std::string &str) {
 		break;
 	case ERR_NORECIPIENT:
 		messg += ":No recipient given " + str + "\n";
+		break;
+	case ERR_NOTEXTTOSEND:
+		messg += ":No text to send\n";
 		break;
 	case ERR_NOMOTD:
 		messg += ":MOTD File is missing\n";

@@ -143,3 +143,8 @@ int checkWildcard(const char *str, const char *mask)
 	}
 	return (!*strIt && !*maskIt);
 }
+
+bool onlyWildcard(std::string str)
+{
+	return (str.find_first_not_of(str[0]) == std::string::npos && str[0] == '*');
+}

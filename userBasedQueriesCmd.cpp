@@ -1,11 +1,6 @@
 #include "Server.hpp"
 #include "Utils.hpp"
 
-static bool onlyWildcard(std::string str)
-{
-	return (str.find_first_not_of(str[0]) == std::string::npos && str[0] == '*');
-}
-
 static bool commonChannel(User & user1, User & user2)
 {
 	std::vector<std::string>::iterator itV1 (user1.getChannelList().begin());
@@ -46,9 +41,9 @@ int Server::who( User & user)
 
 	if (msg.midParams.size() > 2)
 		return (errorMEss(1000, user, "invalid number of parameters is given"));
-	else if (msg.midParams.size() == 2 && msg.midParams[1] != "o")
-		return (errorMEss(1000, user, \
-		"second parameters of command is invalid, please put \"o\" as a second parameter if you want to see the list of operators only"));
+	// else if (msg.midParams.size() == 2 && msg.midParams[1] != "o")
+	// 	return (errorMEss(1000, user, \
+	// 	"second parameters of command is invalid, please put \"o\" as a second parameter if you want to see the list of operators only"));
 	//rfc1459 4.5.1
 	// "In the absence of the <name> parameter, all visible are listed.
 	// The same result can be achieved by using a <name> of "0" or any
@@ -105,10 +100,10 @@ int Server::who( User & user)
 			{
 				if (chnIt->first == msg.midParams[0])
 				{
-					if (msg.midParams.size() == 1)
-						chnUsers = chnIt->second->getUserList();
-					else if (msg.midParams.size() == 2 && msg.midParams[1] == "o")
+					if (msg.midParams.size() == 2 && msg.midParams[1] == "o")
 						chnUsers = chnIt->second->getOperList();
+					else // if (msg.midParams.size() == 1 || (msg.midParams.size() == 2 && msg.midParams[1] == chnIt->second->getPass()))
+						chnUsers = chnIt->second->getUserList();
 					for (size_t i = 0; i < chnUsers.size(); i++)
 					{
 						ircOpSymbol = "";
@@ -207,11 +202,7 @@ int Server::whois( User & user)
 				}
 				else 
 					replyMEss(RPL_WHOISCHANNELS, user, (*userIt)->getNick() + " :");
-				if ((*userIt)->getFlags() & AWAY)
-				{
-					message = (*userIt)->getNick() + " " + (*userIt)->getAwayMess();
-					replyMEss(RPL_AWAY, user, message);
-				}
+				awayRpl(user, **userIt);
 				replyMEss(RPL_ENDOFWHOIS, user, (*userIt)->getNick());
 			}
 			userIt++;

@@ -37,7 +37,7 @@ int Server::join( User & user )
                 user.addChannel(channellist[i]);
                 if (current->isInvited(&user))
                     current->deinvUser(&user);
-                showMEss(user, current, true);
+                showMEss(user, current, "JOIN " + channellist[i], true);
                 if (current->getTopic().empty())
                     replyMEss(RPL_NOTOPIC, user, channellist[i]);
                 else
@@ -63,7 +63,7 @@ int Server::join( User & user )
                 channels[channellist[i]] = new Channel(&user, channellist[i]);
             user.addChannel(channellist[i]);
             user.imOper(channellist[i]);
-            showMEss(user, channels[channellist[i]], true);
+            showMEss(user, channels[channellist[i]], "JOIN " + channellist[i], true);
             replyMEss(RPL_NOTOPIC, user, channellist[i]);
             replyMEss(RPL_NAMREPLY, user, channellist[i] + " = :@" + user.getNick());
             replyMEss(RPL_ENDOFNAMES, user, channellist[i]);

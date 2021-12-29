@@ -1,11 +1,14 @@
 #include "Server.hpp"
 
-// +411 ERR_NORECIPIENT			412 ERR_NOTEXTTOSEND
-// 404 ERR_CANNOTSENDTOCHAN		413 ERR_NOTOPLEVEL
-// 414 ERR_WILDTOPLEVEL			407 ERR_TOOMANYTARGETS
-// +401 ERR_NOSUCHNICK
-// 301 RPL_AWAY
+// + 411 ERR_NORECIPIENT
+// + 404 ERR_CANNOTSENDTOCHAN
+// + 401 ERR_NOSUCHNICK
+// + 301 RPL_AWAY
+// - 407 ERR_TOOMANYTARGETS
 
+// + 412 ERR_NOTEXTTOSEND
+// 413 ERR_NOTOPLEVEL
+// 414 ERR_WILDTOPLEVEL
 
 static int checkMask(std::string str)
 {
@@ -35,10 +38,13 @@ int Server::privmsg( User & user )
 	std::map<std::string, Channel *>::iterator endChnIt = channels.end();
 
 	std::vector<User *> chnUsers;
+	std::vector<User *> Users;
 	bool absenceFlag;
 
 	if (msg.midParams.size() < 1)
 		return (errorMEss(ERR_NORECIPIENT, user, "PRIVMSG"));
+	if (mess.empty())
+		return (errorMEss(ERR_NOTEXTTOSEND, user));
 	while (paramIt != endPramIt)
 	{
 		absenceFlag = 0;
@@ -47,16 +53,25 @@ int Server::privmsg( User & user )
 		{
 			while (chnIt != endChnIt)
 			{
-				std::cout << "here\n";
 				if ((*paramIt) == chnIt->first)
 				{
-					// !!!!! добавить проверки на различные флаги для ERR_CANNOTSENDTOCHAN
-					// chnUsers = chnIt->second->getUserList();
-					// for (size_t i = 0; i < chnUsers.size(); i++)
-					// {
-						showMEss(user, chnIt->second);
-					// }
-					absenceFlag = 1;
+					if ((chnIt->second->flags & NO_MESS && !chnIt->second->isInChannel(user)) \
+					|| (chnIt->second->flags & MODERATE && !chnIt->second->isOperator(&user) \
+					&& !chnIt->second->isVoters(&user)))
+					{
+						errorMEss(ERR_CANNOTSENDTOCHAN, user, chnIt->first);
+					}
+					else
+					{
+						// !!!!! добавить проверки на различные флаги для ERR_CANNOTSENDTOCHAN
+						// chnUsers = chnIt->second->getUserList();
+						// for (size_t i = 0; i < chnUsers.size(); i++)
+						// {
+							// awayRpl(user, *(chnUsers[i]));
+							showMEss(user, chnIt->second);
+						// }
+						absenceFlag = 1;
+					}
 				}
 				chnIt++;
 			}
@@ -64,34 +79,34 @@ int Server::privmsg( User & user )
 				errorMEss(ERR_NOSUCHNICK, user, *paramIt);
 			paramIt++;
 		}
-		//for nicks, users, host masks and server masks:
+		//for nicks, users, host masks: (server mask isn't checked)
 		else
 		{
 			while (userIt != endUserIt)
 			{
-				if ((*userIt)->getNick() == *paramIt)
+				if ((*userIt)->getNick() == *paramIt || (*userIt)->getUser() == *paramIt)
 				{
 					absenceFlag = 1;
+					awayRpl(user, **userIt);
 					showMEss(user, **userIt);
-					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 				}
-				else if ((*userIt)->getUser() == *paramIt)
+				else if(checkMask(*paramIt) && ((*paramIt)[0] == '#' || (*paramIt)[0] == '$') \
+						&& checkWildcard((*userIt)->getServer().c_str(), (*paramIt).c_str()))
 				{
 					absenceFlag = 1;
+					awayRpl(user, **userIt);
 					showMEss(user, **userIt);
-					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
 				}
-				else if(checkMask(*paramIt) && (*paramIt)[0] == '#' && checkWildcard((*userIt)->getHost().c_str(), (*paramIt).c_str()))
+				else if(((*paramIt)[0] == '#' || (*paramIt)[0] == '$') \
+					&& onlyWildcard((*paramIt).substr(1)) && (*userIt)->getFlags() & OPERATOR)
 				{
 					absenceFlag = 1;
-					showMEss(user, **userIt);
-					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
-				}
-				else if(checkMask(*paramIt) && (*paramIt)[0] == '$' && checkWildcard((*userIt)->getServer().c_str(), (*paramIt).c_str()))
-				{
-					absenceFlag = 1;
-					showMEss(user, **userIt);
-					// send((*userIt)->getFd(), mess.c_str(), mess.size(), IRC_NOSIGNAL);
+					Users = userData;
+					for (size_t i = 0; i < Users.size(); i++)
+					{
+						awayRpl(user, *(Users[i]));
+						showMEss(user, *(Users[i]));
+					}
 				}
 				userIt++;
 			}

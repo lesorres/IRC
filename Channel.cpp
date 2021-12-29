@@ -130,6 +130,18 @@ std::string Channel::getTopic( void ) const { return (topic); }
 unsigned int Channel::getCountUsers( void ) const { return(countUsers); }
 unsigned int Channel::getUserLimit( void ) const { return (userLimit); }
 
+int Channel::isInChannel(User &user)
+{
+	std::vector<User *>::iterator beginIt = this->getUserList().begin();
+	std::vector<User *>::iterator endIt = this->getUserList().end();
+	while (beginIt != endIt)
+	{
+		if (*beginIt == &user)
+			return (1);
+	}
+	return (0);
+}
+
 Channel::Channel(User * creater, std::string channelname, std::string pass)
 {
     name = channelname;
