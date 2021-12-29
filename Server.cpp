@@ -141,6 +141,8 @@ int  Server::readRequest( size_t const id )
     }
     while (text.find("\r") != std::string::npos)      // Удаляем символ возврата карретки
         text.erase(text.find("\r"), 1);               // из комбинации CRLF
+    if (text.size() > 512)
+        text.replace(510, 2, "\r\n");
     userData[id]->checkConnection(text);
     userData[id]->messages = split(text, "\n");
     return (bytesRead);
