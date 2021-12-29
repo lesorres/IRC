@@ -35,6 +35,7 @@ typedef struct s_msg
 class Bot {
 	private:
 		std::string 				cmds;
+		std::vector<std::string>	reply;
 		typedef int ( Bot:: *Type )( );
 	    std::map<std::string, Type>	commands;
 		std::string					nick;
@@ -64,6 +65,9 @@ class Bot {
 		void	processError( void );
 		void	sendMessage( std::string const & cmd, std::string const & arg1 = "", std::string const & arg2 = "",\
 					   std::string const & arg3 = "", std::string const & arg4 = "", std::string const & arg5 = "");
+		void	initMap();
+		void	execute( std::string & nick );
+		void	showInfo();
 
 		// commands 
 		int command();
@@ -105,9 +109,6 @@ class Bot {
 
 		Bot();
 	public:
-		void	initMap();
-		void	execute();
-		void	showInfo();
 		void	create();
 		void	run();
 

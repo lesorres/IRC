@@ -10,9 +10,9 @@ int Server::parseMsg(size_t id)
 	std::vector<std::string>::iterator cutIt;
 
 	//check message length
-	if (cmdStr.size() > 510)
+	if (cmdStr.size() > 512)
 	{
-		std::cout << "message length exceeded allowed value of 510 symbols\n";
+		std::cout << "message length exceeded allowed value of 512 symbols\n";
 		return (1);
 	}
 

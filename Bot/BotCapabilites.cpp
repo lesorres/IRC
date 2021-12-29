@@ -4,11 +4,21 @@ void Bot::processCommand( void )
 {
     if (msg.cmd == "PRIVMSG") {
         std::string nick = msg.prefix.substr(1, msg.prefix.find("!") - 1);
-        sendMessage("PRIVMSG", nick, ":Hi, im ircbot. Now I don't know much, but I think that Ilmira will teach me everything");
+		if (msg.trailing.find("!bot") == 1)
+		{
+			if (msg.trailing.find("/") != std::string::npos) {
+				cmds = msg.trailing.substr(msg.trailing.find("/"));
+			}
+			else
+				cmds = "error";	
+			execute(nick);
+		}
+		// else
+        // 	sendMessage("PRIVMSG", nick, ":Hi, im ircbot. Now I don't know much, but I think that Ilmira will teach me everything");
     }
 	else if (msg.cmd == "PING") {
 		msg.prefix.erase(msg.prefix.begin());
-		sendMessage("PONG", msg.prefix);
+		sendMessage("PONG", ":" + msg.prefix);
 	}
     else if (msg.cmd == "INVITE") {
 		if (msg.midParams.size() > 2)
@@ -39,13 +49,9 @@ void Bot::replyRequset( void )
 	if (msg.type & COMMAND)
 		processCommand();
 	else if (msg.type & REPLY)
-	{
 		processReply();
-	}
 	else if (msg.type & ERROR)
-	{
 		processError();
-	}
 	messages.erase(messages.begin());
 	if (!messages.empty())
 		replyRequset();
