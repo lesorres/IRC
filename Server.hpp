@@ -118,6 +118,7 @@ class Server {
 		int			pong( User & user );
 		int			away( User & user );
 		int			privmsg( User & user );
+		int			notice( User & user );
 
 		// server utils
 		void		setChannelMode( Channel * channel, User & user );
