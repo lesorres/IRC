@@ -60,6 +60,7 @@ void Server::consoleCommands( void )
         buf[rd] = 0;
         text += buf;
         bytesRead += rd;
+        std::cout << "text from stdin:" << text;
         if (text.find("\n") != std::string::npos) {
             text.erase(text.find("\n"), 1); 
             break;

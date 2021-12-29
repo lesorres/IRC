@@ -98,7 +98,7 @@ int Server::errorMEss(int err, User &user, const std::string &str) {
 		messg += str + "\n";
 		break ;
 	default:
-		messg += "something wrong\n";
+		messg += ":Unknown command\n";
 	}
 	send(user.getFd(), messg.c_str(), messg.size(), IRC_NOSIGNAL);
 	std::cout << "\e[31mSend error to " << user.getNick() << "< socket " << user.getFd() << " >:\e[0m " << messg;

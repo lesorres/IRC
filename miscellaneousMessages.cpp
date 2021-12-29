@@ -24,7 +24,7 @@ int Server::ping( User & user) {
 int Server::pong( User & user) {
 	if (msg.midParams.size() != 1)  
 		return errorMEss(ERR_NOORIGIN, user);
-	if (msg.midParams[0] != inf.serverName)
+	if (msg.midParams[0] != inf.serverName || msg.trailing != inf.serverName)
 		return errorMEss(ERR_NOSUCHSERVER, user);
 	user.unsetFlags(PING);
 	return 0;

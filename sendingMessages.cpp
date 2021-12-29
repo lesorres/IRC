@@ -51,11 +51,11 @@ int Server::privmsg( User & user )
 				if ((*paramIt) == chnIt->first)
 				{
 					// !!!!! добавить проверки на различные флаги для ERR_CANNOTSENDTOCHAN
-					chnUsers = chnIt->second->getUserList();
-					for (size_t i = 0; i < chnUsers.size(); i++)
-					{
-						showMEss(user, *(chnUsers[i]));
-					}
+					// chnUsers = chnIt->second->getUserList();
+					// for (size_t i = 0; i < chnUsers.size(); i++)
+					// {
+						showMEss(user, chnIt->second);
+					// }
 					absenceFlag = 1;
 				}
 				chnIt++;
