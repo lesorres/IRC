@@ -136,7 +136,7 @@ int Channel::isInChannel(User &user)
 	std::vector<User *>::iterator endIt = this->getUserList().end();
 	while (beginIt != endIt)
 	{
-		if (*beginIt == &user)
+		if (*beginIt++ == &user)
 			return (1);
 	}
 	return (0);
